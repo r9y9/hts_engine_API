@@ -1,0 +1,17 @@
+autom4te.cache
+aclocal.m4
+config.status
+cvs2cl.pl
+Makefile
+Makefile.in
+configure
+ChangeLog
+format.sh
+makeclean.sh
+test_mcp.sh
+test_mcp
+conf.sh
+*test*
+config.log
+hts_engine_API-0.99.tar.*
+*.bz2

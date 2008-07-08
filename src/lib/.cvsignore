@@ -1,0 +1,4 @@
+Makefile
+Makefile.in
+libHTSEngine.a
+.deps

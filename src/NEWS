@@ -1,0 +1,20 @@
+Version 1.00:
+ * bug fixes and performance improvements.
+ * support linear gain in addition to log gain for LSP-type parameters.
+ * first stable release.
+
+Version 0.99:
+ * bug fixes.
+ * switch license to the New and Simplified BSD license.
+
+Version 0.96:
+ * bug fixes.
+ * support flexible model structure.
+ * support LSP-type parameters.
+
+Version 0.95:
+ * support GV.
+
+Version 0.9:
+ * implement API-style hts_engine.
+ * support speaker-interpolation.
