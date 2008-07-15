@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------- */
 /*           The HMM-Based Speech Synthesis System (HTS)             */
-/*           developed by HTS Working Group                          */
-/*           http://hts.sp.nitech.ac.jp/                             */
+/*           hts_engine API developed by HTS Working Group           */
+/*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
 /*  Copyright (c) 2001-2008  Nagoya Institute of Technology          */

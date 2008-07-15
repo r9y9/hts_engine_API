@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------- */
 /*           The HMM-Based Speech Synthesis System (HTS)             */
-/*           developed by HTS Working Group                          */
-/*           http://hts.sp.nitech.ac.jp/                             */
+/*           hts_engine API developed by HTS Working Group           */
+/*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
 /*  Copyright (c) 2001-2008  Nagoya Institute of Technology          */
@@ -42,7 +42,7 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-/* $Id: HTS_engine.h,v 1.1 2008/07/08 10:14:02 uratec Exp $ */
+/* $Id: HTS_engine.h,v 1.2 2008/07/15 11:05:56 uratec Exp $ */
 
 #include <stdio.h>
 
@@ -53,7 +53,7 @@
 #else
 #define HTS_VERSION   "1.0"
 #endif
-#define HTS_URL       "http://hts.sp.nitech.ac.jp/"
+#define HTS_URL       "http://hts-engine.sourceforge.net/"
 #define HTS_COPYRIGHT "2001-2008  Nagoya Institute of Technology", \
                       "2001-2008  Tokyo Institute of Technology"
 #define HTS_NCOPYRIGHT 2
