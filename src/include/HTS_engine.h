@@ -42,7 +42,7 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-/* $Id: HTS_engine.h,v 1.2 2008/07/15 11:05:56 uratec Exp $ */
+/* $Id: HTS_engine.h,v 1.3 2008/07/23 09:44:56 uratec Exp $ */
 
 #include <stdio.h>
 
@@ -232,7 +232,7 @@ typedef struct _HTS_LabelString {
    struct _HTS_LabelString *next;       /* pointer to next label string */
    char *name;                  /* label string */
    HTS_Boolean frame_flag;      /* flag for frame length modification */
-   int frame;                   /* frame length specified in the given label */
+   double frame;                /* frame length specified in the given label */
 } HTS_LabelString;
 
 /* HTS_Label: List of label strings. */
@@ -267,7 +267,7 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
 void HTS_Label_set_speech_speed(HTS_Label * label, double f);
 
 /* HTS_Label_set_frame: set frame length */
-void HTS_Label_set_frame(HTS_Label * label, int string_index, int i);
+void HTS_Label_set_frame(HTS_Label * label, int string_index, double f);
 
 /* HTS_Label_get_size: get number of label string */
 int HTS_Label_get_size(HTS_Label * label);
@@ -280,7 +280,7 @@ HTS_Boolean HTS_Label_get_frame_specified_flag(HTS_Label * label,
                                                int string_index);
 
 /* HTS_Label_get_frame: get frame length */
-int HTS_Label_get_frame(HTS_Label * label, int string_index);
+double HTS_Label_get_frame(HTS_Label * label, int string_index);
 
 /* HTS_Label_get_speech_speed: get speech speed rate */
 double HTS_Label_get_speech_speed(HTS_Label * label);

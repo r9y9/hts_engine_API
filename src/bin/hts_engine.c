@@ -42,7 +42,7 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-/* $Id: hts_engine.c,v 1.2 2008/07/15 11:05:56 uratec Exp $ */
+/* $Id: hts_engine.c,v 1.3 2008/07/23 09:44:55 uratec Exp $ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -345,8 +345,8 @@ int main(int argc, char **argv)
             case 'r':
                rawfp = Getfp(*(argv + 1), "wb");
                break;
-            case 'f':
 #ifndef HTS_EMBEDDED
+            case 'f':
             case 'p':
                lf0fp = Getfp(*(argv + 1), "wb");
                break;
@@ -520,7 +520,7 @@ int main(int argc, char **argv)
    HTS_Engine_load_label_from_fn(&engine, labfn);       /* load label file */
    if (!phoneme_alignment)      /* modify label */
       for (i = 0; i < HTS_Label_get_size(&engine.label); i++)
-         HTS_Label_set_frame(&engine.label, i, -1);
+         HTS_Label_set_frame(&engine.label, i, -1.0);
    if (speech_speed != 1.0)     /* modify label */
       HTS_Label_set_speech_speed(&engine.label, speech_speed);
    HTS_Engine_create_sstream(&engine);  /* parse label and determine state duration */

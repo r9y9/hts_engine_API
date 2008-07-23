@@ -98,12 +98,12 @@ void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
          end = atoi(buff);
          HTS_get_token(fp, buff);
          lstring->frame_flag = TRUE;
-         lstring->frame = (int) (rate * (end - start));
-         if (lstring->frame < 1)
-            lstring->frame = 1;
+         lstring->frame = rate * (end - start);
+         if (lstring->frame < 1.0)
+            lstring->frame = 1.0;
       } else {
          lstring->frame_flag = FALSE;
-         lstring->frame = 0;
+         lstring->frame = 0.0;
       }
       lstring->next = NULL;
       lstring->name = HTS_strdup(buff);
@@ -142,12 +142,12 @@ void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
          end = atoi(buff);
          HTS_get_token_from_string(data, &data_index, buff);
          lstring->frame_flag = TRUE;
-         lstring->frame = (int) (rate * (end - start));
-         if (lstring->frame < 1)
-            lstring->frame = 1;
+         lstring->frame = rate * (end - start);
+         if (lstring->frame < 1.0)
+            lstring->frame = 1.0;
       } else {
          lstring->frame_flag = FALSE;
-         lstring->frame = 0;
+         lstring->frame = 0.0;
       }
       lstring->next = NULL;
       lstring->name = HTS_strdup(buff);
@@ -190,12 +190,12 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
          HTS_get_token_from_string(data[i], &data_index, buff);
          lstring->name = HTS_strdup(&buff[data_index]);
          lstring->frame_flag = TRUE;
-         lstring->frame = (int) (rate * (end - start));
-         if (lstring->frame < 1)
-            lstring->frame = 1;
+         lstring->frame = rate * (end - start);
+         if (lstring->frame < 1.0)
+            lstring->frame = 1.0;
       } else {
          lstring->frame_flag = FALSE;
-         lstring->frame = 0;
+         lstring->frame = 0.0;
          lstring->name = HTS_strdup(data[i]);
       }
       lstring->next = NULL;
@@ -203,7 +203,7 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
 }
 
 /* HTS_Label_set_frame: set frame length */
-void HTS_Label_set_frame(HTS_Label * label, int string_index, int i)
+void HTS_Label_set_frame(HTS_Label * label, int string_index, double f)
 {
    HTS_LabelString *lstring = label->head;
 
@@ -211,12 +211,12 @@ void HTS_Label_set_frame(HTS_Label * label, int string_index, int i)
       lstring = lstring->next;
    if (!lstring)
       return;
-   if (i >= 1) {
+   if (f > 0.0) {
       lstring->frame_flag = TRUE;
-      lstring->frame = i;
+      lstring->frame = f;
    } else {
       lstring->frame_flag = FALSE;
-      lstring->frame = 0;
+      lstring->frame = 0.0;
    }
 }
 
@@ -259,7 +259,7 @@ HTS_Boolean HTS_Label_get_frame_specified_flag(HTS_Label * label,
 }
 
 /* HTS_Label_get_frame: get frame length*/
-int HTS_Label_get_frame(HTS_Label * label, int string_index)
+double HTS_Label_get_frame(HTS_Label * label, int string_index)
 {
    HTS_LabelString *lstring = label->head;
 

@@ -42,7 +42,7 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-/* $Id: HTS_sstream.c,v 1.2 2008/07/15 11:05:56 uratec Exp $ */
+/* $Id: HTS_sstream.c,v 1.3 2008/07/23 09:44:55 uratec Exp $ */
 
 /* hts_engine libraries */
 #include "HTS_hidden.h"
@@ -150,7 +150,7 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
             duration_mean[j] += rho * duration_vari[j];
             temp1 += duration_mean[j];
          }
-         temp1 = (double) HTS_Label_get_frame(label, i) / temp1;
+         temp1 = HTS_Label_get_frame(label, i) / temp1;
          for (j = 2; j <= sss->nstate + 1; j++) {
             temp2 = temp1 * duration_mean[j];
             duration_mean[j] = (double) ((int) (temp2 + duration_remain + 0.5));

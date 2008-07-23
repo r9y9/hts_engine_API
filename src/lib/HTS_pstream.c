@@ -42,7 +42,7 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-/* $Id: HTS_pstream.c,v 1.2 2008/07/15 11:05:56 uratec Exp $ */
+/* $Id: HTS_pstream.c,v 1.3 2008/07/23 09:44:55 uratec Exp $ */
 
 #include <math.h>               /* for sqrt() */
 

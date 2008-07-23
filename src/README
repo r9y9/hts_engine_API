@@ -61,7 +61,7 @@ the conditions in the following license:
 /* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY    */
 /* OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
-/*  ---------------------------------------------------------------  */
+/* ----------------------------------------------------------------- */
 
 Although this software is free, we still offer no warranties and no 
 maintenance.  We will continue to endeavor to fix bugs and answer queries when
@@ -90,9 +90,7 @@ See "INSTALL" in the same directory for details.
 
 Reference manual of hts_engine_API is available at
 
-http://hts.sp.nitech.ac.jp/?Reference%20of%20hts_engine%20API
-
-PDF version of the above web page is also included in this release.
+http://hts-engine.sourceforge.net/
 
 *******************************************************************************
                                   Who we are
@@ -103,15 +101,15 @@ Synthesis System.  Current members are
 
  Keiichi Tokuda      http://www.sp.nitech.ac.jp/~tokuda/
  (Principle Designer)
- Heiga Zen           http://www.sp.nitech.ac.jp/~zen/
+ Keiichiro Oura      http://www.sp.nitech.ac.jp/~uratec/
  (Main Maintainer)
+ Heiga Zen           http://www.sp.nitech.ac.jp/~zen/
  Junichi Yamagishi   http://homepages.inf.ed.ac.uk/jyamagis/
  Alan W. Black       http://www.cs.cmu.edu/~awb/
  Takashi Masuko
  Shinji Sako         http://www.mmsp.nitech.ac.jp/~sako/
  Tomoki Toda         http://spalab.naist.jp/~tomoki/index_e.html
  Takashi Nose
- Keiichiro Oura      http://www.sp.nitech.ac.jp/~uratec/
 
 and the members are dynamically changing.  The current formal contact address
 of HTS working group and a mailing list for HTS users can be found at 
