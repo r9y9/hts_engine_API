@@ -42,8 +42,6 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-/* $Id: HTS_model.c,v 1.3 2008/07/23 09:44:55 uratec Exp $ */
-
 #include <stdlib.h>             /* for atoi(),abs() */
 #include <string.h>             /* for strlen(),strstr(),strrchr(),strcmp() */
 #include <ctype.h>              /* for isdigit() */

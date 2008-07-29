@@ -42,8 +42,6 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-/* $Id: HTS_engine.c,v 1.3 2008/07/23 09:44:55 uratec Exp $ */
-
 #include <string.h>             /* for strcpy() */
 
 /* hts_engine libraries */

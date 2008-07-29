@@ -42,8 +42,6 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-/* $Id: HTS_engine.h,v 1.3 2008/07/23 09:44:56 uratec Exp $ */
-
 #include <stdio.h>
 
 /*  ------------------------ copyright ----------------------------  */
@@ -51,7 +49,7 @@
 #ifdef PACKAGE_VERSION
 #define HTS_VERSION   PACKAGE_VERSION
 #else
-#define HTS_VERSION   "1.0"
+#define HTS_VERSION   "1.01"
 #endif
 #define HTS_URL       "http://hts-engine.sourceforge.net/"
 #define HTS_COPYRIGHT "2001-2008  Nagoya Institute of Technology", \

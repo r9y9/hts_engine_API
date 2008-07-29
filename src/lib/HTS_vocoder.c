@@ -42,8 +42,6 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-/* $Id: HTS_vocoder.c,v 1.3 2008/07/23 09:44:55 uratec Exp $ */
-
 #include <math.h>               /* for sqrt(),log(),exp(),pow(),cos() */
 
 /* hts_engine libraries */

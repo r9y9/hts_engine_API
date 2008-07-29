@@ -42,8 +42,6 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-/* $Id: HTS_misc.c,v 1.3 2008/07/23 09:44:55 uratec Exp $ */
-
 #include <stdlib.h>             /* for exit(),calloc(),free() */
 #include <stdarg.h>             /* for va_list */
 #include <string.h>             /* for strcpy(),strlen() */

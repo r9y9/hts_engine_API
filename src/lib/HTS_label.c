@@ -42,8 +42,6 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-/* $id: HTS_label.c,v 1.1.2.1 2008/02/12 10:47:43 uratec Exp $ */
-
 #include <stdlib.h>             /* for atoi() */
 #include <ctype.h>              /* for isgraph(),isdigit() */
 

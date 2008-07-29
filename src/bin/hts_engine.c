@@ -42,8 +42,6 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-/* $Id: hts_engine.c,v 1.3 2008/07/23 09:44:55 uratec Exp $ */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
