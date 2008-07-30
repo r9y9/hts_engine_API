@@ -10,7 +10,7 @@ include_HEADERS = include/HTS_engine.h
 INCLUDES = -I$(top_srcdir)/include
 
 # Additional files to be included in the distribution.
-EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL NEWS README hts_engine_API.pdf
+EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL NEWS README
 
 # Files to remove by 'make distclean'
 DISTCLEANFILES = *.log *.out *~ bin/*~ config/*~ include/*~ lib/*~

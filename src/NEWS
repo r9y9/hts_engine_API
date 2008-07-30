@@ -1,3 +1,7 @@
+Version 1.01:
+ * bug fixes.
+ * transfer site to SourceForge.
+
 Version 1.00:
  * bug fixes and performance improvements.
  * support linear gain in addition to log gain for LSP-type parameters.
