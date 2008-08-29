@@ -206,9 +206,16 @@ static int HTS_mseq(HTS_Vocoder * v)
 /* HTS_mc2b: transform mel-cepstrum to MLSA digital fillter coefficients */
 static void HTS_mc2b(double *mc, double *b, int m, const double a)
 {
-   b[m] = mc[m];
-   for (m--; m >= 0; m--)
-      b[m] = mc[m] - a * b[m + 1];
+   if (mc != b) {
+      if (a != 0.0) {
+         b[m] = mc[m];
+         for (m--; m >= 0; m--)
+            b[m] = mc[m] - a * b[m + 1];
+      } else
+         HTS_movem(mc, b, m + 1);
+   } else if (a != 0.0)
+      for (m--; m >= 0; m--)
+         b[m] -= a * b[m + 1];
 }
 
 /* HTS_b2bc: transform MLSA digital filter coefficients to mel-cepstrum */
