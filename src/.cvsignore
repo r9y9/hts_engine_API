@@ -5,7 +5,6 @@ cvs2cl.pl
 Makefile
 Makefile.in
 configure
-ChangeLog
 format.sh
 makeclean.sh
 test_mcp.sh
