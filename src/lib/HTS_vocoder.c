@@ -700,7 +700,7 @@ void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
             v->c[0] = LZERO;
          else
             v->c[0] = ZERO;
-         for (i = 0; i <= m; i++)
+         for (i = 1; i <= m; i++)
             v->c[i] = i * PI / (m + 1);
          HTS_lsp2mgc(v, v->c, v->c, m, alpha);
          HTS_mc2b(v->c, v->c, m, alpha);
