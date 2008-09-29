@@ -739,7 +739,12 @@ void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
       }
 
       /* output */
-      xs = (short) x;
+      if (x > 32767.0)
+         xs = 32767;
+      else if (x < -32768.0)
+         xs = -32768;
+      else
+         xs = (short) x;
       if (rawdata)
          rawdata[rawidx++] = xs;
       if (v->audio)

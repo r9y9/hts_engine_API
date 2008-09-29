@@ -1,3 +1,8 @@
+2008-09-29 03:58  Keiichiro Oura
+
+	* lib/HTS_vocoder.c: Fix suggested by Nicholas Volk: fix an
+	overflow problem (-32768 <= short <= 32767).
+
 2008-09-29 02:46  Keiichiro Oura
 
 	* lib/HTS_pstream.c: Fix suggested by Nicholas Volk: fix a minor
