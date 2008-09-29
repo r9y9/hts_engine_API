@@ -272,6 +272,12 @@ void HTS_Engine_set_audio_buff_size(HTS_Engine * engine, int i)
    engine->global.audio_buff_size = i;
 }
 
+/* HTS_Engine_get_audio_buff_size: get audio buffer size */
+int HTS_Engine_get_audio_buff_size(HTS_Engine * engine)
+{
+   return engine->global.audio_buff_size;
+}
+
 /* HTS_Egnine_set_msd_threshold: set MSD threshold */
 void HTS_Engine_set_msd_threshold(HTS_Engine * engine, int stream_index,
                                   double f)

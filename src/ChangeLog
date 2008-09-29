@@ -1,3 +1,8 @@
+2008-09-29 04:19  Keiichiro Oura
+
+	* include/HTS_engine.h, lib/HTS_engine.c: add
+	HTS_Engine_get_audio_buff_size().
+
 2008-09-29 03:58  Keiichiro Oura
 
 	* lib/HTS_vocoder.c: Fix suggested by Nicholas Volk: fix an

@@ -604,6 +604,9 @@ void HTS_Engine_set_beta(HTS_Engine * engine, double f);
 /* HTS_Engine_set_audio_buff_size: set audio buffer size */
 void HTS_Engine_set_audio_buff_size(HTS_Engine * engine, int i);
 
+/* HTS_Engine_get_audio_buff_size: get audio buffer size */
+int HTS_Engine_get_audio_buff_size(HTS_Engine * engine);
+
 /* HTS_Egnine_set_msd_threshold: set MSD threshold */
 void HTS_Engine_set_msd_threshold(HTS_Engine * engine, int stream_index,
                                   double f);
