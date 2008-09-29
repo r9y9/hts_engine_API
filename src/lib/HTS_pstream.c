@@ -371,7 +371,7 @@ void HTS_PStreamSet_create(HTS_PStreamSet * pss, HTS_SStreamSet * sss,
                                HTS_finv(HTS_SStreamSet_get_vari
                                         (sss, i, state, m));
                         else
-                           pst->sm.ivar[msd_frame][k] = 0.0;
+                           pst->sm.ivar[msd_frame][m] = 0.0;
                      }
                   }
                   msd_frame++;
