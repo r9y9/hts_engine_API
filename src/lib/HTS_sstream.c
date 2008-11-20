@@ -144,13 +144,15 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
                                 duration_mean, duration_vari, duration_iw);
       if (HTS_Label_get_frame_specified_flag(label, i)) {       /* use duration set by user */
          temp1 = 0.0;
+         temp2 = 0.0;
          for (j = 2; j <= sss->nstate + 1; j++) {
             duration_mean[j] += rho * duration_vari[j];
             temp1 += duration_mean[j];
+            temp2 += duration_vari[j];
          }
-         temp1 = HTS_Label_get_frame(label, i) / temp1;
+         temp1 = (HTS_Label_get_frame(label, i) - temp1) / temp2;
          for (j = 2; j <= sss->nstate + 1; j++) {
-            temp2 = temp1 * duration_mean[j];
+            temp2 = duration_mean[j] + temp1 * duration_vari[j];
             duration_mean[j] = (double) ((int) (temp2 + duration_remain + 0.5));
             if (duration_mean[j] < 1.0)
                duration_mean[j] = 1.0;
