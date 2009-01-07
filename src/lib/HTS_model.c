@@ -123,7 +123,12 @@ static HTS_Boolean HTS_is_num(const char *buff)
 /* HTS_name2num: convert name of node to number */
 static int HTS_name2num(const char *buff)
 {
-   return (atoi(strrchr(buff, '_') + 1));
+   int i;
+
+   for (i = strlen(buff) - 1; '0' <= buff[i] && buff[i] <= '9' && i >= 0; i--);
+   i++;
+
+   return atoi(&buff[i]);
 }
 
 /* HTS_get_state_num: return the number of state */
@@ -314,6 +319,8 @@ static int HTS_Tree_search_node(HTS_Tree * tree, const char *string)
    HTS_Node *node = tree->root;
 
    while (node != NULL) {
+      if (node->quest == NULL)
+         return node->pdf;
       if (HTS_Question_match(node->quest, string)) {
          if (node->yes->pdf > 0)
             return node->yes->pdf;
