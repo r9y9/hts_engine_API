@@ -59,30 +59,18 @@ else
 fi
 
 
-# Checks for Windows32 Audio
-AC_ARG_ENABLE(win32audio, [  --enable-win32audio   compile for Windows 2000/XP/Vista audio device (default=no)],,enable_win32audio=no)
-AC_MSG_CHECKING(whether to enable compilation for Windows 2000/XP/Vista audio device)
-if test x$enable_win32audio = xyes; then
-	AC_MSG_RESULT(yes)
-	AC_DEFINE(AUDIO_PLAY_WIN32)
-else
-	AC_MSG_RESULT(no)
-fi
-
-
-# Checks for Windows CE/Mobile Audio
-AC_ARG_ENABLE(winceaudio, [  --enable-winceaudio   compile for Windows CE/Mobile audio device (default=no)],,enable_winceaudio=no)
-AC_MSG_CHECKING(whether to enable compilation for Windows CE/Mobile audio device)
-if test x$enable_winceaudio = xyes; then
-	AC_MSG_RESULT(yes)
-	AC_DEFINE(AUDIO_PLAY_WINCE)
-else
-	AC_MSG_RESULT(no)
-fi
-
-
 AC_CANONICAL_HOST
 AC_C_BIGENDIAN
+
+
+# Checks library for windows audio devices
+case "$host_os" in
+ *win32* | *wince* | *cygwin* | *mingw* )
+	AC_HAVE_LIBRARY([winmm],,AC_MSG_ERROR(No winmm))
+	;;
+ *)
+	;;
+esac
 
 
 AC_CONFIG_FILES([Makefile

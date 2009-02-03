@@ -229,6 +229,7 @@ int main(int argc, char **argv)
    double alpha = 0.42;
    double stage = 0.0;          /* gamma = -1.0/stage */
    double beta = 0.0;
+   int audio_buff_size = 1600;
    double uv_threshold = 0.5;
    double gv_weight_lf0 = 0.7;
    double gv_weight_mcp = 1.0;
@@ -497,6 +498,7 @@ int main(int argc, char **argv)
    HTS_Engine_set_gamma(&engine, stage);
    HTS_Engine_set_log_gain(&engine, use_log_gain);
    HTS_Engine_set_beta(&engine, beta);
+   HTS_Engine_set_audio_buff_size(&engine, audio_buff_size);
    HTS_Engine_set_msd_threshold(&engine, 1, uv_threshold);      /* set voiced/unvoiced threshold for stream[1] */
    HTS_Engine_set_gv_weight(&engine, 0, gv_weight_mcp);
    HTS_Engine_set_gv_weight(&engine, 1, gv_weight_lf0);

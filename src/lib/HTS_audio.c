@@ -225,7 +225,7 @@ void HTS_Audio_write(HTS_Audio * as, short data)
 {
 }
 
-/* HTS_Audio_close: close audio device */
+/* HTS_Audio_close: close audio device (dummy) */
 void HTS_Audio_close(HTS_Audio * as)
 {
 }
