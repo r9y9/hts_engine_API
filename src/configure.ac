@@ -73,9 +73,7 @@ case "$host_os" in
 esac
 
 
-AC_CONFIG_FILES([Makefile
-                 bin/Makefile
-                 lib/Makefile])
+AC_CONFIG_FILES([Makefile bin/Makefile lib/Makefile])
 
 AC_OUTPUT
 
