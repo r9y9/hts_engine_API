@@ -1,5 +1,5 @@
 
-INSTALLDIR = C:\hts_engine_API-1.01.win
+INSTALLDIR = C:\hts_engine_API
 
 all:
 	cd lib
