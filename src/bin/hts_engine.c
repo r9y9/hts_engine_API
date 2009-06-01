@@ -538,7 +538,7 @@ int main(int argc, char **argv)
 
    /* output */
    if (tracefp != NULL)
-      HTS_Engine_save_infomation(&engine, tracefp);
+      HTS_Engine_save_information(&engine, tracefp);
    if (durfp != NULL)
       HTS_Engine_save_label(&engine, durfp);
    if (rawfp)

@@ -846,26 +846,75 @@ HTS_Boolean HTS_ModelSet_use_gv(HTS_ModelSet * ms, int stream_index)
    return FALSE;
 }
 
+/* HTS_ModelSet_get_duration_index: get index of duration tree and PDF */
+void HTS_ModelSet_get_duration_index(HTS_ModelSet * ms, char *string,
+                                     int *tree_index, int *pdf_index,
+                                     int interpolation_index)
+{
+   HTS_Tree *tree;
+   HTS_Pattern *pattern;
+   HTS_Boolean find;
+
+   find = FALSE;
+   (*tree_index) = 2;
+   (*pdf_index) = 1;
+   for (tree = ms->duration.model[interpolation_index].tree; tree;
+        tree = tree->next) {
+      pattern = tree->head;
+      if (!pattern)
+         find = TRUE;
+      for (; pattern; pattern = pattern->next)
+         if (HTS_pattern_match(string, pattern->string)) {
+            find = TRUE;
+            break;
+         }
+      if (find)
+         break;
+      (*tree_index)++;
+   }
+   if (tree)
+      (*pdf_index) = HTS_Tree_search_node(tree, string);
+}
+
 /* HTS_ModelSet_get_duration: get duration using interpolation weight */
 void HTS_ModelSet_get_duration(HTS_ModelSet * ms, char *string, double *mean,
                                double *vari, double *iw)
 {
    int i, j;
-   int pdf_index1, pdf_index2;
+   int tree_index, pdf_index;
    const int vector_length = ms->duration.vector_length;
-   HTS_Tree *tree;
-   HTS_Pattern *pattern;
-   HTS_Boolean find;
 
    for (i = 2; i <= ms->nstate + 1; i++) {
       mean[i] = 0.0;
       vari[i] = 0.0;
    }
    for (i = 0; i < ms->duration.interpolation_size; i++) {
-      find = FALSE;
-      pdf_index1 = 2;
-      pdf_index2 = 1;
-      for (tree = ms->duration.model[i].tree; tree; tree = tree->next) {
+      HTS_ModelSet_get_duration_index(ms, string, &tree_index, &pdf_index, i);
+      for (j = 0; j < ms->nstate; j++) {
+         mean[j + 2] +=
+             iw[i] * ms->duration.model[i].pdf[tree_index][pdf_index][j];
+         vari[j + 2] += iw[i] * iw[i] * ms->duration.model[i]
+             .pdf[tree_index][pdf_index][j + vector_length];
+      }
+   }
+}
+
+/* HTS_ModelSet_get_parameter_index: get index of parameter tree and PDF */
+void HTS_ModelSet_get_parameter_index(HTS_ModelSet * ms, char *string,
+                                      int *tree_index, int *pdf_index,
+                                      int stream_index, int state_index,
+                                      int interpolation_index)
+{
+   HTS_Tree *tree;
+   HTS_Pattern *pattern;
+   HTS_Boolean find;
+
+   find = FALSE;
+   (*tree_index) = 2;
+   (*pdf_index) = 1;
+   for (tree = ms->stream[stream_index].model[interpolation_index].tree; tree;
+        tree = tree->next) {
+      if (tree->state == state_index) {
          pattern = tree->head;
          if (!pattern)
             find = TRUE;
@@ -876,17 +925,11 @@ void HTS_ModelSet_get_duration(HTS_ModelSet * ms, char *string, double *mean,
             }
          if (find)
             break;
-         pdf_index1++;
       }
-      if (tree)
-         pdf_index2 = HTS_Tree_search_node(tree, string);
-      for (j = 0; j < ms->nstate; j++) {
-         mean[j + 2] +=
-             iw[i] * ms->duration.model[i].pdf[pdf_index1][pdf_index2][j];
-         vari[j + 2] += iw[i] * iw[i] * ms->duration.model[i]
-             .pdf[pdf_index1][pdf_index2][j + vector_length];
-      }
+      (*tree_index)++;
    }
+   if (tree)
+      (*pdf_index) = HTS_Tree_search_node(tree, string);
 }
 
 /* HTS_ModelSet_get_parameter: get parameter using interpolation weight */
@@ -895,11 +938,8 @@ void HTS_ModelSet_get_parameter(HTS_ModelSet * ms, char *string, double *mean,
                                 int state_index, double *iw)
 {
    int i, j;
-   int pdf_index1, pdf_index2;
+   int tree_index, pdf_index;
    const int vector_length = ms->stream[stream_index].vector_length;
-   HTS_Tree *tree;
-   HTS_Pattern *pattern;
-   HTS_Boolean find;
 
    for (i = 0; i < vector_length; i++) {
       mean[i] = 0.0;
@@ -908,37 +948,18 @@ void HTS_ModelSet_get_parameter(HTS_ModelSet * ms, char *string, double *mean,
    if (msd)
       *msd = 0.0;
    for (i = 0; i < ms->stream[stream_index].interpolation_size; i++) {
-      find = FALSE;
-      pdf_index1 = 2;
-      pdf_index2 = 1;
-      for (tree = ms->stream[stream_index].model[i].tree; tree;
-           tree = tree->next) {
-         if (tree->state == state_index) {
-            pattern = tree->head;
-            if (!pattern)
-               find = TRUE;
-            for (; pattern; pattern = pattern->next)
-               if (HTS_pattern_match(string, pattern->string)) {
-                  find = TRUE;
-                  break;
-               }
-            if (find)
-               break;
-         }
-         pdf_index1++;
-      }
-      if (tree)
-         pdf_index2 = HTS_Tree_search_node(tree, string);
+      HTS_ModelSet_get_parameter_index(ms, string, &tree_index, &pdf_index,
+                                       stream_index, state_index, i);
       for (j = 0; j < vector_length; j++) {
          mean[j] +=
              iw[i] *
-             ms->stream[stream_index].model[i].pdf[pdf_index1][pdf_index2][j];
+             ms->stream[stream_index].model[i].pdf[tree_index][pdf_index][j];
          vari[j] += iw[i] * iw[i] * ms->stream[stream_index].model[i]
-             .pdf[pdf_index1][pdf_index2][j + vector_length];
+             .pdf[tree_index][pdf_index][j + vector_length];
       }
       if (ms->stream[stream_index].msd_flag) {
          *msd += iw[i] * ms->stream[stream_index].model[i]
-             .pdf[pdf_index1][pdf_index2][2 * vector_length];
+             .pdf[tree_index][pdf_index][2 * vector_length];
       }
    }
 }

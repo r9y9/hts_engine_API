@@ -207,9 +207,20 @@ int HTS_ModelSet_get_gv_interpolation_size(HTS_ModelSet * ms, int stream_index);
 /* HTS_ModelSet_use_gv: get GV flag */
 HTS_Boolean HTS_ModelSet_use_gv(HTS_ModelSet * ms, int index);
 
+/* HTS_ModelSet_get_duration_index: get index of duration tree and PDF */
+void HTS_ModelSet_get_duration_index(HTS_ModelSet * ms, char *string,
+                                     int *tree_index, int *pdf_index,
+                                     int interpolation_index);
+
 /* HTS_ModelSet_get_duration: get duration using interpolation weight */
 void HTS_ModelSet_get_duration(HTS_ModelSet * ms, char *string, double *mean,
                                double *vari, double *iw);
+
+/* HTS_ModelSet_get_parameter_index: get index of parameter tree and PDF */
+void HTS_ModelSet_get_parameter_index(HTS_ModelSet * ms, char *string,
+                                      int *tree_index, int *pdf_index,
+                                      int stream_index, int state_index,
+                                      int interpolation_index);
 
 /* HTS_ModelSet_get_parameter: get parameter using interpolation weight */
 void HTS_ModelSet_get_parameter(HTS_ModelSet * ms, char *string, double *mean,
@@ -225,7 +236,7 @@ void HTS_ModelSet_clear(HTS_ModelSet * ms);
 
 /*  -------------------------- label ------------------------------  */
 
-/* HTS_LabelString: Individual label string with time infomation */
+/* HTS_LabelString: Individual label string with time information */
 typedef struct _HTS_LabelString {
    struct _HTS_LabelString *next;       /* pointer to next label string */
    char *name;                  /* label string */
@@ -652,8 +663,8 @@ void HTS_Engine_create_pstream(HTS_Engine * engine);
 /* HTS_Engine_create_gstream: synthesis speech */
 void HTS_Engine_create_gstream(HTS_Engine * engine);
 
-/* HTS_Engine_save_infomation: output trace infomation */
-void HTS_Engine_save_infomation(HTS_Engine * engine, FILE * fp);
+/* HTS_Engine_save_information: output trace information */
+void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp);
 
 /* HTS_Engine_save_label: output label with time */
 void HTS_Engine_save_label(HTS_Engine * engine, FILE * fp);
