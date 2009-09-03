@@ -689,6 +689,7 @@ void HTS_Engine_clear(HTS_Engine * engine);
 
 /*  -------------------------- audio ------------------------------  */
 
+#if !defined(AUDIO_PLAY_WINCE) && !defined(AUDIO_PLAY_WIN32) && !defined(AUDIO_PLAY_NONE)
 #if defined(__WINCE__) || defined(_WINCE) || defined(_WINCE) || defined(__WINCE)
 #define AUDIO_PLAY_WINCE
 #elif defined(__WIN32__) || defined(__WIN32) || defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
@@ -696,6 +697,7 @@ void HTS_Engine_clear(HTS_Engine * engine);
 #else
 #define AUDIO_PLAY_NONE
 #endif                          /* WINCE || WIN32 */
+#endif                          /* !AUDIO_PLAY_WINCE && !AUDIO_PLAY_WIN32 && !AUDIO_PLAY_NONE */
 
 /* HTS_Audio: For MS Windows (Windows Mobile) audio output device. */
 #if defined (AUDIO_PLAY_WIN32) || defined(AUDIO_PLAY_WINCE)

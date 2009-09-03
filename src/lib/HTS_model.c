@@ -872,8 +872,11 @@ void HTS_ModelSet_get_duration_index(HTS_ModelSet * ms, char *string,
          break;
       (*tree_index)++;
    }
-   if (tree)
-      (*pdf_index) = HTS_Tree_search_node(tree, string);
+
+   if (tree == NULL)
+      HTS_error(1, "HTS_ModelSet_get_duration_index: Cannot find model %s.\n",
+                string);
+   (*pdf_index) = HTS_Tree_search_node(tree, string);
 }
 
 /* HTS_ModelSet_get_duration: get duration using interpolation weight */
@@ -928,8 +931,11 @@ void HTS_ModelSet_get_parameter_index(HTS_ModelSet * ms, char *string,
       }
       (*tree_index)++;
    }
-   if (tree)
-      (*pdf_index) = HTS_Tree_search_node(tree, string);
+
+   if (tree == NULL)
+      HTS_error(1, "HTS_ModelSet_get_parameter_index: Cannot find model %s.\n",
+                string);
+   (*pdf_index) = HTS_Tree_search_node(tree, string);
 }
 
 /* HTS_ModelSet_get_parameter: get parameter using interpolation weight */
