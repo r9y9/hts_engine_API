@@ -48,12 +48,47 @@
 /* hts_engine libraries */
 #include "HTS_hidden.h"
 
+static HTS_Boolean isdigit_string(char *str)
+{
+   int i;
+
+   if (sscanf(str, "%d", &i) == 1)
+      return TRUE;
+   else
+      return FALSE;
+}
+
 /* HTS_Label_initialize: initialize label */
 void HTS_Label_initialize(HTS_Label * label)
 {
    label->head = NULL;
    label->size = 0;
+   label->frame_flag = FALSE;
    label->speech_speed = 1.0;
+}
+
+/* HTS_Label_check_time: check label */
+static void HTS_Label_check_time(HTS_Label * label)
+{
+   HTS_LabelString *lstring = label->head;
+   HTS_LabelString *next = NULL;
+
+   if (lstring)
+      lstring->start = 0.0;
+   while (lstring) {
+      next = lstring->next;
+      if (!next)
+         break;
+      if (lstring->end < 0.0 && next->start >= 0.0)
+         lstring->end = next->start;
+      else if (lstring->end >= 0.0 && next->start < 0.0)
+         next->start = lstring->end;
+      if (lstring->start < 0.0)
+         lstring->start = -1.0;
+      if (lstring->end < 0.0)
+         lstring->end = -1.0;
+      lstring = next;
+   }
 }
 
 /* HTS_Label_load_from_fn: load label from file name */
@@ -90,22 +125,21 @@ void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
          lstring = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
          label->head = lstring;
       }
-      if (isdigit(buff[0])) {   /* has frame infomation */
+      if (isdigit_string(buff)) {       /* has frame infomation */
          start = atoi(buff);
          HTS_get_token(fp, buff);
          end = atoi(buff);
          HTS_get_token(fp, buff);
-         lstring->frame_flag = TRUE;
-         lstring->frame = rate * (end - start);
-         if (lstring->frame < 1.0)
-            lstring->frame = 1.0;
+         lstring->start = rate * start;
+         lstring->end = rate * end;
       } else {
-         lstring->frame_flag = FALSE;
-         lstring->frame = 0.0;
+         lstring->start = -1.0;
+         lstring->end = -1.0;
       }
       lstring->next = NULL;
       lstring->name = HTS_strdup(buff);
    }
+   HTS_Label_check_time(label);
 }
 
 /* HTS_Label_load_from_string: load label from string */
@@ -134,22 +168,21 @@ void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
          lstring = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
          label->head = lstring;
       }
-      if (isdigit(buff[0])) {   /* has frame infomation */
+      if (isdigit_string(buff)) {       /* has frame infomation */
          start = atoi(buff);
          HTS_get_token_from_string(data, &data_index, buff);
          end = atoi(buff);
          HTS_get_token_from_string(data, &data_index, buff);
-         lstring->frame_flag = TRUE;
-         lstring->frame = rate * (end - start);
-         if (lstring->frame < 1.0)
-            lstring->frame = 1.0;
+         lstring->start = rate * start;
+         lstring->end = rate * end;
       } else {
-         lstring->frame_flag = FALSE;
-         lstring->frame = 0.0;
+         lstring->start = -1.0;
+         lstring->end = -1.0;
       }
       lstring->next = NULL;
       lstring->name = HTS_strdup(buff);
    }
+   HTS_Label_check_time(label);
 }
 
 /* HTS_Label_load_from_string_list: load label from string list */
@@ -180,42 +213,29 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
          label->head = lstring;
       }
       data_index = 0;
-      if (isdigit(data[i][0])) {        /* has frame infomation */
+      if (isdigit_string(data[i])) {    /* has frame infomation */
          HTS_get_token_from_string(data[i], &data_index, buff);
          start = atoi(buff);
          HTS_get_token_from_string(data[i], &data_index, buff);
          end = atoi(buff);
          HTS_get_token_from_string(data[i], &data_index, buff);
          lstring->name = HTS_strdup(&buff[data_index]);
-         lstring->frame_flag = TRUE;
-         lstring->frame = rate * (end - start);
-         if (lstring->frame < 1.0)
-            lstring->frame = 1.0;
+         lstring->start = rate * start;
+         lstring->end = rate * end;
       } else {
-         lstring->frame_flag = FALSE;
-         lstring->frame = 0.0;
+         lstring->start = -1.0;
+         lstring->end = -1.0;
          lstring->name = HTS_strdup(data[i]);
       }
       lstring->next = NULL;
    }
+   HTS_Label_check_time(label);
 }
 
-/* HTS_Label_set_frame: set frame length */
-void HTS_Label_set_frame(HTS_Label * label, int string_index, double f)
+/* HTS_Label_set_frame_specified_flag: set frame specified flag */
+void HTS_Label_set_frame_specified_flag(HTS_Label * label, HTS_Boolean i)
 {
-   HTS_LabelString *lstring = label->head;
-
-   while (string_index-- && lstring)
-      lstring = lstring->next;
-   if (!lstring)
-      return;
-   if (f > 0.0) {
-      lstring->frame_flag = TRUE;
-      lstring->frame = f;
-   } else {
-      lstring->frame_flag = FALSE;
-      lstring->frame = 0.0;
-   }
+   label->frame_flag = i;
 }
 
 /* HTS_Label_set_speech_speed: set speech speed rate */
@@ -244,28 +264,33 @@ char *HTS_Label_get_string(HTS_Label * label, int string_index)
 }
 
 /* HTS_Label_get_frame_specified_flag: get frame specified flag */
-HTS_Boolean HTS_Label_get_frame_specified_flag(HTS_Label * label,
-                                               int string_index)
+HTS_Boolean HTS_Label_get_frame_specified_flag(HTS_Label * label)
 {
-   HTS_LabelString *lstring = label->head;
-
-   while (string_index-- && lstring)
-      lstring = lstring->next;
-   if (!lstring)
-      return FALSE;
-   return lstring->frame_flag;
+   return label->frame_flag;
 }
 
-/* HTS_Label_get_frame: get frame length*/
-double HTS_Label_get_frame(HTS_Label * label, int string_index)
+/* HTS_Label_get_start_frame: get start frame */
+double HTS_Label_get_start_frame(HTS_Label * label, int string_index)
 {
    HTS_LabelString *lstring = label->head;
 
    while (string_index-- && lstring)
       lstring = lstring->next;
    if (!lstring)
-      return 0;
-   return lstring->frame;
+      return -1.0;
+   return lstring->start;
+}
+
+/* HTS_Label_get_end_frame: get end frame */
+double HTS_Label_get_end_frame(HTS_Label * label, int string_index)
+{
+   HTS_LabelString *lstring = label->head;
+
+   while (string_index-- && lstring)
+      lstring = lstring->next;
+   if (!lstring)
+      return -1.0;
+   return lstring->end;
 }
 
 /* HTS_Label_get_speech_speed: get speech speed rate */

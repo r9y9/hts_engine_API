@@ -695,7 +695,9 @@ void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
       if (v->gauss & (v->seed != 1))
          v->next = HTS_srnd((unsigned) v->seed);
       HTS_Vocoder_initialize_excitation(v);
-      if (v->stage != 0) {      /* for LSP */
+      if (v->stage == 0) {      /* for MCP */
+         HTS_mc2b(spectrum, v->c, m, alpha);
+      } else {                  /* for LSP */
          if (v->use_log_gain)
             v->c[0] = LZERO;
          else

@@ -240,14 +240,15 @@ void HTS_ModelSet_clear(HTS_ModelSet * ms);
 typedef struct _HTS_LabelString {
    struct _HTS_LabelString *next;       /* pointer to next label string */
    char *name;                  /* label string */
-   HTS_Boolean frame_flag;      /* flag for frame length modification */
-   double frame;                /* frame length specified in the given label */
+   double start;                /* start frame specified in the given label */
+   double end;                  /* end frame specified in the given label */
 } HTS_LabelString;
 
 /* HTS_Label: List of label strings. */
 typedef struct _HTS_Label {
    HTS_LabelString *head;       /* pointer to the head of label string */
    int size;                    /* # of label strings */
+   HTS_Boolean frame_flag;      /* flag for frame length modification */
    double speech_speed;         /* speech speed rate */
 } HTS_Label;
 
@@ -275,8 +276,8 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
 /* HTS_Label_set_speech_speed: set speech speed rate */
 void HTS_Label_set_speech_speed(HTS_Label * label, double f);
 
-/* HTS_Label_set_frame: set frame length */
-void HTS_Label_set_frame(HTS_Label * label, int string_index, double f);
+/* HTS_Label_set_frame_specified_flag: set frame specified flag */
+void HTS_Label_set_frame_specified_flag(HTS_Label * label, HTS_Boolean i);
 
 /* HTS_Label_get_size: get number of label string */
 int HTS_Label_get_size(HTS_Label * label);
@@ -285,11 +286,13 @@ int HTS_Label_get_size(HTS_Label * label);
 char *HTS_Label_get_string(HTS_Label * label, int string_index);
 
 /* HTS_Label_get_frame_specified_flag: get frame specified flag */
-HTS_Boolean HTS_Label_get_frame_specified_flag(HTS_Label * label,
-                                               int string_index);
+HTS_Boolean HTS_Label_get_frame_specified_flag(HTS_Label * label);
 
-/* HTS_Label_get_frame: get frame length */
-double HTS_Label_get_frame(HTS_Label * label, int string_index);
+/* HTS_Label_get_start_frame: get start frame */
+double HTS_Label_get_start_frame(HTS_Label * label, int string_index);
+
+/* HTS_Label_get_end_frame: get end frame */
+double HTS_Label_get_end_frame(HTS_Label * label, int string_index);
 
 /* HTS_Label_get_speech_speed: get speech speed rate */
 double HTS_Label_get_speech_speed(HTS_Label * label);

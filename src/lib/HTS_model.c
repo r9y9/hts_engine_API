@@ -887,16 +887,15 @@ void HTS_ModelSet_get_duration(HTS_ModelSet * ms, char *string, double *mean,
    int tree_index, pdf_index;
    const int vector_length = ms->duration.vector_length;
 
-   for (i = 2; i <= ms->nstate + 1; i++) {
+   for (i = 0; i < ms->nstate; i++) {
       mean[i] = 0.0;
       vari[i] = 0.0;
    }
    for (i = 0; i < ms->duration.interpolation_size; i++) {
       HTS_ModelSet_get_duration_index(ms, string, &tree_index, &pdf_index, i);
       for (j = 0; j < ms->nstate; j++) {
-         mean[j + 2] +=
-             iw[i] * ms->duration.model[i].pdf[tree_index][pdf_index][j];
-         vari[j + 2] += iw[i] * iw[i] * ms->duration.model[i]
+         mean[j] += iw[i] * ms->duration.model[i].pdf[tree_index][pdf_index][j];
+         vari[j] += iw[i] * iw[i] * ms->duration.model[i]
              .pdf[tree_index][pdf_index][j + vector_length];
       }
    }
@@ -957,8 +956,7 @@ void HTS_ModelSet_get_parameter(HTS_ModelSet * ms, char *string, double *mean,
       HTS_ModelSet_get_parameter_index(ms, string, &tree_index, &pdf_index,
                                        stream_index, state_index, i);
       for (j = 0; j < vector_length; j++) {
-         mean[j] +=
-             iw[i] *
+         mean[j] += iw[i] *
              ms->stream[stream_index].model[i].pdf[tree_index][pdf_index][j];
          vari[j] += iw[i] * iw[i] * ms->stream[stream_index].model[i]
              .pdf[tree_index][pdf_index][j + vector_length];

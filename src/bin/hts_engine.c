@@ -109,7 +109,7 @@ void Usage(void)
    fprintf(stderr,
            "    -fs f          : multilply F0                                            [  1.0][ 0.1--1.9]\n");
    fprintf(stderr,
-           "    -fm f          : add F0             f                                    [  0.0][-200.0--200.0]\n");
+           "    -fm f          : add F0                                                  [  0.0][-200.0--200.0]\n");
    fprintf(stderr,
            "    -u  f          : voiced/unvoiced threshold                               [  0.5][ 0.0--1.0]\n");
    fprintf(stderr,
@@ -518,9 +518,8 @@ int main(int argc, char **argv)
 
    /* synthesis */
    HTS_Engine_load_label_from_fn(&engine, labfn);       /* load label file */
-   if (!phoneme_alignment)      /* modify label */
-      for (i = 0; i < HTS_Label_get_size(&engine.label); i++)
-         HTS_Label_set_frame(&engine.label, i, -1.0);
+   if (phoneme_alignment)       /* modify label */
+      HTS_Label_set_frame_specified_flag(&engine.label, TRUE);
    if (speech_speed != 1.0)     /* modify label */
       HTS_Label_set_speech_speed(&engine.label, speech_speed);
    HTS_Engine_create_sstream(&engine);  /* parse label and determine state duration */

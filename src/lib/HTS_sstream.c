@@ -45,6 +45,31 @@
 /* hts_engine libraries */
 #include "HTS_hidden.h"
 
+static void HTS_set_duration(int *duration, double *mean, double *vari,
+                             double *remain, int size, double frame_length)
+{
+   int i;
+   double temp1, temp2;
+   double rho = 0.0;
+
+   if (frame_length != 0.0) {   /* if frame length is specified, rho is determined */
+      temp1 = 0.0;
+      temp2 = 0.0;
+      for (i = 0; i < size; i++) {
+         temp1 += mean[i];
+         temp2 += vari[i];
+      }
+      rho = (frame_length - temp1) / temp2;
+   }
+   for (i = 0; i < size; i++) {
+      temp1 = mean[i] + rho * vari[i];
+      duration[i] = (int) (temp1 + *remain + 0.5);
+      if (duration[i] < 1)
+         duration[i] = 1;
+      *remain = temp1 - (double) duration[i];
+   }
+}
+
 /* HTS_SStreamSet_initialize: initialize state stream set */
 void HTS_SStreamSet_initialize(HTS_SStreamSet * sss)
 {
@@ -67,7 +92,9 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
    HTS_SStream *sst;
    double *duration_mean, *duration_vari;
    double duration_remain;
-   double rho = 0.0;
+   double frame_length;
+   double next_time;
+   int next_state;
 
    /* initialize state sequence */
    sss->nstate = HTS_ModelSet_get_nstate(ms);
@@ -115,62 +142,65 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
       }
    }
 
-   /* memory allocate for duration_mean & duration_vari */
-   duration_mean = (double *) HTS_calloc(sss->nstate, sizeof(double));
-   duration_mean -= 2;
-   duration_vari = (double *) HTS_calloc(sss->nstate, sizeof(double));
-   duration_vari -= 2;
+   /* determine state duration */
+   duration_mean =
+       (double *) HTS_calloc(sss->nstate * HTS_Label_get_size(label),
+                             sizeof(double));
+   duration_vari =
+       (double *) HTS_calloc(sss->nstate * HTS_Label_get_size(label),
+                             sizeof(double));
    duration_remain = 0.0;
-
-   /* determine rho */
-   if (HTS_Label_get_speech_speed(label) != 1.0) {
-      temp1 = 0.0;
-      temp2 = 0.0;
-      for (i = 0; i < HTS_Label_get_size(label); i++) {
-         HTS_ModelSet_get_duration(ms, HTS_Label_get_string(label, i),
-                                   duration_mean, duration_vari, duration_iw);
-         for (j = 2; j <= sss->nstate + 1; j++) {
-            temp1 += duration_mean[j];
-            temp2 += duration_vari[j];
-         }
-      }
-      rho = (temp1 / HTS_Label_get_speech_speed(label) - temp1) / temp2;
-   }
-
-   /* parse label file */
-   for (i = 0, state = 0; i < HTS_Label_get_size(label); i++) {
-      /* determine state duration */
+   for (i = 0; i < HTS_Label_get_size(label); i++)
       HTS_ModelSet_get_duration(ms, HTS_Label_get_string(label, i),
-                                duration_mean, duration_vari, duration_iw);
-      if (HTS_Label_get_frame_specified_flag(label, i)) {       /* use duration set by user */
-         temp1 = 0.0;
-         temp2 = 0.0;
-         for (j = 2; j <= sss->nstate + 1; j++) {
-            duration_mean[j] += rho * duration_vari[j];
-            temp1 += duration_mean[j];
-            temp2 += duration_vari[j];
+                                &duration_mean[i * sss->nstate],
+                                &duration_vari[i * sss->nstate], duration_iw);
+   if (HTS_Label_get_frame_specified_flag(label)) {
+      /* use duration set by user */
+      next_time = 0.0;
+      next_state = 0;
+      state = 0;
+      for (i = 0; i < HTS_Label_get_size(label); i++) {
+         temp1 = HTS_Label_get_start_frame(label, i);
+         temp2 = HTS_Label_get_end_frame(label, i);
+         if (temp2 >= 0) {
+            HTS_set_duration(&sss->duration[next_state],
+                             &duration_mean[next_state],
+                             &duration_vari[next_state], &duration_remain,
+                             state + sss->nstate - next_state,
+                             temp2 - next_time);
+            next_time = temp2;
+            next_state = state + sss->nstate;
+         } else if (i + 1 == HTS_Label_get_size(label)) {
+            HTS_set_duration(&sss->duration[next_state],
+                             &duration_mean[next_state],
+                             &duration_vari[next_state], &duration_remain,
+                             state + sss->nstate - next_state, 0.0);
          }
-         temp1 = (HTS_Label_get_frame(label, i) - temp1) / temp2;
-         for (j = 2; j <= sss->nstate + 1; j++) {
-            temp2 = duration_mean[j] + temp1 * duration_vari[j];
-            duration_mean[j] = (double) ((int) (temp2 + duration_remain + 0.5));
-            if (duration_mean[j] < 1.0)
-               duration_mean[j] = 1.0;
-            duration_remain += temp2 - duration_mean[j];
-         }
-      } else {                  /* estimate using gauss */
-         for (j = 2; j <= sss->nstate + 1; j++) {
-            temp1 = duration_mean[j] + rho * duration_vari[j];
-            duration_mean[j] = (double) ((int) (temp1 + duration_remain + 0.5));
-            if (duration_mean[j] < 1.0)
-               duration_mean[j] = 1.0;
-            duration_remain += temp1 - duration_mean[j];
-         }
+         state += sss->nstate;
       }
+   } else {
+      /* determine frame length */
+      if (HTS_Label_get_speech_speed(label) != 1.0) {
+         temp1 = 0.0;
+         for (i = 0; i < HTS_Label_get_size(label) * sss->nstate; i++) {
+            temp1 += duration_mean[i];
+         }
+         frame_length = temp1 / HTS_Label_get_speech_speed(label);
+      } else {
+         frame_length = 0.0;
+      }
+      /* set state duration */
+      HTS_set_duration(sss->duration, duration_mean, duration_vari,
+                       &duration_remain,
+                       HTS_Label_get_size(label) * sss->nstate, frame_length);
+   }
+   HTS_free(duration_mean);
+   HTS_free(duration_vari);
 
-      /* determine parameter */
+   /* get parameter */
+   for (i = 0, state = 0; i < HTS_Label_get_size(label); i++) {
       for (j = 2; j <= sss->nstate + 1; j++) {
-         sss->duration[state] = (int) duration_mean[j];
+         sss->total_frame += sss->duration[state];
          for (k = 0; k < sss->nstream; k++) {
             sst = &sss->sstream[k];
             if (sst->msd)
@@ -183,12 +213,9 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
                                           sst->mean[state], sst->vari[state],
                                           NULL, k, j, parameter_iw[k]);
          }
-         sss->total_frame += sss->duration[state];
          state++;
       }
    }
-   HTS_free(duration_mean + 2);
-   HTS_free(duration_vari + 2);
 
    /* copy dynamic window */
    for (i = 0; i < sss->nstream; i++) {
@@ -327,7 +354,7 @@ double HTS_SStreamSet_get_mean(HTS_SStreamSet * sss,
    return sss->sstream[stream_index].mean[state_index][vector_index];
 }
 
-/* HTS_SStreamSet_get_mean: set mean parameter */
+/* HTS_SStreamSet_set_mean: set mean parameter */
 void HTS_SStreamSet_set_mean(HTS_SStreamSet * sss, int stream_index,
                              int state_index, int vector_index, double f)
 {
@@ -342,7 +369,7 @@ double HTS_SStreamSet_get_vari(HTS_SStreamSet * sss,
    return sss->sstream[stream_index].vari[state_index][vector_index];
 }
 
-/* HTS_SStreamSet_get_mean: set mean parameter */
+/* HTS_SStreamSet_set_vari: set variance parameter */
 void HTS_SStreamSet_set_vari(HTS_SStreamSet * sss, int stream_index,
                              int state_index, int vector_index, double f)
 {

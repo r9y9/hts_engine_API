@@ -382,11 +382,23 @@ void HTS_PStreamSet_create(HTS_PStreamSet * pss, HTS_SStreamSet * sss,
          for (state = 0, frame = 0;
               state < HTS_SStreamSet_get_total_state(sss); state++) {
             for (j = 0; j < HTS_SStreamSet_get_duration(sss, state); j++) {
-               for (k = 0; k < pst->vector_length; k++) {
-                  pst->sm.mean[frame][k] =
-                      HTS_SStreamSet_get_mean(sss, i, state, k);
-                  pst->sm.ivar[frame][k] =
-                      HTS_finv(HTS_SStreamSet_get_vari(sss, i, state, k));
+               for (k = 0; k < pst->win_size; k++) {
+                  not_bound = TRUE;
+                  for (l = pst->win_l_width[k]; l <= pst->win_r_width[k]; l++)
+                     if (frame + l < 0 || pss->total_frame <= frame + l) {
+                        not_bound = FALSE;
+                        break;
+                     }
+                  for (l = 0; l < pst->static_length; l++) {
+                     m = pst->static_length * k + l;
+                     pst->sm.mean[frame][m] =
+                         HTS_SStreamSet_get_mean(sss, i, state, m);
+                     if (not_bound || k == 0)
+                        pst->sm.ivar[frame][m] =
+                            HTS_finv(HTS_SStreamSet_get_vari(sss, i, state, m));
+                     else
+                        pst->sm.ivar[frame][m] = 0.0;
+                  }
                }
                frame++;
             }
