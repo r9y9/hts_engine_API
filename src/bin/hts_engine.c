@@ -61,21 +61,21 @@ void Usage(void)
    fprintf(stderr,
            "  options:                                                                   [  def][ min--max]\n");
    fprintf(stderr,
-           "    -td tree       : decision trees file for state duration                  [  N/A]\n");
+           "    -td tree       : decision tree files for state duration                  [  N/A]\n");
    fprintf(stderr,
-           "    -tf tree       : decision trees file for Log F0                          [  N/A]\n");
+           "    -tf tree       : decision tree files for Log F0                          [  N/A]\n");
    fprintf(stderr,
-           "    -tm tree       : decision trees file for spectrum                        [  N/A]\n");
+           "    -tm tree       : decision tree files for spectrum                        [  N/A]\n");
    fprintf(stderr,
-           "    -md pdf        : model file for state duration                           [  N/A]\n");
+           "    -md pdf        : model files for state duration                          [  N/A]\n");
    fprintf(stderr,
-           "    -mf pdf        : model file for Log F0                                   [  N/A]\n");
+           "    -mf pdf        : model files for Log F0                                  [  N/A]\n");
    fprintf(stderr,
-           "    -mm pdf        : model file for spectrum                                 [  N/A]\n");
+           "    -mm pdf        : model files for spectrum                                [  N/A]\n");
    fprintf(stderr,
-           "    -df win        : window file for calculation delta of Log F0             [  N/A]\n");
+           "    -df win        : window files for calculation delta of Log F0            [  N/A]\n");
    fprintf(stderr,
-           "    -dm win        : filename of delta coeffs for spectrum                   [  N/A]\n");
+           "    -dm win        : window files for calculation delta of spectrum          [  N/A]\n");
    fprintf(stderr,
            "    -od s          : filename of output label with duration                  [  N/A]\n");
    fprintf(stderr,
@@ -115,15 +115,15 @@ void Usage(void)
    fprintf(stderr,
            "    -em tree       : decision tree files for GV of spectrum                  [  N/A]\n");
    fprintf(stderr,
-           "    -cf pdf        : filename of GV for Log F0                               [  N/A]\n");
+           "    -cf pdf        : filenames of GV for Log F0                              [  N/A]\n");
    fprintf(stderr,
-           "    -cm pdf        : filename of GV for spectrum                             [  N/A]\n");
+           "    -cm pdf        : filenames of GV for spectrum                            [  N/A]\n");
    fprintf(stderr,
            "    -jf f          : weight of GV for Log F0                                 [  0.7][ 0.0--2.0]\n");
    fprintf(stderr,
            "    -jm f          : weight of GV for spectrum                               [  1.0][ 0.0--2.0]\n");
    fprintf(stderr,
-           "    -k tree        : use GV switch                                           [  N/A]\n");
+           "    -k  tree       : GV switch                                               [  N/A]\n");
    fprintf(stderr, "  infile:\n");
    fprintf(stderr, "    label file\n");
    fprintf(stderr, "  note:\n");
@@ -300,82 +300,78 @@ int main(int argc, char **argv)
             switch (*(*argv + 2)) {
             case 'f':
             case 'p':
-               fn_ts_lf0[num_ts_lf0++] = *(argv + 1);
+               fn_ts_lf0[num_ts_lf0++] = *++argv;
                break;
             case 'm':
-               fn_ts_mcp[num_ts_mcp++] = *(argv + 1);
+               fn_ts_mcp[num_ts_mcp++] = *++argv;
                break;
             case 'd':
-               fn_ts_dur[num_ts_dur++] = *(argv + 1);
+               fn_ts_dur[num_ts_dur++] = *++argv;
                break;
             default:
                Error(1, "hts_engine: Invalid option '-t%c'.\n", *(*argv + 2));
             }
-            ++argv;
             --argc;
             break;
          case 'm':
             switch (*(*argv + 2)) {
             case 'f':
             case 'p':
-               fn_ms_lf0[num_ms_lf0++] = *(argv + 1);
+               fn_ms_lf0[num_ms_lf0++] = *++argv;
                break;
             case 'm':
-               fn_ms_mcp[num_ms_mcp++] = *(argv + 1);
+               fn_ms_mcp[num_ms_mcp++] = *++argv;
                break;
             case 'd':
-               fn_ms_dur[num_ms_dur++] = *(argv + 1);
+               fn_ms_dur[num_ms_dur++] = *++argv;
                break;
             default:
                Error(1, "hts_engine: Invalid option '-m%c'.\n", *(*argv + 2));
             }
-            ++argv;
             --argc;
             break;
          case 'd':
             switch (*(*argv + 2)) {
             case 'f':
             case 'p':
-               fn_ws_lf0[num_ws_lf0] = *(argv + 1);
+               fn_ws_lf0[num_ws_lf0] = *++argv;
                num_ws_lf0++;
                break;
             case 'm':
-               fn_ws_mcp[num_ws_mcp] = *(argv + 1);
+               fn_ws_mcp[num_ws_mcp] = *++argv;
                num_ws_mcp++;
                break;
             default:
                Error(1, "hts_engine: Invalid option '-d%c'.\n", *(*argv + 2));
             }
-            ++argv;
             --argc;
             break;
          case 'o':
             switch (*(*argv + 2)) {
             case 'w':
-               wavfp = Getfp(*(argv + 1), "wb");
+               wavfp = Getfp(*++argv, "wb");
                break;
             case 'r':
-               rawfp = Getfp(*(argv + 1), "wb");
+               rawfp = Getfp(*++argv, "wb");
                break;
 #ifndef HTS_EMBEDDED
             case 'f':
             case 'p':
-               lf0fp = Getfp(*(argv + 1), "wb");
+               lf0fp = Getfp(*++argv, "wb");
                break;
             case 'm':
-               mcpfp = Getfp(*(argv + 1), "wb");
+               mcpfp = Getfp(*++argv, "wb");
                break;
 #endif                          /* !HTS_EMBEDDED */
             case 'd':
-               durfp = Getfp(*(argv + 1), "wt");
+               durfp = Getfp(*++argv, "wt");
                break;
             case 't':
-               tracefp = Getfp(*(argv + 1), "wt");
+               tracefp = Getfp(*++argv, "wt");
                break;
             default:
                Error(1, "hts_engine: Invalid option '-o%c'.\n", *(*argv + 2));
             }
-            ++argv;
             --argc;
             break;
          case 'h':
@@ -439,45 +435,42 @@ int main(int argc, char **argv)
             switch (*(*argv + 2)) {
             case 'f':
             case 'p':
-               fn_ts_gvl[num_ts_gvl++] = *(argv + 1);
+               fn_ts_gvl[num_ts_gvl++] = *++argv;
                break;
             case 'm':
-               fn_ts_gvm[num_ts_gvm++] = *(argv + 1);
+               fn_ts_gvm[num_ts_gvm++] = *++argv;
                break;
             default:
                Error(1, "hts_engine: Invalid option '-e%c'.\n", *(*argv + 2));
             }
-            ++argv;
             --argc;
             break;
          case 'c':
             switch (*(*argv + 2)) {
             case 'f':
             case 'p':
-               fn_ms_gvl[num_ms_gvl++] = *(argv + 1);
+               fn_ms_gvl[num_ms_gvl++] = *++argv;
                break;
             case 'm':
-               fn_ms_gvm[num_ms_gvm++] = *(argv + 1);
+               fn_ms_gvm[num_ms_gvm++] = *++argv;
                break;
             default:
                Error(1, "hts_engine: Invalid option '-c%c'.\n", *(*argv + 2));
             }
-            ++argv;
             --argc;
             break;
          case 'j':
             switch (*(*argv + 2)) {
             case 'f':
             case 'p':
-               gv_weight_lf0 = atof(*(argv + 1));
+               gv_weight_lf0 = atof(*++argv);
                break;
             case 'm':
-               gv_weight_mcp = atof(*(argv + 1));
+               gv_weight_mcp = atof(*++argv);
                break;
             default:
                Error(1, "hts_engine: Invalid option '-j%c'.\n", *(*argv + 2));
             }
-            ++argv;
             --argc;
             break;
          case 'k':
