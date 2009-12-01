@@ -118,6 +118,10 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
          sst->vari[j] =
              (double *) HTS_calloc(sst->vector_length, sizeof(double));
       }
+      sst->gv_switch =
+          (HTS_Boolean *) HTS_calloc(sss->total_state, sizeof(HTS_Boolean));
+      for (j = 0; j < sss->total_state; j++)
+         sst->gv_switch[j] = TRUE;
    }
 
    /* check interpolation weights */
@@ -141,7 +145,6 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
          for (j = 0; j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
             if (gv_iw[i][j] != 0.0)
                gv_iw[i][j] /= temp1;
-
       }
    }
 
@@ -256,12 +259,21 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
          sst->gv_vari =
              (double *) HTS_calloc(sst->vector_length / sst->win_size,
                                    sizeof(double));
-         HTS_ModelSet_get_gv(ms, sst->gv_mean, sst->gv_vari, i, gv_iw[i]);
+         HTS_ModelSet_get_gv(ms, HTS_Label_get_string(label, 0), sst->gv_mean,
+                             sst->gv_vari, i, gv_iw[i]);
       } else {
          sst->gv_mean = NULL;
          sst->gv_vari = NULL;
       }
    }
+
+   if (HTS_ModelSet_have_gv_switch(ms) == TRUE)
+      for (i = 0; i < HTS_Label_get_size(label); i++)
+         if (HTS_ModelSet_get_gv_switch(ms, HTS_Label_get_string(label, i)) ==
+             FALSE)
+            for (j = 0; j < sss->nstream; j++)
+               for (k = 0; k < sss->nstate; k++)
+                  sss->sstream[j].gv_switch[i * sss->nstate + k] = FALSE;
 }
 
 /* HTS_SStreamSet_get_nstream: get number of stream */
@@ -393,6 +405,20 @@ double HTS_SStreamSet_get_gv_vari(HTS_SStreamSet * sss,
    return sss->sstream[stream_index].gv_vari[vector_index];
 }
 
+/* HTS_SStreamSet_set_gv_switch: set GV switch */
+void HTS_SStreamSet_set_gv_switch(HTS_SStreamSet * sss, int stream_index,
+                                  int state_index, HTS_Boolean i)
+{
+   sss->sstream[stream_index].gv_switch[state_index] = i;
+}
+
+/* HTS_SStreamSet_get_gv_switch: get GV switch */
+HTS_Boolean HTS_SStreamSet_get_gv_switch(HTS_SStreamSet * sss, int stream_index,
+                                         int state_index)
+{
+   return sss->sstream[stream_index].gv_switch[state_index];
+}
+
 /* HTS_SStreamSet_clear: free state stream set */
 void HTS_SStreamSet_clear(HTS_SStreamSet * sss)
 {
@@ -421,6 +447,7 @@ void HTS_SStreamSet_clear(HTS_SStreamSet * sss)
             HTS_free(sst->gv_mean);
          if (sst->gv_vari)
             HTS_free(sst->gv_vari);
+         HTS_free(sst->gv_switch);
       }
       HTS_free(sss->sstream);
    }

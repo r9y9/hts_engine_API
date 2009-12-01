@@ -140,6 +140,7 @@ typedef struct _HTS_ModelSet {
    HTS_Stream duration;         /* duration PDFs and trees */
    HTS_Stream *stream;          /* parameter PDFs, trees and windows */
    HTS_Stream *gv;              /* GV PDFs */
+   HTS_Model gv_switch;         /* GV switch */
    int nstate;                  /* # of HMM states */
    int nstream;                 /* # of stream */
 } HTS_ModelSet;
@@ -160,8 +161,14 @@ void HTS_ModelSet_load_parameter(HTS_ModelSet * ms, FILE ** pdf_fp,
                                  int window_size, int interpolation_size);
 
 /* HTS_ModelSet_load_gv: load GV model */
-void HTS_ModelSet_load_gv(HTS_ModelSet * ms, FILE ** pdf_fp, int stream_index,
-                          int interpolation_size);
+void HTS_ModelSet_load_gv(HTS_ModelSet * ms, FILE ** pdf_fp, FILE ** tree_fp,
+                          int stream_index, int interpolation_size);
+
+/* HTS_ModelSet_load_gv_switch: load GV switch */
+void HTS_ModelSet_load_gv_switch(HTS_ModelSet * ms, FILE * fp);
+
+/* HTS_ModelSet_have_gv_switch: if GV switch is used, return true */
+HTS_Boolean HTS_ModelSet_have_gv_switch(HTS_ModelSet * ms);
 
 /* HTS_ModelSet_get_nstate: get number of state */
 int HTS_ModelSet_get_nstate(HTS_ModelSet * ms);
@@ -228,8 +235,11 @@ void HTS_ModelSet_get_parameter(HTS_ModelSet * ms, char *string, double *mean,
                                 int state_index, double *iw);
 
 /* HTS_ModelSet_get_gv: get GV using interpolation weight */
-void HTS_ModelSet_get_gv(HTS_ModelSet * ms, double *mean, double *vari,
-                         int stream_index, double *iw);
+void HTS_ModelSet_get_gv(HTS_ModelSet * ms, char *string, double *mean,
+                         double *vari, int stream_index, double *iw);
+
+/* HTS_ModelSet_get_gv_switch: get GV switch */
+HTS_Boolean HTS_ModelSet_get_gv_switch(HTS_ModelSet * ms, char *string);
 
 /* HTS_ModelSet_clear: free model set */
 void HTS_ModelSet_clear(HTS_ModelSet * ms);
@@ -315,6 +325,7 @@ typedef struct _HTS_SStream {
    int win_max_width;           /* maximum width of windows */
    double *gv_mean;             /* mean vector of GV */
    double *gv_vari;             /* variance vector of GV */
+   HTS_Boolean *gv_switch;      /* GV flag sequence */
 } HTS_SStream;
 
 /* HTS_SStreamSet: Set of state stream. */
@@ -405,6 +416,14 @@ double HTS_SStreamSet_get_gv_mean(HTS_SStreamSet * sss, int stream_index,
 double HTS_SStreamSet_get_gv_vari(HTS_SStreamSet * sss, int stream_index,
                                   int vector_index);
 
+/* HTS_SStreamSet_set_gv_switch: set GV switch */
+void HTS_SStreamSet_set_gv_switch(HTS_SStreamSet * sss, int stream_index,
+                                  int state_index, HTS_Boolean i);
+
+/* HTS_SStreamSet_get_gv_switch: get GV switch */
+HTS_Boolean HTS_SStreamSet_get_gv_switch(HTS_SStreamSet * sss, int stream_index,
+                                         int state_index);
+
 /* HTS_SStreamSet_clear: free state stream set */
 void HTS_SStreamSet_clear(HTS_SStreamSet * sss);
 
@@ -436,6 +455,8 @@ typedef struct _HTS_PStream {
    double *gv_mean;             /* mean vector of GV */
    double *gv_vari;             /* variance vector of GV */
    double gv_weight;            /* GV weight */
+   HTS_Boolean *gv_switch;      /* GV flag sequence */
+   int gv_length;               /* frame length for GV calculation */
 } HTS_PStream;
 
 /* HTS_PStreamSet: Set of PDF streams. */
@@ -589,13 +610,21 @@ void HTS_Engine_load_parameter_from_fp(HTS_Engine * engine, FILE ** pdf_fp,
                                        int stream_index, HTS_Boolean msd_flag,
                                        int window_size, int interpolation_size);
 
-/* HTS_Engine_load_gv_from_fn: load GV pdfs from file names */
+/* HTS_Engine_load_gv_from_fn: load GV pdfs and trees from file names */
 void HTS_Engine_load_gv_from_fn(HTS_Engine * engine, char **pdf_fn,
-                                int stream_index, int interpolation_size);
+                                char **tree_fn, int stream_index,
+                                int interpolation_size);
 
-/* HTS_Engine_load_gv_from_fp: load GV pdfs from file pointers */
+/* HTS_Engine_load_gv_from_fp: load GV pdfs and trees from file pointers */
 void HTS_Engine_load_gv_from_fp(HTS_Engine * engine, FILE ** pdf_fp,
-                                int stream_index, int interpolation_size);
+                                FILE ** tree_fp, int stream_index,
+                                int interpolation_size);
+
+/* HTS_Engine_load_gv_switch_from_fn: load GV switch from file names */
+void HTS_Engine_load_gv_switch_from_fn(HTS_Engine * engine, char *fn);
+
+/* HTS_Engine_load_gv_switch_from_fp: load GV switch from file pointers */
+void HTS_Engine_load_gv_switch_from_fp(HTS_Engine * engine, FILE * fp);
 
 /* HTS_Engine_set_sampling_rate: set sampling rate */
 void HTS_Engine_set_sampling_rate(HTS_Engine * engine, int i);

@@ -111,6 +111,10 @@ void Usage(void)
    fprintf(stderr,
            "    -u  f          : voiced/unvoiced threshold                               [  0.5][ 0.0--1.0]\n");
    fprintf(stderr,
+           "    -ef tree       : decision tree files for GV of Log F0                    [  N/A]\n");
+   fprintf(stderr,
+           "    -em tree       : decision tree files for GV of spectrum                  [  N/A]\n");
+   fprintf(stderr,
            "    -cf pdf        : filename of GV for Log F0                               [  N/A]\n");
    fprintf(stderr,
            "    -cm pdf        : filename of GV for spectrum                             [  N/A]\n");
@@ -118,6 +122,8 @@ void Usage(void)
            "    -jf f          : weight of GV for Log F0                                 [  0.7][ 0.0--2.0]\n");
    fprintf(stderr,
            "    -jm f          : weight of GV for spectrum                               [  1.0][ 0.0--2.0]\n");
+   fprintf(stderr,
+           "    -k tree        : use GV switch                                           [  N/A]\n");
    fprintf(stderr, "  infile:\n");
    fprintf(stderr, "    label file\n");
    fprintf(stderr, "  note:\n");
@@ -221,6 +227,14 @@ int main(int argc, char **argv)
    char **fn_ms_gvm = NULL;
    int num_ms_gvl = 0, num_ms_gvm = 0;
 
+   /* file names of global variance trees */
+   char **fn_ts_gvl = NULL;
+   char **fn_ts_gvm = NULL;
+   int num_ts_gvl = 0, num_ts_gvm = 0;
+
+   /* file name of global variance switch */
+   char *fn_gv_switch = NULL;
+
    /* global parameter */
    int sampling_rate = 16000;
    int fperiod = 80;
@@ -266,6 +280,8 @@ int main(int argc, char **argv)
    fn_ts_dur = (char **) calloc(num_interp, sizeof(char *));
    fn_ms_gvl = (char **) calloc(num_interp, sizeof(char *));
    fn_ms_gvm = (char **) calloc(num_interp, sizeof(char *));
+   fn_ts_gvl = (char **) calloc(num_interp, sizeof(char *));
+   fn_ts_gvm = (char **) calloc(num_interp, sizeof(char *));
 
    /* read command */
    while (--argc) {
@@ -419,6 +435,21 @@ int main(int argc, char **argv)
                argc--;
             }
             break;
+         case 'e':
+            switch (*(*argv + 2)) {
+            case 'f':
+            case 'p':
+               fn_ts_gvl[num_ts_gvl++] = *(argv + 1);
+               break;
+            case 'm':
+               fn_ts_gvm[num_ts_gvm++] = *(argv + 1);
+               break;
+            default:
+               Error(1, "hts_engine: Invalid option '-e%c'.\n", *(*argv + 2));
+            }
+            ++argv;
+            --argc;
+            break;
          case 'c':
             switch (*(*argv + 2)) {
             case 'f':
@@ -449,6 +480,10 @@ int main(int argc, char **argv)
             ++argv;
             --argc;
             break;
+         case 'k':
+            fn_gv_switch = *++argv;
+            --argc;
+            break;
          default:
             Error(1, "hts_engine: Invalid option '-%c'.\n", *(*argv + 1));
          }
@@ -474,11 +509,24 @@ int main(int argc, char **argv)
    HTS_Engine_load_parameter_from_fn(&engine, fn_ms_lf0, fn_ts_lf0, fn_ws_lf0,
                                      1, TRUE, num_ws_lf0, num_interp);
    /* load gv[0] (GV for spectrum) */
-   if (num_interp == num_ms_gvm)
-      HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvm, 0, num_interp);
+   if (num_interp == num_ms_gvm) {
+      if (num_ms_gvm == num_ts_gvm)
+         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvm, fn_ts_gvm, 0,
+                                    num_interp);
+      else
+         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvm, NULL, 0, num_interp);
+   }
    /* load gv[1] (GV for lf0) */
-   if (num_interp == num_ms_gvl)
-      HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvl, 1, num_interp);
+   if (num_interp == num_ms_gvl) {
+      if (num_ms_gvl == num_ts_gvl)
+         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvl, fn_ts_gvl, 1,
+                                    num_interp);
+      else
+         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvl, NULL, 1, num_interp);
+   }
+   /* load GV switch */
+   if (fn_gv_switch != NULL)
+      HTS_Engine_load_gv_switch_from_fn(&engine, fn_gv_switch);
 
    /* set parameter */
    HTS_Engine_set_sampling_rate(&engine, sampling_rate);
@@ -556,6 +604,8 @@ int main(int argc, char **argv)
    free(fn_ts_dur);
    free(fn_ms_gvm);
    free(fn_ms_gvl);
+   free(fn_ts_gvm);
+   free(fn_ts_gvl);
 
    /* close files */
 #ifndef HTS_EMBEDDED

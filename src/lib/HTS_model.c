@@ -686,6 +686,7 @@ void HTS_ModelSet_initialize(HTS_ModelSet * ms, int nstream)
    HTS_Stream_initialize(&ms->duration);
    ms->stream = NULL;
    ms->gv = NULL;
+   HTS_Model_initialize(&ms->gv_switch);
    ms->nstate = -1;
    ms->nstream = nstream;
 }
@@ -739,8 +740,8 @@ void HTS_ModelSet_load_parameter(HTS_ModelSet * ms, FILE ** pdf_fp,
 }
 
 /* HTS_ModelSet_load_gv: load GV model */
-void HTS_ModelSet_load_gv(HTS_ModelSet * ms, FILE ** pdf_fp, int stream_index,
-                          int interpolation_size)
+void HTS_ModelSet_load_gv(HTS_ModelSet * ms, FILE ** pdf_fp, FILE ** tree_fp,
+                          int stream_index, int interpolation_size)
 {
    int i;
 
@@ -754,8 +755,28 @@ void HTS_ModelSet_load_gv(HTS_ModelSet * ms, FILE ** pdf_fp, int stream_index,
       for (i = 0; i < ms->nstream; i++)
          HTS_Stream_initialize(&ms->gv[i]);
    }
-   HTS_Stream_load_pdf(&ms->gv[stream_index], pdf_fp, 1, FALSE,
-                       interpolation_size);
+   if (tree_fp)
+      HTS_Stream_load_pdf_and_tree(&ms->gv[stream_index], pdf_fp, tree_fp,
+                                   FALSE, interpolation_size);
+   else
+      HTS_Stream_load_pdf(&ms->gv[stream_index], pdf_fp, 1, FALSE,
+                          interpolation_size);
+}
+
+/* HTS_ModelSet_load_gv_switch: load GV switch */
+void HTS_ModelSet_load_gv_switch(HTS_ModelSet * ms, FILE * fp)
+{
+   if (fp != NULL)
+      HTS_Model_load_tree(&ms->gv_switch, fp);
+}
+
+/* HTS_ModelSet_have_gv_switch: if GV switch is used, return true */
+HTS_Boolean HTS_ModelSet_have_gv_switch(HTS_ModelSet * ms)
+{
+   if (ms->gv_switch.tree != NULL)
+      return TRUE;
+   else
+      return FALSE;
 }
 
 /* HTS_ModelSet_get_nstate: get number of state */
@@ -968,11 +989,47 @@ void HTS_ModelSet_get_parameter(HTS_ModelSet * ms, char *string, double *mean,
    }
 }
 
+/* HTS_ModelSet_get_gv_index: get index of GV tree and PDF */
+void HTS_ModelSet_get_gv_index(HTS_ModelSet * ms, char *string, int *tree_index,
+                               int *pdf_index, int stream_index,
+                               int interpolation_index)
+{
+   HTS_Tree *tree;
+   HTS_Pattern *pattern;
+   HTS_Boolean find;
+
+   find = FALSE;
+   (*tree_index) = 2;
+   (*pdf_index) = 1;
+   tree = ms->gv[stream_index].model[interpolation_index].tree;
+   if (tree == NULL)
+      return;
+   for (; tree; tree = tree->next) {
+      pattern = tree->head;
+      if (!pattern)
+         find = TRUE;
+      for (; pattern; pattern = pattern->next)
+         if (HTS_pattern_match(string, pattern->string)) {
+            find = TRUE;
+            break;
+         }
+      if (find)
+         break;
+      (*tree_index)++;
+   }
+
+   if (tree == NULL)
+      HTS_error(1, "HTS_ModelSet_get_gv_index: Cannot find model %s.\n",
+                string);
+   (*pdf_index) = HTS_Tree_search_node(tree, string);
+}
+
 /* HTS_ModelSet_get_gv: get GV using interpolation weight */
-void HTS_ModelSet_get_gv(HTS_ModelSet * ms, double *mean, double *vari,
-                         int stream_index, double *iw)
+void HTS_ModelSet_get_gv(HTS_ModelSet * ms, char *string, double *mean,
+                         double *vari, int stream_index, double *iw)
 {
    int i, j;
+   int tree_index, pdf_index;
    const int vector_length = ms->gv[stream_index].vector_length;
 
    for (i = 0; i < vector_length; i++) {
@@ -980,12 +1037,60 @@ void HTS_ModelSet_get_gv(HTS_ModelSet * ms, double *mean, double *vari,
       vari[i] = 0.0;
    }
    for (i = 0; i < ms->gv[stream_index].interpolation_size; i++) {
+      HTS_ModelSet_get_gv_index(ms, string, &tree_index, &pdf_index,
+                                stream_index, i);
       for (j = 0; j < vector_length; j++) {
-         mean[j] += iw[i] * ms->gv[stream_index].model[i].pdf[2][1][j];
-         vari[j] += iw[i] * iw[i] *
-             ms->gv[stream_index].model[i].pdf[2][1][j + vector_length];
+         mean[j] += iw[i] *
+             ms->gv[stream_index].model[i].pdf[tree_index][pdf_index][j];
+         vari[j] += iw[i] * iw[i] * ms->gv[stream_index].model[i]
+             .pdf[tree_index][pdf_index][j + vector_length];
       }
    }
+}
+
+/* HTS_ModelSet_get_gv_switch_index: get index of GV switch tree and PDF */
+void HTS_ModelSet_get_gv_switch_index(HTS_ModelSet * ms, char *string,
+                                      int *tree_index, int *pdf_index)
+{
+   HTS_Tree *tree;
+   HTS_Pattern *pattern;
+   HTS_Boolean find;
+
+   find = FALSE;
+   (*tree_index) = 2;
+   (*pdf_index) = 1;
+   for (tree = ms->gv_switch.tree; tree; tree = tree->next) {
+      pattern = tree->head;
+      if (!pattern)
+         find = TRUE;
+      for (; pattern; pattern = pattern->next)
+         if (HTS_pattern_match(string, pattern->string)) {
+            find = TRUE;
+            break;
+         }
+      if (find)
+         break;
+      (*tree_index)++;
+   }
+
+   if (tree == NULL)
+      HTS_error(1, "HTS_ModelSet_get_gv_switch_index: Cannot find model %s.\n",
+                string);
+   (*pdf_index) = HTS_Tree_search_node(tree, string);
+}
+
+/* HTS_ModelSet_get_gv_switch: get GV switch */
+HTS_Boolean HTS_ModelSet_get_gv_switch(HTS_ModelSet * ms, char *string)
+{
+   int tree_index, pdf_index;
+
+   if (ms->gv_switch.tree == NULL)
+      return TRUE;
+   HTS_ModelSet_get_gv_switch_index(ms, string, &tree_index, &pdf_index);
+   if (pdf_index == 1)
+      return FALSE;
+   else
+      return TRUE;
 }
 
 /* HTS_ModelSet_clear: free model set */
@@ -1004,5 +1109,6 @@ void HTS_ModelSet_clear(HTS_ModelSet * ms)
          HTS_Stream_clear(&ms->gv[i]);
       HTS_free(ms->gv);
    }
+   HTS_Model_clear(&ms->gv_switch);
    HTS_ModelSet_initialize(ms, -1);
 }

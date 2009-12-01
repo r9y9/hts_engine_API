@@ -142,12 +142,14 @@ static void HTS_PStream_calc_gv(HTS_PStream * pst, double *mean, double *vari)
 
    *mean = 0.0;
    for (t = 0; t < pst->length; t++)
-      *mean += pst->gv_buff[t];
-   *mean /= pst->length;
+      if (pst->gv_switch[t])
+         *mean += pst->gv_buff[t];
+   *mean /= pst->gv_length;
    *vari = 0.0;
    for (t = 0; t < pst->length; t++)
-      *vari += (pst->gv_buff[t] - *mean) * (pst->gv_buff[t] - *mean);
-   *vari /= pst->length;
+      if (pst->gv_switch[t])
+         *vari += (pst->gv_buff[t] - *mean) * (pst->gv_buff[t] - *mean);
+   *vari /= pst->gv_length;
 }
 
 /* HTS_PStream_conv_gv: subfunction for mlpg using GV */
@@ -161,7 +163,8 @@ static void HTS_PStream_conv_gv(HTS_PStream * pst, const int m)
    HTS_PStream_calc_gv(pst, &mean, &vari);
    ratio = sqrt(pst->gv_mean[m] / vari);
    for (t = 0; t < pst->length; t++)
-      pst->gv_buff[t] = ratio * (pst->gv_buff[t] - mean) + mean;
+      if (pst->gv_switch[t])
+         pst->gv_buff[t] = ratio * (pst->gv_buff[t] - mean) + mean;
 }
 
 /* HTS_PStream_calc_derivative: subfunction for mlpg using GV */
@@ -198,9 +201,12 @@ static double HTS_PStream_calc_derivative(HTS_PStream * pst, const int m)
           ((pst->length - 1) * pst->gv_vari[m] * (vari - pst->gv_mean[m])
            + 2.0 * pst->gv_vari[m] * (pst->gv_buff[t] -
                                       mean) * (pst->gv_buff[t] - mean));
-      pst->sm.g[t] =
-          1.0 / h * (W1 * w * (-pst->sm.g[t] + pst->sm.wum[t]) +
-                     W2 * dv * (pst->gv_buff[t] - mean));
+      if (pst->gv_switch[t])
+         pst->sm.g[t] =
+             1.0 / h * (W1 * w * (-pst->sm.g[t] + pst->sm.wum[t]) +
+                        W2 * dv * (pst->gv_buff[t] - mean));
+      else
+         pst->sm.g[t] = 1.0 / h * (W1 * w * (-pst->sm.g[t] + pst->sm.wum[t]));
    }
 
    return (-(hmmobj + gvobj));
@@ -213,6 +219,9 @@ static void HTS_PStream_gv_parmgen(HTS_PStream * pst, const int m)
    double step = STEPINIT;
    double prev = -LZERO;
    double obj;
+
+   if (pst->gv_length == 0)
+      return;
 
    for (t = 0; t < pst->length; t++)
       pst->gv_buff[t] = pst->par[t][m];
@@ -238,6 +247,9 @@ static void HTS_PStream_gv_parmgen(HTS_PStream * pst, const int m)
 static void HTS_PStream_mlpg(HTS_PStream * pst)
 {
    int m;
+
+   if (pst->length == 0)
+      return;
 
    for (m = 0; m < pst->static_length; m++) {
       HTS_PStream_calc_wuw_and_wum(pst, m);
@@ -341,7 +353,29 @@ void HTS_PStreamSet_create(HTS_PStreamSet * pss, HTS_SStreamSet * sss,
             pst->gv_mean[j] = HTS_SStreamSet_get_gv_mean(sss, i, j);
             pst->gv_vari[j] = HTS_SStreamSet_get_gv_vari(sss, i, j);
          }
+         pst->gv_switch =
+             (HTS_Boolean *) HTS_calloc(pst->length, sizeof(HTS_Boolean));
+         if (HTS_SStreamSet_is_msd(sss, i)) {   /* for MSD */
+            for (state = 0, frame = 0, msd_frame = 0;
+                 state < HTS_SStreamSet_get_total_state(sss); state++)
+               for (j = 0; j < HTS_SStreamSet_get_duration(sss, state);
+                    j++, frame++)
+                  if (pst->msd_flag[frame])
+                     pst->gv_switch[msd_frame++] =
+                         HTS_SStreamSet_get_gv_switch(sss, i, state);
+         } else {               /* for non MSD */
+            for (state = 0, frame = 0;
+                 state < HTS_SStreamSet_get_total_state(sss); state++)
+               for (j = 0; j < HTS_SStreamSet_get_duration(sss, state); j++)
+                  pst->gv_switch[frame++] =
+                      HTS_SStreamSet_get_gv_switch(sss, i, state);
+         }
+         for (j = 0, pst->gv_length = 0; j < pst->length; j++)
+            if (pst->gv_switch[j])
+               pst->gv_length++;
       } else {
+         pst->gv_switch = NULL;
+         pst->gv_length = 0;
          pst->gv_mean = NULL;
          pst->gv_vari = NULL;
          pst->gv_buff = NULL;
@@ -485,6 +519,8 @@ void HTS_PStreamSet_clear(HTS_PStreamSet * pss)
          HTS_free(pstream->win_coefficient);
          HTS_free(pstream->win_l_width);
          HTS_free(pstream->win_r_width);
+         if (pstream->gv_switch)
+            HTS_free(pstream->gv_switch);
       }
       HTS_free(pss->pstream);
    }

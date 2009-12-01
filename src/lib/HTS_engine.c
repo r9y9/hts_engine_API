@@ -177,35 +177,68 @@ void HTS_Engine_load_parameter_from_fp(HTS_Engine * engine, FILE ** pdf_fp,
       engine->global.parameter_iw[stream_index][i] = 1.0 / interpolation_size;
 }
 
-/* HTS_Engine_load_gv_from_fn: load GV pdfs from file names */
+/* HTS_Engine_load_gv_from_fn: load GV pdfs and trees from file names */
 void HTS_Engine_load_gv_from_fn(HTS_Engine * engine, char **pdf_fn,
-                                int stream_index, int interpolation_size)
+                                char **tree_fn, int stream_index,
+                                int interpolation_size)
 {
    int i;
-   FILE **pdf_fp;
+   FILE **pdf_fp, **tree_fp;
 
    pdf_fp = (FILE **) HTS_calloc(interpolation_size, sizeof(FILE *));
+   if (tree_fn)
+      tree_fp = (FILE **) HTS_calloc(interpolation_size, sizeof(FILE *));
+   else
+      tree_fp = NULL;
    for (i = 0; i < interpolation_size; i++) {
       pdf_fp[i] = HTS_get_fp(pdf_fn[i], "rb");
+      if (tree_fn) {
+         if (tree_fn[i])
+            tree_fp[i] = HTS_get_fp(tree_fn[i], "r");
+         else
+            tree_fp[i] = NULL;
+      }
    }
-   HTS_Engine_load_gv_from_fp(engine, pdf_fp, stream_index, interpolation_size);
+   HTS_Engine_load_gv_from_fp(engine, pdf_fp, tree_fp, stream_index,
+                              interpolation_size);
    for (i = 0; i < interpolation_size; i++) {
       fclose(pdf_fp[i]);
+      if (tree_fp && tree_fp[i])
+         fclose(tree_fp[i]);
    }
    HTS_free(pdf_fp);
+   if (tree_fp)
+      HTS_free(tree_fp);
 }
 
-/* HTS_Engine_load_gv_from_fp: load GV pdfs from file pointers */
+/* HTS_Engine_load_gv_from_fp: load GV pdfs and trees from file pointers */
 void HTS_Engine_load_gv_from_fp(HTS_Engine * engine, FILE ** pdf_fp,
-                                int stream_index, int interpolation_size)
+                                FILE ** tree_fp, int stream_index,
+                                int interpolation_size)
 {
    int i;
 
-   HTS_ModelSet_load_gv(&engine->ms, pdf_fp, stream_index, interpolation_size);
+   HTS_ModelSet_load_gv(&engine->ms, pdf_fp, tree_fp, stream_index,
+                        interpolation_size);
    engine->global.gv_iw[stream_index] =
        (double *) HTS_calloc(interpolation_size, sizeof(double));
    for (i = 0; i < interpolation_size; i++)
       engine->global.gv_iw[stream_index][i] = 1.0 / interpolation_size;
+}
+
+/* HTS_Engine_load_gv_switch_from_fn: load GV switch from file name */
+void HTS_Engine_load_gv_switch_from_fn(HTS_Engine * engine, char *fn)
+{
+   FILE *fp = HTS_get_fp(fn, "r");
+
+   HTS_Engine_load_gv_switch_from_fp(engine, fp);
+   fclose(fp);
+}
+
+/* HTS_Engine_load_gv_switch_from_fp: load GV switch from file pointer */
+void HTS_Engine_load_gv_switch_from_fp(HTS_Engine * engine, FILE * fp)
+{
+   HTS_ModelSet_load_gv_switch(&engine->ms, fp);
 }
 
 /* HTS_Engine_set_sampling_rate: set sampling rate */
