@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2008  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2009  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -107,9 +107,7 @@ void Usage(void)
    fprintf(stderr,
            "    -r  f          : speech speed rate                                       [  1.0][ 0.0--10.0]\n");
    fprintf(stderr,
-           "    -fs f          : multilply F0                                            [  1.0][ 0.1--1.9]\n");
-   fprintf(stderr,
-           "    -fm f          : add F0                                                  [  0.0][-200.0--200.0]\n");
+           "    -fm f          : add half-tone                                           [  0.0][-24.0--24.0]\n");
    fprintf(stderr,
            "    -u  f          : voiced/unvoiced threshold                               [  0.5][ 0.0--1.0]\n");
    fprintf(stderr,
@@ -234,8 +232,7 @@ int main(int argc, char **argv)
    double gv_weight_lf0 = 0.7;
    double gv_weight_mcp = 1.0;
 
-   double f0_std = 1.0;
-   double f0_mean = 0.0;
+   double half_tone = 0.0;
    HTS_Boolean phoneme_alignment = FALSE;
    double speech_speed = 1.0;
    HTS_Boolean use_log_gain = FALSE;
@@ -397,21 +394,13 @@ int main(int argc, char **argv)
             break;
          case 'f':
             switch (*(*argv + 2)) {
-            case 's':
-               f = atof(*++argv);
-               if (f < 0.1)
-                  f = 0.1;
-               if (f > 1.9)
-                  f = 1.9;
-               f0_std = f;
-               break;
             case 'm':
                f = atof(*++argv);
-               if (f < -200.0)
-                  f = -200.0;
-               if (f > 200.0)
-                  f = 200.0;
-               f0_mean = f;
+               if (f < -24.0)
+                  f = -24.0;
+               if (f > 24.0)
+                  f = 24.0;
+               half_tone = f;
                break;
             default:
                Error(1, "hts_engine: Invalid option '-f%c'.\n", *(*argv + 2));
@@ -523,13 +512,13 @@ int main(int argc, char **argv)
    if (speech_speed != 1.0)     /* modify label */
       HTS_Label_set_speech_speed(&engine.label, speech_speed);
    HTS_Engine_create_sstream(&engine);  /* parse label and determine state duration */
-   if (f0_std != 1.0 || f0_mean != 0.0) {       /* modify f0 */
+   if (half_tone != 0.0) {      /* modify f0 */
       for (i = 0; i < HTS_SStreamSet_get_total_state(&engine.sss); i++) {
-         f = exp(HTS_SStreamSet_get_mean(&engine.sss, 1, i, 0));
-         f = f0_std * f + f0_mean;
-         if (f < 10.0)
-            f = 10.0;
-         HTS_SStreamSet_set_mean(&engine.sss, 1, i, 0, log(f));
+         f = HTS_SStreamSet_get_mean(&engine.sss, 1, i, 0);
+         f += half_tone * log(2.0) / 12;
+         if (f < log(10.0))
+            f = log(10.0);
+         HTS_SStreamSet_set_mean(&engine.sss, 1, i, 0, f);
       }
    }
    HTS_Engine_create_pstream(&engine);  /* generate speech parameter vector sequence */

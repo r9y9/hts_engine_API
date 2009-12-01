@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2008  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2009  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -125,19 +125,22 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
         i < HTS_ModelSet_get_duration_interpolation_size(ms); i++)
       temp1 += duration_iw[i];
    for (i = 0; i < HTS_ModelSet_get_duration_interpolation_size(ms); i++)
-      duration_iw[i] /= temp1;
+      if (duration_iw[i] != 0.0)
+         duration_iw[i] /= temp1;
    for (i = 0; i < sss->nstream; i++) {
       for (j = 0, temp1 = 0.0;
            j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
          temp1 += parameter_iw[i][j];
       for (j = 0; j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
-         parameter_iw[i][j] /= temp1;
+         if (parameter_iw[i][j] != 0.0)
+            parameter_iw[i][j] /= temp1;
       if (HTS_ModelSet_use_gv(ms, i)) {
          for (j = 0, temp1 = 0.0;
               j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
             temp1 += gv_iw[i][j];
          for (j = 0; j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
-            gv_iw[i][j] /= temp1;
+            if (gv_iw[i][j] != 0.0)
+               gv_iw[i][j] /= temp1;
 
       }
    }

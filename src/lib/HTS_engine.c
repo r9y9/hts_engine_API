@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2008  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2009  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -418,7 +418,8 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
         i < HTS_ModelSet_get_duration_interpolation_size(ms); i++)
       temp += global->duration_iw[i];
    for (i = 0; i < HTS_ModelSet_get_duration_interpolation_size(ms); i++)
-      global->duration_iw[i] /= temp;
+      if (global->duration_iw[i] != 0.0)
+         global->duration_iw[i] /= temp;
    for (i = 0; i < HTS_ModelSet_get_duration_interpolation_size(ms); i++)
       fprintf(fp,
               "         Interpolation weight[%2d]      -> %8.0f(%%)\n", i,
@@ -439,7 +440,8 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
            j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
          temp += global->parameter_iw[i][j];
       for (j = 0; j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
-         global->parameter_iw[i][j] /= temp;
+         if (global->parameter_iw[i][j] != 0.0)
+            global->parameter_iw[i][j] /= temp;
       for (j = 0; j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
          fprintf(fp,
                  "           Interpolation weight[%2d]    -> %8.0f(%%)\n", j,
@@ -464,7 +466,8 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
               j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
             temp += global->gv_iw[i][j];
          for (j = 0; j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
-            global->gv_iw[i][j] /= temp;
+            if (global->gv_iw[i][j] != 0.0)
+               global->gv_iw[i][j] /= temp;
          for (j = 0; j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
             fprintf(fp,
                     "           GV interpolation weight[%2d] -> %8.0f(%%)\n", j,
