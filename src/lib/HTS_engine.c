@@ -490,6 +490,23 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
       /* GV */
       if (HTS_ModelSet_use_gv(ms, i)) {
          fprintf(fp, "           GV flag                     ->     TRUE\n");
+         if (HTS_ModelSet_have_gv_switch(ms)) {
+            if (HTS_ModelSet_have_gv_tree(ms, i)) {
+               fprintf(fp,
+                       "           GV type                     ->     CDGV\n");
+               fprintf(fp,
+                       "                                       ->  +SWITCH\n");
+            } else
+               fprintf(fp,
+                       "           GV type                     ->   SWITCH\n");
+         } else {
+            if (HTS_ModelSet_have_gv_tree(ms, i))
+               fprintf(fp,
+                       "           GV type                     ->     CDGV\n");
+            else
+               fprintf(fp,
+                       "           GV type                     ->   NORMAL\n");
+         }
          fprintf(fp, "           GV weight                   -> %8.0f(%%)\n",
                  (float) (100 * global->gv_weight[i]));
          fprintf(fp, "           GV interpolation size       -> %8d\n",

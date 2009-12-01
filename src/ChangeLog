@@ -1,3 +1,10 @@
+2009-12-01 21:00  uratec
+
+	* ChangeLog, bin/hts_engine.c, include/HTS_engine.h,
+	  lib/HTS_engine.c, lib/HTS_model.c, lib/HTS_pstream.c,
+	  lib/HTS_sstream.c: Add function of context-dependent GV without
+	  silent and pause phoneme.
+
 2009-12-01 19:06  uratec
 
 	* AUTHORS, COPYING, ChangeLog, INSTALL, README, configure.ac,

@@ -763,6 +763,17 @@ void HTS_ModelSet_load_gv(HTS_ModelSet * ms, FILE ** pdf_fp, FILE ** tree_fp,
                           interpolation_size);
 }
 
+/* HTS_ModelSet_have_gv_tree: if context-dependent GV is used, return true */
+HTS_Boolean HTS_ModelSet_have_gv_tree(HTS_ModelSet * ms, int stream_index)
+{
+   int i;
+
+   for (i = 0; i < ms->gv[stream_index].interpolation_size; i++)
+      if (ms->gv[stream_index].model[i].tree == NULL)
+         return FALSE;
+   return TRUE;
+}
+
 /* HTS_ModelSet_load_gv_switch: load GV switch */
 void HTS_ModelSet_load_gv_switch(HTS_ModelSet * ms, FILE * fp)
 {
@@ -1001,10 +1012,11 @@ void HTS_ModelSet_get_gv_index(HTS_ModelSet * ms, char *string, int *tree_index,
    find = FALSE;
    (*tree_index) = 2;
    (*pdf_index) = 1;
-   tree = ms->gv[stream_index].model[interpolation_index].tree;
-   if (tree == NULL)
+
+   if (HTS_ModelSet_have_gv_tree(ms, stream_index) == FALSE)
       return;
-   for (; tree; tree = tree->next) {
+   for (tree = ms->gv[stream_index].model[interpolation_index].tree; tree;
+        tree = tree->next) {
       pattern = tree->head;
       if (!pattern)
          find = TRUE;

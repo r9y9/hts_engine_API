@@ -164,6 +164,9 @@ void HTS_ModelSet_load_parameter(HTS_ModelSet * ms, FILE ** pdf_fp,
 void HTS_ModelSet_load_gv(HTS_ModelSet * ms, FILE ** pdf_fp, FILE ** tree_fp,
                           int stream_index, int interpolation_size);
 
+/* HTS_ModelSet_have_gv_tree: if context-dependent GV is used, return true */
+HTS_Boolean HTS_ModelSet_have_gv_tree(HTS_ModelSet * ms, int stream_index);
+
 /* HTS_ModelSet_load_gv_switch: load GV switch */
 void HTS_ModelSet_load_gv_switch(HTS_ModelSet * ms, FILE * fp);
 
