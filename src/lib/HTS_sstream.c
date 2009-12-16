@@ -93,7 +93,7 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
    double *duration_mean, *duration_vari;
    double duration_remain;
    double frame_length;
-   double next_time;
+   int next_time;
    int next_state;
 
    /* initialize state sequence */
@@ -162,7 +162,7 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
                                 &duration_vari[i * sss->nstate], duration_iw);
    if (HTS_Label_get_frame_specified_flag(label)) {
       /* use duration set by user */
-      next_time = 0.0;
+      next_time = 0;
       next_state = 0;
       state = 0;
       for (i = 0; i < HTS_Label_get_size(label); i++) {
@@ -174,7 +174,8 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
                              &duration_vari[next_state], &duration_remain,
                              state + sss->nstate - next_state,
                              temp2 - next_time);
-            next_time = temp2;
+            for (j = next_state; j < state + sss->nstate; j++)
+               next_time += sss->duration[j];
             next_state = state + sss->nstate;
          } else if (i + 1 == HTS_Label_get_size(label)) {
             HTS_set_duration(&sss->duration[next_state],

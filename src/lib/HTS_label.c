@@ -107,7 +107,7 @@ void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
    char buff[HTS_MAXBUFLEN];
    HTS_LabelString *lstring = NULL;
    int start, end;
-   const double rate = sampling_rate / (fperiod * 1e+7);
+   const double rate = (double) sampling_rate / ((double) fperiod * 1e+7);
 
    if (label->head || label->size != 0)
       HTS_error(1, "HTS_Label_load_from_fp: label is not initialized.\n");
@@ -150,7 +150,7 @@ void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
    HTS_LabelString *lstring = NULL;
    int data_index = 0;          /* data index */
    int start, end;
-   const double rate = sampling_rate / (fperiod * 1e+7);
+   const double rate = (double) sampling_rate / ((double) fperiod * 1e+7);
 
    if (label->head || label->size != 0)
       HTS_error(1, "HTS_Label_load_from_fp: label list is not initialized.\n");
@@ -194,7 +194,7 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
    int i;
    int data_index;
    int start, end;
-   const double rate = sampling_rate / (fperiod * 1e+7);
+   const double rate = (double) sampling_rate / ((double) fperiod * 1e+7);
 
    if (label->head || label->size != 0)
       HTS_error(1, "HTS_Label_load_from_fp: label list is not initialized.\n");

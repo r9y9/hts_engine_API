@@ -1,3 +1,11 @@
+Version 1.02:
+ * context-dependent GV without silent and pause phoneme.
+ * buffer size control of audio output for Windows.
+ * makefiles for nmake of VC.
+ * save detail information.
+ * support singing voice synthesis.
+ * bug fixes.
+
 Version 1.01:
  * bug fixes.
  * transfer site to SourceForge.

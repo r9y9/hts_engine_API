@@ -1,3 +1,8 @@
+2009-12-02 01:21  uratec
+
+	* ChangeLog, bin/hts_engine.c: small simplification of help
+	  message.
+
 2009-12-01 21:32  uratec
 
 	* ChangeLog, include/HTS_engine.h, lib/HTS_engine.c,
