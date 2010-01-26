@@ -434,8 +434,9 @@ static void HTS_Model_initialize(HTS_Model * model)
 static void HTS_Model_load_pdf(HTS_Model * model, FILE * fp, int ntree,
                                HTS_Boolean msd_flag)
 {
-   int i, j, k, l;
+   int i, j, k, l, m;
    float temp;
+   int ssize;
 
    /* check */
    if (fp == NULL)
@@ -443,6 +444,14 @@ static void HTS_Model_load_pdf(HTS_Model * model, FILE * fp, int ntree,
 
    /* load pdf */
    model->ntree = ntree;
+   /* read MSD flag */
+   HTS_fread_big_endian(&i, sizeof(int), 1, fp);
+   if ((i != 0 || msd_flag != FALSE) && (i != 1 || msd_flag != TRUE))
+      HTS_error(1, "HTS_Model_load_pdf: Failed to load header of pdfs.");
+   /* read stream size */
+   HTS_fread_big_endian(&ssize, sizeof(int), 1, fp);
+   if (ssize < 1)
+      HTS_error(1, "HTS_Model_load_pdf: Failed to load header of pdfs.");
    /* read vector size */
    HTS_fread_big_endian(&model->vector_length, sizeof(int), 1, fp);
    if (model->vector_length < 0)
@@ -463,26 +472,29 @@ static void HTS_Model_load_pdf(HTS_Model * model, FILE * fp, int ntree,
    /* read means and variances */
    if (msd_flag) {              /* for MSD */
       for (j = 2; j <= ntree + 1; j++) {
-         model->pdf[j] =
-             (double **) HTS_calloc(model->npdf[j], sizeof(double *));
+         model->pdf[j] = (double **)
+             HTS_calloc(model->npdf[j], sizeof(double *));
          model->pdf[j]--;
          for (k = 1; k <= model->npdf[j]; k++) {
-            model->pdf[j][k] =
-                (double *) HTS_calloc(2 * model->vector_length + 1,
-                                      sizeof(double));
-            for (l = 0; l < model->vector_length; l++) {
-               HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
-               model->pdf[j][k][l] = (double) temp;
-               HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
-               model->pdf[j][k][l + model->vector_length] = (double) temp;
-               HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
-               if (l == 0) {    /* MSD parameter */
-                  if (temp < 0.0 || temp > 1.0)
-                     HTS_error(1,
-                               "HTS_Model_load_pdf: MSD weight should be within 0.0 to 1.0.\n");
-                  model->pdf[j][k][2 * model->vector_length] = (double) temp;
+            model->pdf[j][k] = (double *)
+                HTS_calloc(2 * model->vector_length + 1, sizeof(double));
+            for (l = 0; l < ssize; l++) {
+               for (m = 0; m < model->vector_length / ssize; m++) {
+                  HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
+                  model->pdf[j][k][l * model->vector_length / ssize + m] =
+                      (double) temp;
+                  HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
+                  model->pdf[j][k][l * model->vector_length / ssize + m +
+                                   model->vector_length] = (double) temp;
+                  HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
+                  if (l == 0) {
+                     if (temp < 0.0 || temp > 1.0)
+                        HTS_error(1,
+                                  "HTS_Model_load_pdf: MSD weight should be within 0.0 to 1.0.\n");
+                     model->pdf[j][k][2 * model->vector_length] = (double) temp;
+                  }
+                  HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
                }
-               HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
             }
          }
       }
@@ -494,9 +506,11 @@ static void HTS_Model_load_pdf(HTS_Model * model, FILE * fp, int ntree,
          for (k = 1; k <= model->npdf[j]; k++) {
             model->pdf[j][k] =
                 (double *) HTS_calloc(2 * model->vector_length, sizeof(double));
-            for (l = 0; l < 2 * model->vector_length; l++) {
+            for (l = 0; l < model->vector_length; l++) {
                HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
                model->pdf[j][k][l] = (double) temp;
+               HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
+               model->pdf[j][k][l + model->vector_length] = (double) temp;
             }
          }
       }
