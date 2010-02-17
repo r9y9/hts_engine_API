@@ -486,15 +486,15 @@ static void HTS_Model_load_pdf(HTS_Model * model, FILE * fp, int ntree,
                   HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
                   model->pdf[j][k][l * model->vector_length / ssize + m +
                                    model->vector_length] = (double) temp;
-                  HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
-                  if (l == 0) {
-                     if (temp < 0.0 || temp > 1.0)
-                        HTS_error(1,
-                                  "HTS_Model_load_pdf: MSD weight should be within 0.0 to 1.0.\n");
-                     model->pdf[j][k][2 * model->vector_length] = (double) temp;
-                  }
-                  HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
                }
+               HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
+               if (l == 0) {
+                  if (temp < 0.0 || temp > 1.0)
+                     HTS_error(1,
+                               "HTS_Model_load_pdf: MSD weight should be within 0.0 to 1.0.\n");
+                  model->pdf[j][k][2 * model->vector_length] = (double) temp;
+               }
+               HTS_fread_big_endian(&temp, sizeof(float), 1, fp);
             }
          }
       }

@@ -1,3 +1,8 @@
+2010-01-26 10:32  uratec
+
+	* ChangeLog, lib/HTS_model.c: Change *.pdf file format in CM
+	  command
+
 2009-12-17 00:17  uratec
 
 	* ChangeLog, INSTALL, NEWS, README, configure.ac,
