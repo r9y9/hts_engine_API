@@ -1,3 +1,8 @@
+Version 1.03:
+ * add '-z' option to control audio buffer size.
+ * change PDF file format.
+ * bug fixes.
+
 Version 1.02:
  * context-dependent GV without silent and pause phoneme.
  * buffer size control of audio output for Windows.
