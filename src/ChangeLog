@@ -1,3 +1,8 @@
+2010-02-17 22:13  uratec
+
+	* ChangeLog, lib/HTS_model.c: Fix a small bug for new format of PDF
+	  files.
+
 2010-01-26 10:32  uratec
 
 	* ChangeLog, lib/HTS_model.c: Change *.pdf file format in CM

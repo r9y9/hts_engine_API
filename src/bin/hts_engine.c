@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2009  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2010  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -124,6 +124,8 @@ void Usage(void)
            "    -jm f          : weight of GV for spectrum                               [  1.0][ 0.0--2.0]\n");
    fprintf(stderr,
            "    -k  tree       : GV switch                                               [  N/A]\n");
+   fprintf(stderr,
+           "    -z  i          : audio buffer size                                       [ 1600][   0--48000]\n");
    fprintf(stderr, "  infile:\n");
    fprintf(stderr, "    label file\n");
    fprintf(stderr, "  note:\n");
@@ -475,6 +477,10 @@ int main(int argc, char **argv)
             break;
          case 'k':
             fn_gv_switch = *++argv;
+            --argc;
+            break;
+         case 'z':
+            audio_buff_size = atoi(*++argv);
             --argc;
             break;
          default:

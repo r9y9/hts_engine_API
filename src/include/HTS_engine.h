@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2009  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2010  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -49,10 +49,10 @@
 #ifdef PACKAGE_VERSION
 #define HTS_VERSION   PACKAGE_VERSION
 #else
-#define HTS_VERSION   "1.02"
+#define HTS_VERSION   "1.03"
 #endif
 #define HTS_URL       "http://hts-engine.sourceforge.net/"
-#define HTS_COPYRIGHT "2001-2009  Nagoya Institute of Technology", \
+#define HTS_COPYRIGHT "2001-2010  Nagoya Institute of Technology", \
                       "2001-2008  Tokyo Institute of Technology"
 #define HTS_NCOPYRIGHT 2
 

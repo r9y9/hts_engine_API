@@ -1,6 +1,6 @@
 ===============================================================================
-                        The hts_engine API version 1.02
-                           release December 25, 2009
+                        The hts_engine API version 1.03
+                            release April 16, 2010
 
 
 The hts_engine API is an API version of hts_engine which has been releases
@@ -25,7 +25,7 @@ the conditions in the following license:
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2009  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2010  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */

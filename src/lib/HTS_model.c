@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2009  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2010  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -447,11 +447,11 @@ static void HTS_Model_load_pdf(HTS_Model * model, FILE * fp, int ntree,
    /* read MSD flag */
    HTS_fread_big_endian(&i, sizeof(int), 1, fp);
    if ((i != 0 || msd_flag != FALSE) && (i != 1 || msd_flag != TRUE))
-      HTS_error(1, "HTS_Model_load_pdf: Failed to load header of pdfs.");
+      HTS_error(1, "HTS_Model_load_pdf: Failed to load header of pdfs.\n");
    /* read stream size */
    HTS_fread_big_endian(&ssize, sizeof(int), 1, fp);
    if (ssize < 1)
-      HTS_error(1, "HTS_Model_load_pdf: Failed to load header of pdfs.");
+      HTS_error(1, "HTS_Model_load_pdf: Failed to load header of pdfs.\n");
    /* read vector size */
    HTS_fread_big_endian(&model->vector_length, sizeof(int), 1, fp);
    if (model->vector_length < 0)

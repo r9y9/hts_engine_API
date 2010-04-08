@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2009  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2010  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -42,7 +42,7 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
-#include <stdlib.h>             /* for atoi() */
+#include <stdlib.h>             /* for atof() */
 #include <ctype.h>              /* for isgraph(),isdigit() */
 
 /* hts_engine libraries */
@@ -106,7 +106,7 @@ void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
 {
    char buff[HTS_MAXBUFLEN];
    HTS_LabelString *lstring = NULL;
-   int start, end;
+   double start, end;
    const double rate = (double) sampling_rate / ((double) fperiod * 1e+7);
 
    if (label->head || label->size != 0)
@@ -126,9 +126,9 @@ void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
          label->head = lstring;
       }
       if (isdigit_string(buff)) {       /* has frame infomation */
-         start = atoi(buff);
+         start = atof(buff);
          HTS_get_token(fp, buff);
-         end = atoi(buff);
+         end = atof(buff);
          HTS_get_token(fp, buff);
          lstring->start = rate * start;
          lstring->end = rate * end;
@@ -149,7 +149,7 @@ void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
    char buff[HTS_MAXBUFLEN];
    HTS_LabelString *lstring = NULL;
    int data_index = 0;          /* data index */
-   int start, end;
+   double start, end;
    const double rate = (double) sampling_rate / ((double) fperiod * 1e+7);
 
    if (label->head || label->size != 0)
@@ -169,9 +169,9 @@ void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
          label->head = lstring;
       }
       if (isdigit_string(buff)) {       /* has frame infomation */
-         start = atoi(buff);
+         start = atof(buff);
          HTS_get_token_from_string(data, &data_index, buff);
-         end = atoi(buff);
+         end = atof(buff);
          HTS_get_token_from_string(data, &data_index, buff);
          lstring->start = rate * start;
          lstring->end = rate * end;
@@ -193,7 +193,7 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
    HTS_LabelString *lstring = NULL;
    int i;
    int data_index;
-   int start, end;
+   double start, end;
    const double rate = (double) sampling_rate / ((double) fperiod * 1e+7);
 
    if (label->head || label->size != 0)
@@ -215,9 +215,9 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
       data_index = 0;
       if (isdigit_string(data[i])) {    /* has frame infomation */
          HTS_get_token_from_string(data[i], &data_index, buff);
-         start = atoi(buff);
+         start = atof(buff);
          HTS_get_token_from_string(data[i], &data_index, buff);
-         end = atoi(buff);
+         end = atof(buff);
          HTS_get_token_from_string(data[i], &data_index, buff);
          lstring->name = HTS_strdup(&buff[data_index]);
          lstring->start = rate * start;
