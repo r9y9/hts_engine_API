@@ -569,7 +569,7 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
                           "      MSD flag                         ->     TRUE\n");
                else
                   fprintf(fp,
-                          "      MSD flag                         ->    FLASE\n");
+                          "      MSD flag                         ->    FALSE\n");
             }
             for (l = 0;
                  l < HTS_ModelSet_get_parameter_interpolation_size(ms, k);
