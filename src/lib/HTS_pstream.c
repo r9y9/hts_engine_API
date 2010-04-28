@@ -235,7 +235,7 @@ static void HTS_PStream_gv_parmgen(HTS_PStream * pst, const int m)
          if (obj < prev)
             step *= STEPINC;
          for (t = 0; t < pst->length; t++)
-            pst->gv_buff[t] -= step * pst->sm.g[t];
+            pst->gv_buff[t] += step * pst->sm.g[t];
          prev = obj;
       }
    }
