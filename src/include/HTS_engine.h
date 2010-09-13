@@ -564,7 +564,7 @@ void HTS_GStreamSet_clear(HTS_GStreamSet * gss);
 
 /* HTS_Global: Global settings. */
 typedef struct _HTS_Global {
-   int stage;                   /* Gamma=-1/stage : if stage=0 then Gamma=0 */
+   int stage;                   /* Gamma=-1/stage: if stage=0 then Gamma=0 */
    HTS_Boolean use_log_gain;    /* log gain flag (for LSP) */
    int sampling_rate;           /* sampling rate */
    int fperiod;                 /* frame period */
@@ -638,7 +638,7 @@ void HTS_Engine_set_fperiod(HTS_Engine * engine, int i);
 /* HTS_Engine_set_alpha: set alpha */
 void HTS_Engine_set_alpha(HTS_Engine * engine, double f);
 
-/* HTS_Engine_set_gamma: set gamma (gamma = -1 / i : if i=0 then gamma=0) */
+/* HTS_Engine_set_gamma: set gamma (Gamma=-1/i: if i=0 then Gamma=0) */
 void HTS_Engine_set_gamma(HTS_Engine * engine, int i);
 
 /* HTS_Engine_set_log_gain: set log gain flag (for LSP) */
@@ -763,7 +763,7 @@ typedef struct _HTS_Audio {
 
 /* HTS_Vocoder: structure for setting of vocoder */
 typedef struct _HTS_Vocoder {
-   int stage;                   /* Gamma=-1/stage : if stage=0 then Gamma=0 */
+   int stage;                   /* Gamma=-1/stage: if stage=0 then Gamma=0 */
    double gamma;                /* Gamma */
    HTS_Boolean use_log_gain;    /* log gain flag (for LSP) */
    int fprd;                    /* frame shift */

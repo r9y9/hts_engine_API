@@ -62,8 +62,8 @@ static void HTS_set_duration(int *duration, double *mean, double *vari,
       rho = (frame_length - temp1) / temp2;
    }
    for (i = 0; i < size; i++) {
-      temp1 = mean[i] + rho * vari[i];
-      duration[i] = (int) (temp1 + *remain + 0.5);
+      temp1 = mean[i] + rho * vari[i] + *remain;
+      duration[i] = (int) (temp1 + 0.5);
       if (duration[i] < 1)
          duration[i] = 1;
       *remain = temp1 - (double) duration[i];

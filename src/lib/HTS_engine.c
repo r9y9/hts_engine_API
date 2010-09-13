@@ -271,7 +271,7 @@ void HTS_Engine_set_alpha(HTS_Engine * engine, double f)
    engine->global.alpha = f;
 }
 
-/* HTS_Engine_set_gamma: set gamma (gamma = -1 / i : if i=0 then gamma=0) */
+/* HTS_Engine_set_gamma: set gamma (Gamma = -1/i: if i=0 then Gamma=0) */
 void HTS_Engine_set_gamma(HTS_Engine * engine, int i)
 {
    if (i < 0)

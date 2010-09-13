@@ -1,3 +1,8 @@
+2010-04-28 13:30  uratec
+
+	* ChangeLog, lib/HTS_pstream.c: Fix a bug suggested by Yu Sansuo:
+	  change step in parameter generation using gv.
+
 2010-04-20 00:38  uratec
 
 	* ChangeLog, lib/HTS_engine.c: Fix a small typo suggested by oaomly

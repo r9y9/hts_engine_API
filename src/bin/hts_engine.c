@@ -241,7 +241,7 @@ int main(int argc, char **argv)
    int sampling_rate = 16000;
    int fperiod = 80;
    double alpha = 0.42;
-   double stage = 0.0;          /* gamma = -1.0/stage */
+   int stage = 0;               /* Gamma=-1/stage: if stage=0 then Gamma=0 */
    double beta = 0.0;
    int audio_buff_size = 1600;
    double uv_threshold = 0.5;
