@@ -141,7 +141,7 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
       HTS_Vocoder_synthesize(&v, HTS_PStreamSet_get_static_length(pss, 0) - 1,
                              lf0, HTS_PStreamSet_get_parameter_vector(pss, 0,
                                                                       i), alpha,
-                             volume, beta, &gss->gspeech[i * fperiod]);
+                             beta, volume, &gss->gspeech[i * fperiod]);
    }
 #else
    HTS_Vocoder_initialize(&v, gss->gstream[0].static_length - 1, stage,

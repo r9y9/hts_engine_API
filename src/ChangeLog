@@ -1,3 +1,9 @@
+2010-10-12 22:54  uratec
+
+	* ChangeLog, include/HTS_engine.h, lib/HTS_engine.c,
+	  lib/HTS_gstream.c, lib/HTS_vocoder.c: add barge-in function and
+	  volume controller.
+
 2010-09-13 18:51  uratec
 
 	* ChangeLog, bin/Makefile.mak, bin/hts_engine.c,
