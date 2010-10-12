@@ -62,7 +62,8 @@ void HTS_GStreamSet_initialize(HTS_GStreamSet * gss)
 void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
                            int stage, HTS_Boolean use_log_gain,
                            int sampling_rate, int fperiod, double alpha,
-                           double beta, int audio_buff_size)
+                           double beta, HTS_Boolean * stop, double volume,
+                           int audio_buff_size)
 {
    int i, j, k;
 #ifdef HTS_EMBEDDED
@@ -133,23 +134,23 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
    HTS_Vocoder_initialize(&v, HTS_PStreamSet_get_static_length(pss, 0) - 1,
                           stage, use_log_gain, sampling_rate, fperiod,
                           audio_buff_size);
-   for (i = 0, msd_frame = 0; i < gss->total_frame; i++) {
+   for (i = 0, msd_frame = 0; i < gss->total_frame && (*stop) == FALSE; i++) {
       lf0 = LZERO;
       if (HTS_PStreamSet_get_msd_flag(pss, 1, i))
          lf0 = HTS_PStreamSet_get_parameter(pss, 1, msd_frame++, 0);
       HTS_Vocoder_synthesize(&v, HTS_PStreamSet_get_static_length(pss, 0) - 1,
-                             lf0,
-                             HTS_PStreamSet_get_parameter_vector(pss, 0, i),
-                             alpha, beta, &gss->gspeech[i * fperiod]);
+                             lf0, HTS_PStreamSet_get_parameter_vector(pss, 0,
+                                                                      i), alpha,
+                             volume, beta, &gss->gspeech[i * fperiod]);
    }
 #else
    HTS_Vocoder_initialize(&v, gss->gstream[0].static_length - 1, stage,
                           use_log_gain, sampling_rate, fperiod,
                           audio_buff_size);
-   for (i = 0; i < gss->total_frame; i++) {
+   for (i = 0; i < gss->total_frame && (*stop) == FALSE; i++) {
       HTS_Vocoder_synthesize(&v, gss->gstream[0].static_length - 1,
                              gss->gstream[1].par[i][0],
-                             &gss->gstream[0].par[i][0], alpha, beta,
+                             &gss->gstream[0].par[i][0], alpha, beta, volume,
                              &gss->gspeech[i * fperiod]);
    }
 #endif                          /* HTS_EMBEDDED */

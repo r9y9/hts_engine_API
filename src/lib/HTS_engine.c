@@ -80,6 +80,11 @@ void HTS_Engine_initialize(HTS_Engine * engine, int nstream)
    for (i = 0; i < nstream; i++)
       engine->global.gv_weight[i] = 1.0;
 
+   /* stop flag */
+   engine->global.stop = FALSE;
+   /* volume */
+   engine->global.volume = 1.0;
+
    /* initialize model set */
    HTS_ModelSet_initialize(&engine->ms, nstream);
    /* initialize label list */
@@ -353,6 +358,19 @@ void HTS_Engine_set_gv_weight(HTS_Engine * engine, int stream_index, double f)
    engine->global.gv_weight[stream_index] = f;
 }
 
+/* HTS_Engine_set_stop_flag: set stop flag */
+void HTS_Engine_set_stop_flag(HTS_Engine * engine, HTS_Boolean b)
+{
+   engine->global.stop = b;
+}
+
+/* HTS_Engine_set_volume: set volume */
+void HTS_Engine_set_volume(HTS_Engine * engine, double f)
+{
+   if (f >= 0.0)
+      engine->global.volume = f;
+}
+
 /* HTS_Engine_load_label_from_fn: load label from file name */
 void HTS_Engine_load_label_from_fn(HTS_Engine * engine, char *fn)
 {
@@ -405,6 +423,7 @@ void HTS_Engine_create_gstream(HTS_Engine * engine)
                          engine->global.use_log_gain,
                          engine->global.sampling_rate, engine->global.fperiod,
                          engine->global.alpha, engine->global.beta,
+                         &engine->global.stop, engine->global.volume,
                          engine->global.audio_buff_size);
 }
 
@@ -694,6 +713,8 @@ void HTS_Engine_refresh(HTS_Engine * engine)
    HTS_SStreamSet_clear(&engine->sss);
    /* free label list */
    HTS_Label_clear(&engine->label);
+   /* stop flag */
+   engine->global.stop = FALSE;
 }
 
 /* HTS_Engine_clear: free engine */

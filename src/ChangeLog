@@ -1,3 +1,9 @@
+2010-09-13 18:51  uratec
+
+	* ChangeLog, bin/Makefile.mak, bin/hts_engine.c,
+	  include/HTS_engine.h, lib/HTS_engine.c, lib/HTS_sstream.c,
+	  lib/Makefile.mak: Fix a tiny bug: unify type of 'stage' value.
+
 2010-04-28 13:30  uratec
 
 	* ChangeLog, lib/HTS_pstream.c: Fix a bug suggested by Yu Sansuo:

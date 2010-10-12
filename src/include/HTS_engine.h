@@ -535,7 +535,8 @@ void HTS_GStreamSet_initialize(HTS_GStreamSet * gss);
 void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
                            int stage, HTS_Boolean use_log_gain,
                            int sampling_rate, int fperiod, double alpha,
-                           double beta, int audio_buff_size);
+                           double beta, HTS_Boolean * stop, double volume,
+                           int audio_buff_size);
 
 /* HTS_GStreamSet_get_total_nsample: get total number of sample */
 int HTS_GStreamSet_get_total_nsample(HTS_GStreamSet * gss);
@@ -576,6 +577,8 @@ typedef struct _HTS_Global {
    double **parameter_iw;       /* weights for parameter interpolation */
    double **gv_iw;              /* weights for GV interpolation */
    double *gv_weight;           /* GV weights */
+   HTS_Boolean stop;            /* stop flag */
+   double volume;               /* volume */
 } HTS_Global;
 
 /* HTS_Engine: Engine itself. */
@@ -675,6 +678,12 @@ void HTS_Engine_set_gv_interpolation_weight(HTS_Engine * engine,
 
 /* HTS_Engine_set_gv_weight: set GV weight */
 void HTS_Engine_set_gv_weight(HTS_Engine * engine, int stream_index, double f);
+
+/* HTS_Engine_set_stop_flag: set stop flag */
+void HTS_Engine_set_stop_flag(HTS_Engine * engine, HTS_Boolean b);
+
+/* HTS_Engine_set_volume: set volume */
+void HTS_Engine_set_volume(HTS_Engine * engine, double f);
 
 /* HTS_Engine_load_label_from_fn: load label from file pointer */
 void HTS_Engine_load_label_from_fn(HTS_Engine * engine, char *fn);
@@ -804,7 +813,7 @@ void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
 /* HTS_Vocoder_synthesize: pulse/noise excitation and MLSA/MGLSA filster based waveform synthesis */
 void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
                             double *spectrum, double alpha, double beta,
-                            short *rawdata);
+                            double volume, short *rawdata);
 
 /* HTS_Vocoder_postfilter_mcp: postfilter for MCP */
 void HTS_Vocoder_postfilter_mcp(HTS_Vocoder * v, double *mcp, const int m,
