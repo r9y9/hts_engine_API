@@ -1,3 +1,11 @@
+2010-10-13 23:21  uratec
+
+	* ChangeLog, include/HTS_engine.h, lib/HTS_engine.c: Add functions:
+	  HTS_Engine_get_sampling_rate, HTS_Engine_get_fperiod,
+	  HTS_Engine_get_total_state, HTS_Engine_set_state_mean,
+	  HTS_Engine_get_state_mean, HTS_Engine_get_state_duration, and
+	  HTS_Engine_get_nstate.
+
 2010-10-12 23:09  uratec
 
 	* ChangeLog, lib/HTS_gstream.c: Fix a tiny bug.

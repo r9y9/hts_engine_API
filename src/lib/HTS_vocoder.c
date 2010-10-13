@@ -42,6 +42,19 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
+#ifndef HTS_VOCODER_C
+#define HTS_VOCODER_C
+
+#ifdef __cplusplus
+#define HTS_VOCODER_C_START extern "C" {
+#define HTS_VOCODER_C_END   }
+#else
+#define HTS_VOCODER_C_START
+#define HTS_VOCODER_C_END
+#endif                          /* __CPLUSPLUS */
+
+HTS_VOCODER_C_START;
+
 #include <math.h>               /* for sqrt(),log(),exp(),pow(),cos() */
 
 /* hts_engine libraries */
@@ -837,3 +850,7 @@ void HTS_Vocoder_clear(HTS_Vocoder * v)
       }
    }
 }
+
+HTS_VOCODER_C_END;
+
+#endif                          /* !HTS_VOCODER_C */

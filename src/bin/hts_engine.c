@@ -42,6 +42,19 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
+#ifndef HTS_ENGINE_C
+#define HTS_ENGINE_C
+
+#ifdef __cplusplus
+#define HTS_ENGINE_C_START extern "C" {
+#define HTS_ENGINE_C_END   }
+#else
+#define HTS_ENGINE_C_START
+#define HTS_ENGINE_C_END
+#endif                          /* __CPLUSPLUS */
+
+HTS_ENGINE_C_START;
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -624,3 +637,7 @@ int main(int argc, char **argv)
 
    return 0;
 }
+
+HTS_ENGINE_C_END;
+
+#endif                          /* !HTS_ENGINE_C */

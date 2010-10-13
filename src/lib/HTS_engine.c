@@ -42,6 +42,19 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
+#ifndef HTS_ENGINE_C
+#define HTS_ENGINE_C
+
+#ifdef __cplusplus
+#define HTS_ENGINE_C_START extern "C" {
+#define HTS_ENGINE_C_END   }
+#else
+#define HTS_ENGINE_C_START
+#define HTS_ENGINE_C_END
+#endif                          /* __CPLUSPLUS */
+
+HTS_ENGINE_C_START;
+
 #include <string.h>             /* for strcpy() */
 
 /* hts_engine libraries */
@@ -812,3 +825,7 @@ void HTS_show_copyright(FILE * fp)
 
    return;
 }
+
+HTS_ENGINE_C_END;
+
+#endif                          /* !HTS_ENGINE_C */

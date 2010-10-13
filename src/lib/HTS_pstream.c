@@ -42,6 +42,19 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
+#ifndef HTS_PSTREAM_C
+#define HTS_PSTREAM_C
+
+#ifdef __cplusplus
+#define HTS_PSTREAM_C_START extern "C" {
+#define HTS_PSTREAM_C_END   }
+#else
+#define HTS_PSTREAM_C_START
+#define HTS_PSTREAM_C_END
+#endif                          /* __CPLUSPLUS */
+
+HTS_PSTREAM_C_START;
+
 #include <math.h>               /* for sqrt() */
 
 /* hts_engine libraries */
@@ -526,3 +539,7 @@ void HTS_PStreamSet_clear(HTS_PStreamSet * pss)
    }
    HTS_PStreamSet_initialize(pss);
 }
+
+HTS_PSTREAM_C_END;
+
+#endif                          /* !HTS_PSTREAM_C */

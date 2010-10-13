@@ -42,6 +42,19 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
+#ifndef HTS_MODEL_C
+#define HTS_MODEL_C
+
+#ifdef __cplusplus
+#define HTS_MODEL_C_START extern "C" {
+#define HTS_MODEL_C_END   }
+#else
+#define HTS_MODEL_C_START
+#define HTS_MODEL_C_END
+#endif                          /* __CPLUSPLUS */
+
+HTS_MODEL_C_START;
+
 #include <stdlib.h>             /* for atoi(),abs() */
 #include <string.h>             /* for strlen(),strstr(),strrchr(),strcmp() */
 #include <ctype.h>              /* for isdigit() */
@@ -1138,3 +1151,7 @@ void HTS_ModelSet_clear(HTS_ModelSet * ms)
    HTS_Model_clear(&ms->gv_switch);
    HTS_ModelSet_initialize(ms, -1);
 }
+
+HTS_MODEL_C_END;
+
+#endif                          /* !HTS_MODEL_C */

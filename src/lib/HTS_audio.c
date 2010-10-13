@@ -42,6 +42,19 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
+#ifndef HTS_AUDIO_C
+#define HTS_AUDIO_C
+
+#ifdef __cplusplus
+#define HTS_AUDIO_C_START extern "C" {
+#define HTS_AUDIO_C_END   }
+#else
+#define HTS_AUDIO_C_START
+#define HTS_AUDIO_C_END
+#endif                          /* __CPLUSPLUS */
+
+HTS_AUDIO_C_START;
+
 /* hts_engine libralies */
 #include "HTS_hidden.h"
 
@@ -230,3 +243,7 @@ void HTS_Audio_close(HTS_Audio * as)
 {
 }
 #endif                          /* AUDIO_PLAY_NONE */
+
+HTS_AUDIO_C_END;
+
+#endif                          /* !HTS_AUDIO_C */

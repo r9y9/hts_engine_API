@@ -42,6 +42,19 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
+#ifndef HTS_LABEL_C
+#define HTS_LABEL_C
+
+#ifdef __cplusplus
+#define HTS_LABEL_C_START extern "C" {
+#define HTS_LABEL_C_END   }
+#else
+#define HTS_LABEL_C_START
+#define HTS_LABEL_C_END
+#endif                          /* __CPLUSPLUS */
+
+HTS_LABEL_C_START;
+
 #include <stdlib.h>             /* for atof() */
 #include <ctype.h>              /* for isgraph(),isdigit() */
 
@@ -311,3 +324,7 @@ void HTS_Label_clear(HTS_Label * label)
    }
    HTS_Label_initialize(label);
 }
+
+HTS_LABEL_C_END;
+
+#endif                          /* !HTS_LABEL_C */

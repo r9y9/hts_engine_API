@@ -42,6 +42,19 @@
 /* POSSIBILITY OF SUCH DAMAGE.                                       */
 /* ----------------------------------------------------------------- */
 
+#ifndef HTS_ENGINE_H
+#define HTS_ENGINE_H
+
+#ifdef __cplusplus
+#define HTS_ENGINE_H_START extern "C" {
+#define HTS_ENGINE_H_END   }
+#else
+#define HTS_ENGINE_H_START
+#define HTS_ENGINE_H_END
+#endif                          /* __CPLUSPLUS */
+
+HTS_ENGINE_H_START;
+
 #include <stdio.h>
 
 /*  ------------------------ copyright ----------------------------  */
@@ -67,8 +80,10 @@ void HTS_get_copyright(char *str);
 typedef int HTS_Boolean;
 #ifndef TRUE
 #define TRUE  1
-#define FALSE 0
 #endif                          /* !TRUE */
+#ifndef FALSE
+#define FALSE 0
+#endif                          /* !FALSE */
 
 #define ZERO  1.0e-10           /* ~(0) */
 #define LZERO (-1.0e+10)        /* ~log(0) */
@@ -844,3 +859,7 @@ void HTS_Vocoder_postfilter_mcp(HTS_Vocoder * v, double *mcp, const int m,
 
 /* HTS_Vocoder_clear: clear vocoder */
 void HTS_Vocoder_clear(HTS_Vocoder * v);
+
+HTS_ENGINE_H_END;
+
+#endif                          /* !HTS_ENGINE_H */
