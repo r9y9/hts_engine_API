@@ -1,3 +1,7 @@
+2010-10-12 23:09  uratec
+
+	* ChangeLog, lib/HTS_gstream.c: Fix a tiny bug.
+
 2010-10-12 22:54  uratec
 
 	* ChangeLog, include/HTS_engine.h, lib/HTS_engine.c,

@@ -635,8 +635,14 @@ void HTS_Engine_load_gv_switch_from_fp(HTS_Engine * engine, FILE * fp);
 /* HTS_Engine_set_sampling_rate: set sampling rate */
 void HTS_Engine_set_sampling_rate(HTS_Engine * engine, int i);
 
+/* HTS_Engine_get_sampling_rate: get sampling rate */
+int HTS_Engine_get_sampling_rate(HTS_Engine * engine);
+
 /* HTS_Engine_set_fperiod: set frame shift */
 void HTS_Engine_set_fperiod(HTS_Engine * engine, int i);
+
+/* HTS_Engine_get_fperiod: get frame shift */
+int HTS_Engine_get_fperiod(HTS_Engine * engine);
 
 /* HTS_Engine_set_alpha: set alpha */
 void HTS_Engine_set_alpha(HTS_Engine * engine, double f);
@@ -684,6 +690,23 @@ void HTS_Engine_set_stop_flag(HTS_Engine * engine, HTS_Boolean b);
 
 /* HTS_Engine_set_volume: set volume */
 void HTS_Engine_set_volume(HTS_Engine * engine, double f);
+
+/* HTS_Engine_get_total_state: get total number of state */
+int HTS_Engine_get_total_state(HTS_Engine * engine);
+
+/* HTS_Engine_set_state_mean: set mean value of state */
+void HTS_Engine_set_state_mean(HTS_Engine * engine, int stream_index,
+                               int state_index, int vector_index, double f);
+
+/* HTS_Engine_get_state_mean: get mean value of state */
+double HTS_Engine_get_state_mean(HTS_Engine * engine, int stream_index,
+                                 int state_index, int vector_index);
+
+/* HTS_Engine_get_state_duration: get state duration */
+int HTS_Engine_get_state_duration(HTS_Engine * engine, int state_index);
+
+/* HTS_Engine_get_nstate: get number of state */
+int HTS_Engine_get_nstate(HTS_Engine * engine);
 
 /* HTS_Engine_load_label_from_fn: load label from file pointer */
 void HTS_Engine_load_label_from_fn(HTS_Engine * engine, char *fn);

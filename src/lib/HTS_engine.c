@@ -256,6 +256,12 @@ void HTS_Engine_set_sampling_rate(HTS_Engine * engine, int i)
    engine->global.sampling_rate = i;
 }
 
+/* HTS_Engine_get_sampling_rate: get sampling rate */
+int HTS_Engine_get_sampling_rate(HTS_Engine * engine)
+{
+   return engine->global.sampling_rate;
+}
+
 /* HTS_Engine_set_fperiod: set frame shift */
 void HTS_Engine_set_fperiod(HTS_Engine * engine, int i)
 {
@@ -264,6 +270,12 @@ void HTS_Engine_set_fperiod(HTS_Engine * engine, int i)
    if (i > 2000)
       i = 2000;
    engine->global.fperiod = i;
+}
+
+/* HTS_Engine_get_fperiod: get frame shift */
+int HTS_Engine_get_fperiod(HTS_Engine * engine)
+{
+   return engine->global.fperiod;
 }
 
 /* HTS_Engine_set_alpha: set alpha */
@@ -369,6 +381,40 @@ void HTS_Engine_set_volume(HTS_Engine * engine, double f)
 {
    if (f >= 0.0)
       engine->global.volume = f;
+}
+
+/* HTS_Engine_get_total_state: get total number of state */
+int HTS_Engine_get_total_state(HTS_Engine * engine)
+{
+   return HTS_SStreamSet_get_total_state(&engine->sss);
+}
+
+/* HTS_Engine_set_state_mean: set mean value of state */
+void HTS_Engine_set_state_mean(HTS_Engine * engine, int stream_index,
+                               int state_index, int vector_index, double f)
+{
+   HTS_SStreamSet_set_mean(&engine->sss, stream_index, state_index,
+                           vector_index, f);
+}
+
+/* HTS_Engine_get_state_mean: get mean value of state */
+double HTS_Engine_get_state_mean(HTS_Engine * engine, int stream_index,
+                                 int state_index, int vector_index)
+{
+   return HTS_SStreamSet_get_mean(&engine->sss, stream_index, state_index,
+                                  vector_index);
+}
+
+/* HTS_Engine_get_state_duration: get state duration */
+int HTS_Engine_get_state_duration(HTS_Engine * engine, int state_index)
+{
+   return HTS_SStreamSet_get_duration(&engine->sss, state_index);
+}
+
+/* HTS_Engine_get_nstate: get number of state */
+int HTS_Engine_get_nstate(HTS_Engine * engine)
+{
+   return HTS_ModelSet_get_nstate(&engine->ms);
 }
 
 /* HTS_Engine_load_label_from_fn: load label from file name */
