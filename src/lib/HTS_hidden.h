@@ -119,7 +119,7 @@ void HTS_free(void *p);
 #define STEPINC  1.2
 #define W1       1.0
 #define W2       1.0
-#define GV_MAX_ITERATION 0
+#define GV_MAX_ITERATION 5
 
 /*  -------------------------- audio ------------------------------  */
 

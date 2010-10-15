@@ -280,8 +280,8 @@ void HTS_Engine_set_fperiod(HTS_Engine * engine, int i)
 {
    if (i < 1)
       i = 1;
-   if (i > 2000)
-      i = 2000;
+   if (i > 48000)
+      i = 48000;
    engine->global.fperiod = i;
 }
 
@@ -380,6 +380,10 @@ void HTS_Engine_set_gv_interpolation_weight(HTS_Engine * engine,
 /* HTS_Engine_set_gv_weight: set GV weight */
 void HTS_Engine_set_gv_weight(HTS_Engine * engine, int stream_index, double f)
 {
+   if (f < 0.0)
+      f = 0.0;
+   if (f > 2.0)
+      f = 2.0;
    engine->global.gv_weight[stream_index] = f;
 }
 
@@ -392,8 +396,9 @@ void HTS_Engine_set_stop_flag(HTS_Engine * engine, HTS_Boolean b)
 /* HTS_Engine_set_volume: set volume */
 void HTS_Engine_set_volume(HTS_Engine * engine, double f)
 {
-   if (f >= 0.0)
-      engine->global.volume = f;
+   if (f < 0.0)
+      f = 0.0;
+   engine->global.volume = f;
 }
 
 /* HTS_Engine_get_total_state: get total number of state */

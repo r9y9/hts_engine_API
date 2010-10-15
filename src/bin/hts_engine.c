@@ -132,7 +132,7 @@ void Usage(void)
    fprintf(stderr,
            "    -cm pdf        : filenames of GV for spectrum                            [  N/A]\n");
    fprintf(stderr,
-           "    -jf f          : weight of GV for Log F0                                 [  0.7][ 0.0--2.0]\n");
+           "    -jf f          : weight of GV for Log F0                                 [  1.0][ 0.0--2.0]\n");
    fprintf(stderr,
            "    -jm f          : weight of GV for spectrum                               [  1.0][ 0.0--2.0]\n");
    fprintf(stderr,
@@ -258,7 +258,7 @@ int main(int argc, char **argv)
    double beta = 0.0;
    int audio_buff_size = 1600;
    double uv_threshold = 0.5;
-   double gv_weight_lf0 = 0.7;
+   double gv_weight_lf0 = 1.0;
    double gv_weight_mcp = 1.0;
 
    double half_tone = 0.0;

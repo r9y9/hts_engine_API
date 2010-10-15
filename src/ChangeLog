@@ -1,3 +1,11 @@
+2010-10-14 00:28  uratec
+
+	* ChangeLog, bin/hts_engine.c, include/HTS_engine.h,
+	  lib/HTS_audio.c, lib/HTS_engine.c, lib/HTS_gstream.c,
+	  lib/HTS_hidden.h, lib/HTS_label.c, lib/HTS_misc.c,
+	  lib/HTS_model.c, lib/HTS_pstream.c, lib/HTS_sstream.c,
+	  lib/HTS_vocoder.c: Accept C++ compiler.
+
 2010-10-13 23:21  uratec
 
 	* ChangeLog, include/HTS_engine.h, lib/HTS_engine.c: Add functions:

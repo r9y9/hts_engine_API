@@ -469,10 +469,8 @@ typedef struct _HTS_PStream {
    int *win_r_width;            /* right width of windows */
    double **win_coefficient;    /* window coefficients */
    HTS_Boolean *msd_flag;       /* Boolean sequence for MSD */
-   double *gv_buff;             /* buffer for GV calculation */
    double *gv_mean;             /* mean vector of GV */
    double *gv_vari;             /* variance vector of GV */
-   double gv_weight;            /* GV weight */
    HTS_Boolean *gv_switch;      /* GV flag sequence */
    int gv_length;               /* frame length for GV calculation */
 } HTS_PStream;
