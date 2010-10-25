@@ -127,7 +127,7 @@ static HTS_Boolean HTS_is_num(const char *buff)
    const int length = (int) strlen(buff);
 
    for (i = 0; i < length; i++)
-      if (!(isdigit(buff[i]) || (buff[i] == '-')))
+      if (!(isdigit((int) buff[i]) || (buff[i] == '-')))
          return FALSE;
 
    return TRUE;

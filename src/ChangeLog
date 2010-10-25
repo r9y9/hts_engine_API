@@ -1,3 +1,8 @@
+2010-10-15 14:15  uratec
+
+	* ChangeLog, NEWS, README, configure.ac, include/HTS_engine.h:
+	  update all documents for version 1.04.
+
 2010-10-15 14:02  uratec
 
 	* ChangeLog, bin/hts_engine.c, include/HTS_engine.h,

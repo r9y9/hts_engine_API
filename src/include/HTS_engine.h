@@ -264,7 +264,7 @@ void HTS_ModelSet_clear(HTS_ModelSet * ms);
 
 /*  -------------------------- label ------------------------------  */
 
-/* HTS_LabelString: Individual label string with time information */
+/* HTS_LabelString: individual label string with time information */
 typedef struct _HTS_LabelString {
    struct _HTS_LabelString *next;       /* pointer to next label string */
    char *name;                  /* label string */
@@ -272,7 +272,7 @@ typedef struct _HTS_LabelString {
    double end;                  /* end frame specified in the given label */
 } HTS_LabelString;
 
-/* HTS_Label: List of label strings. */
+/* HTS_Label: list of label strings */
 typedef struct _HTS_Label {
    HTS_LabelString *head;       /* pointer to the head of label string */
    int size;                    /* # of label strings */
@@ -330,7 +330,7 @@ void HTS_Label_clear(HTS_Label * label);
 
 /*  -------------------------- sstream ----------------------------  */
 
-/* HTS_SStream: Individual state stream. */
+/* HTS_SStream: individual state stream */
 typedef struct _HTS_SStream {
    int vector_length;           /* vector length (include static and dynamic features) */
    double **mean;               /* mean vector sequence */
@@ -346,7 +346,7 @@ typedef struct _HTS_SStream {
    HTS_Boolean *gv_switch;      /* GV flag sequence */
 } HTS_SStream;
 
-/* HTS_SStreamSet: Set of state stream. */
+/* HTS_SStreamSet: set of state stream */
 typedef struct _HTS_SStreamSet {
    HTS_SStream *sstream;        /* state streams */
    int nstream;                 /* # of streams */
