@@ -1,5 +1,6 @@
 Version 1.04:
  * support C++ compiler.
+ * add low-pass filter stream.
  * change definition of GV weights.
  * add stop switch.
  * add volume controller.

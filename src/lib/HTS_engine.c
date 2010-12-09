@@ -687,14 +687,13 @@ void HTS_Engine_save_label(HTS_Engine * engine, FILE * fp)
       for (j = 0, duration = 0; j < nstate; j++)
          duration += HTS_SStreamSet_get_duration(sss, state++);
       /* in HTK & HTS format */
-      fprintf(fp, "%d %d %s\n", (int) (frame * rate),
-              (int) ((frame + duration) * rate),
+      fprintf(fp, "%lu %lu %s\n", (unsigned long) (frame * rate),
+              (unsigned long) ((frame + duration) * rate),
               HTS_Label_get_string(label, i));
       frame += duration;
    }
 }
 
-#ifndef HTS_EMBEDDED
 /* HTS_Engine_save_generated_parameter: output generated parameter */
 void HTS_Engine_save_generated_parameter(HTS_Engine * engine, FILE * fp,
                                          int stream_index)
@@ -709,7 +708,6 @@ void HTS_Engine_save_generated_parameter(HTS_Engine * engine, FILE * fp,
          fwrite(&temp, sizeof(float), 1, fp);
       }
 }
-#endif                          /* !HTS_EMBEDDED */
 
 /* HTS_Engine_save_generated_speech: output generated speech */
 void HTS_Engine_save_generated_speech(HTS_Engine * engine, FILE * fp)

@@ -77,7 +77,7 @@ static void HTS_movem(double *a, double *b, const int nitem)
 }
 
 /* HTS_mlsafir: sub functions for MLSA filter */
-static double HTS_mlsafir(const double x, double *b, const int m,
+static double HTS_mlsafir(const double x, const double *b, const int m,
                           const double a, const double aa, double *d)
 {
    double y = 0.0;
@@ -99,9 +99,9 @@ static double HTS_mlsafir(const double x, double *b, const int m,
 }
 
 /* HTS_mlsadf1: sub functions for MLSA filter */
-static double HTS_mlsadf1(double x, double *b, const int m,
-                          const double a, const double aa,
-                          const int pd, double *d, const double *ppade)
+static double HTS_mlsadf1(double x, const double *b, const int m,
+                          const double a, const double aa, const int pd,
+                          double *d, const double *ppade)
 {
    double v, out = 0.0, *pt;
    int i;
@@ -123,9 +123,9 @@ static double HTS_mlsadf1(double x, double *b, const int m,
 }
 
 /* HTS_mlsadf2: sub functions for MLSA filter */
-static double HTS_mlsadf2(double x, double *b, const int m,
-                          const double a, const double aa,
-                          const int pd, double *d, const double *ppade)
+static double HTS_mlsadf2(double x, const double *b, const int m,
+                          const double a, const double aa, const int pd,
+                          double *d, const double *ppade)
 {
    double v, out = 0.0, *pt;
    int i;
@@ -147,7 +147,7 @@ static double HTS_mlsadf2(double x, double *b, const int m,
 }
 
 /* HTS_mlsadf: functions for MLSA filter */
-static double HTS_mlsadf(double x, double *b, int m, const double a,
+static double HTS_mlsadf(double x, const double *b, const int m, const double a,
                          const int pd, double *d, double *pade)
 {
    const double aa = 1 - a * a;
@@ -232,7 +232,7 @@ static void HTS_mc2b(double *mc, double *b, int m, const double a)
 }
 
 /* HTS_b2bc: transform MLSA digital filter coefficients to mel-cepstrum */
-static void HTS_b2mc(double *b, double *mc, int m, const double a)
+static void HTS_b2mc(const double *b, double *mc, int m, const double a)
 {
    double d, o;
 
@@ -245,7 +245,7 @@ static void HTS_b2mc(double *b, double *mc, int m, const double a)
 }
 
 /* HTS_freqt: frequency transformation */
-static void HTS_freqt(HTS_Vocoder * v, double *c1, const int m1,
+static void HTS_freqt(HTS_Vocoder * v, const double *c1, const int m1,
                       double *c2, const int m2, const double a)
 {
    int i, j;
@@ -277,7 +277,7 @@ static void HTS_freqt(HTS_Vocoder * v, double *c1, const int m1,
 }
 
 /* HTS_c2ir: The minimum phase impulse response is evaluated from the minimum phase cepstrum */
-static void HTS_c2ir(double *c, const int nc, double *h, const int leng)
+static void HTS_c2ir(const double *c, const int nc, double *h, const int leng)
 {
    int n, k, upl;
    double d;
@@ -293,7 +293,8 @@ static void HTS_c2ir(double *c, const int nc, double *h, const int leng)
 }
 
 /* HTS_b2en: calculate frame energy */
-static double HTS_b2en(HTS_Vocoder * v, double *b, const int m, const double a)
+static double HTS_b2en(HTS_Vocoder * v, const double *b, const int m,
+                       const double a)
 {
    int i;
    double en = 0.0;
@@ -351,7 +352,7 @@ static void HTS_gnorm(double *c1, double *c2, int m, const double g)
 }
 
 /* HTS_lsp2lpc: transform LSP to LPC */
-static void HTS_lsp2lpc(HTS_Vocoder * v, double *lsp, double *a, int m)
+static void HTS_lsp2lpc(HTS_Vocoder * v, double *lsp, double *a, const int m)
 {
    int i, k, mh1, mh2, flag_odd;
    double xx, xf, xff;
@@ -477,9 +478,9 @@ static void HTS_gc2gc(HTS_Vocoder * v, double *c1, const int m1,
 }
 
 /* HTS_mgc2mgc: frequency and generalized cepstral transformation */
-static void HTS_mgc2mgc(HTS_Vocoder * v, double *c1, int m1,
-                        const double a1, double g1, double *c2, int m2,
-                        const double a2, double g2)
+static void HTS_mgc2mgc(HTS_Vocoder * v, double *c1, const int m1,
+                        const double a1, const double g1, double *c2,
+                        const int m2, const double a2, const double g2)
 {
    double a;
 
@@ -527,8 +528,8 @@ static void HTS_lsp2mgc(HTS_Vocoder * v, double *lsp, double *mgc,
 }
 
 /* HTS_mglsadff: sub functions for MGLSA filter */
-static double HTS_mglsadff(double x, double *b, const int m, const double a,
-                           double *d)
+static double HTS_mglsadff(double x, const double *b, const int m,
+                           const double a, double *d)
 {
    int i;
 
@@ -547,8 +548,8 @@ static double HTS_mglsadff(double x, double *b, const int m, const double a,
 }
 
 /* HTS_mglsadf: sub functions for MGLSA filter */
-static double HTS_mglsadf(double x, double *b, const int m, const double a,
-                          int n, double *d)
+static double HTS_mglsadf(double x, const double *b, const int m,
+                          const double a, const int n, double *d)
 {
    int i;
 
@@ -566,47 +567,134 @@ static double HTS_white_noise(HTS_Vocoder * v)
       return HTS_mseq(v);
 }
 
+/* HTS_ping_pulse: ping pulse using low-pass filter */
+static void HTS_ping_pulse(HTS_Vocoder * v, const int ping_place,
+                           const double p, const int nlpf, const double *lpf)
+{
+   int i, j;
+   const double power = sqrt(p);
+
+   for (i = ping_place - nlpf, j = 0; i <= ping_place + nlpf; i++, j++)
+      if (0 <= i && i < PULSELISTSIZE)
+         v->pulse_list[i] += power * lpf[j];
+}
+
+/* HTS_ping_noise: ping noise using low-pass filter */
+static void HTS_ping_noise(HTS_Vocoder * v, const int ping_place,
+                           const int nlpf, const double *lpf)
+{
+   int i, j;
+   const double power = HTS_white_noise(v);
+
+   for (i = ping_place - nlpf, j = 0; i <= ping_place + nlpf; i++, j++)
+      if (0 <= i && i < PULSELISTSIZE) {
+         if (j == nlpf)
+            v->pulse_list[i] += power * (1.0 - lpf[j]);
+         else
+            v->pulse_list[i] += power * (0.0 - lpf[j]);
+      }
+}
+
+/* HTS_Vocoder_initialize_excitation: initialize excitation */
 static void HTS_Vocoder_initialize_excitation(HTS_Vocoder * v)
 {
+   int i;
+
+   for (i = 0; i < PULSELISTSIZE; i++)
+      v->pulse_list[i] = 0.0;
    v->p1 = 0.0;
    v->pc = 0.0;
    v->p = 0.0;
    v->inc = 0.0;
 }
 
-static void HTS_Vocoder_start_excitation(HTS_Vocoder * v, double pitch)
+/* HTS_Vocoder_start_excitation: start excitation of each frame */
+static void HTS_Vocoder_start_excitation(HTS_Vocoder * v, const double pitch,
+                                         const int nlpf)
 {
    if (v->p1 != 0.0 && pitch != 0.0)
       v->inc = (pitch - v->p1) * v->iprd / v->fprd;
    else {
       v->inc = 0.0;
-      v->p1 = 0.0;
-      v->pc = pitch;
+      if (nlpf <= 0) {
+         v->p1 = 0.0;
+         v->pc = pitch;
+      }
    }
    v->p = pitch;
 }
 
-static double HTS_Vocoder_get_excitation(HTS_Vocoder * v, int fprd_index,
-                                         int iprd_index)
+/* HTS_Vocoder_get_excitation: get excitation of each sample */
+static double HTS_Vocoder_get_excitation(HTS_Vocoder * v, const int fprd_index,
+                                         const int iprd_index, const int nlpf,
+                                         const double *lpf)
 {
    double x;
+   int i, j;
 
-   if (v->p1 == 0.0)
-      x = HTS_white_noise(v);
-   else {
-      if ((v->pc += 1.0) >= v->p1) {
-         x = sqrt(v->p1);
-         v->pc -= v->p1;
-      } else
-         x = 0.0;
+   if (nlpf > 0) {
+      if (fprd_index == 0) {
+         if (v->p1 == 0.0) {
+            for (i = 0; i < v->fprd; i++)
+               v->pulse_list[i] += HTS_white_noise(v);
+            if (v->p != 0.0) {
+               HTS_ping_pulse(v, v->fprd + nlpf, v->p, nlpf, lpf);
+               v->pc = v->fprd + nlpf;
+            }
+         } else if (v->p == 0.0) {
+            for (i = nlpf; i < v->fprd; i++)
+               v->pulse_list[i] += HTS_white_noise(v);
+         } else {
+            for (i = 0, j = (v->iprd + 1) / 2; i < v->fprd; i++) {
+               if ((v->pc + v->p1) <= i) {
+                  HTS_ping_pulse(v, i, v->p1, nlpf, lpf);
+                  v->pc += v->p1;
+               }
+               if (!--j) {
+                  v->p1 += v->inc;
+                  j = v->iprd;
+               }
+            }
+            for (i = v->fprd; i < v->fprd + nlpf; i++) {
+               if ((v->pc + v->p) <= i) {
+                  HTS_ping_pulse(v, i, v->p, nlpf, lpf);
+                  v->pc += v->p;
+               }
+            }
+            for (i = nlpf; i < v->fprd + nlpf; i++)
+               HTS_ping_noise(v, i, nlpf, lpf);
+         }
+      }
+      x = v->pulse_list[fprd_index];
+   } else {
+      if (v->p1 == 0.0)
+         x = HTS_white_noise(v);
+      else {
+         if ((v->pc += 1.0) >= v->p1) {
+            x = sqrt(v->p1);
+            v->pc -= v->p1;
+         } else
+            x = 0.0;
+      }
+      if (iprd_index <= 1)
+         v->p1 += v->inc;
    }
-   if (!--iprd_index)
-      v->p1 += v->inc;
    return x;
 }
 
-static void HTS_Vocoder_end_excitation(HTS_Vocoder * v)
+/* HTS_Vocoder_end_excitation: end excitation of each frame */
+static void HTS_Vocoder_end_excitation(HTS_Vocoder * v, const int nlpf)
 {
+   int i;
+
+   if (nlpf > 0) {
+      v->pc -= v->fprd;
+      for (i = 0; i < PULSELISTSIZE; i++)
+         if (i < PULSELISTSIZE - v->fprd)
+            v->pulse_list[i] = v->pulse_list[i + v->fprd];
+         else
+            v->pulse_list[i] = 0.0;
+   }
    v->p1 = v->p;
 }
 
@@ -684,12 +772,14 @@ void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
       v->cinc = v->cc + m + 1;
       v->d1 = v->cinc + m + 1;
    }
+   v->pulse_list = (double *) HTS_calloc(PULSELISTSIZE, sizeof(double));
 }
 
 /* HTS_Vocoder_synthesize: pulse/noise excitation and MLSA/MGLSA filster based waveform synthesis */
 void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
-                            double *spectrum, double alpha, double beta,
-                            double volume, short *rawdata)
+                            double *spectrum, const int nlpf, double *lpf,
+                            double alpha, double beta, double volume,
+                            short *rawdata)
 {
    double x;
    int i, j;
@@ -725,7 +815,7 @@ void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
       }
    }
 
-   HTS_Vocoder_start_excitation(v, p);
+   HTS_Vocoder_start_excitation(v, p, nlpf);
    if (v->stage == 0) {         /* for MCP */
       HTS_Vocoder_postfilter_mcp(v, spectrum, m, alpha, beta);
       HTS_mc2b(spectrum, v->cc, m, alpha);
@@ -742,7 +832,7 @@ void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
    }
 
    for (j = 0, i = (v->iprd + 1) / 2; j < v->fprd; j++) {
-      x = HTS_Vocoder_get_excitation(v, j, i);
+      x = HTS_Vocoder_get_excitation(v, j, i, nlpf, lpf);
       if (v->stage == 0) {      /* for MCP */
          if (x != 0.0)
             x *= exp(v->c[0]);
@@ -773,7 +863,7 @@ void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
       }
    }
 
-   HTS_Vocoder_end_excitation(v);
+   HTS_Vocoder_end_excitation(v, nlpf);
    HTS_movem(v->cc, v->c, m + 1);
 }
 
@@ -848,6 +938,8 @@ void HTS_Vocoder_clear(HTS_Vocoder * v)
          HTS_free(v->audio);
          v->audio = NULL;
       }
+      if (v->pulse_list != NULL)
+         HTS_free(v->pulse_list);
    }
 }
 

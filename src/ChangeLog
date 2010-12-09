@@ -1,3 +1,8 @@
+2010-10-25 16:36  uratec
+
+	* ChangeLog, include/HTS_engine.h, lib/HTS_label.c,
+	  lib/HTS_model.c: Remove warning for cygwin compiler.
+
 2010-10-15 14:15  uratec
 
 	* ChangeLog, NEWS, README, configure.ac, include/HTS_engine.h:

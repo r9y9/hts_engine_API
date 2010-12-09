@@ -76,25 +76,33 @@ void Usage(void)
    fprintf(stderr,
            "    -td tree       : decision tree files for state duration                  [  N/A]\n");
    fprintf(stderr,
+           "    -tm tree       : decision tree files for spectrum                        [  N/A]\n");
+   fprintf(stderr,
            "    -tf tree       : decision tree files for Log F0                          [  N/A]\n");
    fprintf(stderr,
-           "    -tm tree       : decision tree files for spectrum                        [  N/A]\n");
+           "    -tl tree       : decision tree files for low-pass filter                 [  N/A]\n");
    fprintf(stderr,
            "    -md pdf        : model files for state duration                          [  N/A]\n");
    fprintf(stderr,
-           "    -mf pdf        : model files for Log F0                                  [  N/A]\n");
-   fprintf(stderr,
            "    -mm pdf        : model files for spectrum                                [  N/A]\n");
    fprintf(stderr,
-           "    -df win        : window files for calculation delta of Log F0            [  N/A]\n");
+           "    -mf pdf        : model files for Log F0                                  [  N/A]\n");
+   fprintf(stderr,
+           "    -ml pdf        : model files for low-pass filter                         [  N/A]\n");
    fprintf(stderr,
            "    -dm win        : window files for calculation delta of spectrum          [  N/A]\n");
    fprintf(stderr,
+           "    -df win        : window files for calculation delta of Log F0            [  N/A]\n");
+   fprintf(stderr,
+           "    -dl win        : window files for calculation delta of low-pass filter   [  N/A]\n");
+   fprintf(stderr,
            "    -od s          : filename of output label with duration                  [  N/A]\n");
+   fprintf(stderr,
+           "    -om s          : filename of output spectrum                             [  N/A]\n");
    fprintf(stderr,
            "    -of s          : filename of output Log F0                               [  N/A]\n");
    fprintf(stderr,
-           "    -om s          : filename of output spectrum                             [  N/A]\n");
+           "    -ol s          : filename of output low-pass filter                      [  N/A]\n");
    fprintf(stderr,
            "    -or s          : filename of output raw audio (generated speech)         [  N/A]\n");
    fprintf(stderr,
@@ -124,17 +132,23 @@ void Usage(void)
    fprintf(stderr,
            "    -u  f          : voiced/unvoiced threshold                               [  0.5][ 0.0--1.0]\n");
    fprintf(stderr,
-           "    -ef tree       : decision tree files for GV of Log F0                    [  N/A]\n");
-   fprintf(stderr,
            "    -em tree       : decision tree files for GV of spectrum                  [  N/A]\n");
    fprintf(stderr,
-           "    -cf pdf        : filenames of GV for Log F0                              [  N/A]\n");
+           "    -ef tree       : decision tree files for GV of Log F0                    [  N/A]\n");
+   fprintf(stderr,
+           "    -el tree       : decision tree files for GV of low-pass filter           [  N/A]\n");
    fprintf(stderr,
            "    -cm pdf        : filenames of GV for spectrum                            [  N/A]\n");
    fprintf(stderr,
-           "    -jf f          : weight of GV for Log F0                                 [  1.0][ 0.0--2.0]\n");
+           "    -cf pdf        : filenames of GV for Log F0                              [  N/A]\n");
+   fprintf(stderr,
+           "    -cl pdf        : filenames of GV for low-pass filter                     [  N/A]\n");
    fprintf(stderr,
            "    -jm f          : weight of GV for spectrum                               [  1.0][ 0.0--2.0]\n");
+   fprintf(stderr,
+           "    -jf f          : weight of GV for Log F0                                 [  1.0][ 0.0--2.0]\n");
+   fprintf(stderr,
+           "    -jl f          : weight of GV for low-pass filter                        [  1.0][ 0.0--2.0]\n");
    fprintf(stderr,
            "    -k  tree       : GV switch                                               [  N/A]\n");
    fprintf(stderr,
@@ -145,8 +159,9 @@ void Usage(void)
    fprintf(stderr,
            "    option '-d' may be repeated to use multiple delta parameters.\n");
    fprintf(stderr,
-           "    generated spectrum and log F0 sequences are saved in natural\n");
-   fprintf(stderr, "    endian, binary (float) format.\n");
+           "    generated spectrum, log F0, and low-pass filter coefficient\n");
+   fprintf(stderr,
+           "    sequences are saved in natural endian, binary (float) format.\n");
    fprintf(stderr, "\n");
 
    exit(0);
@@ -209,43 +224,46 @@ int main(int argc, char **argv)
    int i;
    double f;
    char *labfn = NULL;
-#ifndef HTS_EMBEDDED
-   FILE *lf0fp = NULL, *mcpfp = NULL;
-#endif                          /* !HTS_EMBEDDED */
-   FILE *durfp = NULL, *wavfp = NULL, *rawfp = NULL, *tracefp = NULL;
+   FILE *durfp = NULL, *mgcfp = NULL, *lf0fp = NULL, *lpffp = NULL;
+   FILE *wavfp = NULL, *rawfp = NULL, *tracefp = NULL;
 
    /* number of speakers for interpolation */
    int num_interp = 0;
    double *rate_interp = NULL;
 
    /* file names of models */
-   char **fn_ms_lf0;
-   char **fn_ms_mcp;
    char **fn_ms_dur;
+   char **fn_ms_mgc;
+   char **fn_ms_lf0;
+   char **fn_ms_lpf;
    /* number of each models for interpolation */
-   int num_ms_lf0 = 0, num_ms_mcp = 0, num_ms_dur = 0;
+   int num_ms_dur = 0, num_ms_mgc = 0, num_ms_lf0 = 0, num_ms_lpf = 0;
 
    /* file names of trees */
-   char **fn_ts_lf0;
-   char **fn_ts_mcp;
    char **fn_ts_dur;
+   char **fn_ts_mgc;
+   char **fn_ts_lf0;
+   char **fn_ts_lpf;
    /* number of each trees for interpolation */
-   int num_ts_lf0 = 0, num_ts_mcp = 0, num_ts_dur = 0;
+   int num_ts_dur = 0, num_ts_mgc = 0, num_ts_lf0 = 0, num_ts_lpf = 0;
 
    /* file names of windows */
+   char **fn_ws_mgc;
    char **fn_ws_lf0;
-   char **fn_ws_mcp;
-   int num_ws_lf0 = 0, num_ws_mcp = 0;
+   char **fn_ws_lpf;
+   int num_ws_mgc = 0, num_ws_lf0 = 0, num_ws_lpf = 0;
 
    /* file names of global variance */
-   char **fn_ms_gvl = NULL;
    char **fn_ms_gvm = NULL;
-   int num_ms_gvl = 0, num_ms_gvm = 0;
+   char **fn_ms_gvl = NULL;
+   char **fn_ms_gvf = NULL;
+   int num_ms_gvm = 0, num_ms_gvl = 0, num_ms_gvf = 0;
 
    /* file names of global variance trees */
-   char **fn_ts_gvl = NULL;
    char **fn_ts_gvm = NULL;
-   int num_ts_gvl = 0, num_ts_gvm = 0;
+   char **fn_ts_gvl = NULL;
+   char **fn_ts_gvf = NULL;
+   int num_ts_gvm = 0, num_ts_gvl = 0, num_ts_gvf = 0;
 
    /* file name of global variance switch */
    char *fn_gv_switch = NULL;
@@ -258,8 +276,9 @@ int main(int argc, char **argv)
    double beta = 0.0;
    int audio_buff_size = 1600;
    double uv_threshold = 0.5;
+   double gv_weight_mgc = 1.0;
    double gv_weight_lf0 = 1.0;
-   double gv_weight_mcp = 1.0;
+   double gv_weight_lpf = 1.0;
 
    double half_tone = 0.0;
    HTS_Boolean phoneme_alignment = FALSE;
@@ -273,13 +292,12 @@ int main(int argc, char **argv)
    if (argc == 1)
       Usage();
 
-   /* initialize (stream[0] = spectrum , stream[1] = lf0) */
-   HTS_Engine_initialize(&engine, 2);
-
+   /* delta window handler for mel-cepstrum */
+   fn_ws_mgc = (char **) calloc(argc, sizeof(char *));
    /* delta window handler for log f0 */
    fn_ws_lf0 = (char **) calloc(argc, sizeof(char *));
-   /* delta window handler for mel-cepstrum */
-   fn_ws_mcp = (char **) calloc(argc, sizeof(char *));
+   /* delta window handler for low-pass filter */
+   fn_ws_lpf = (char **) calloc(argc, sizeof(char *));
 
    /* prepare for interpolation */
    num_interp = GetNumInterp(argc, argv);
@@ -287,16 +305,20 @@ int main(int argc, char **argv)
    for (i = 0; i < num_interp; i++)
       rate_interp[i] = 1.0;
 
-   fn_ms_lf0 = (char **) calloc(num_interp, sizeof(char *));
-   fn_ms_mcp = (char **) calloc(num_interp, sizeof(char *));
    fn_ms_dur = (char **) calloc(num_interp, sizeof(char *));
-   fn_ts_lf0 = (char **) calloc(num_interp, sizeof(char *));
-   fn_ts_mcp = (char **) calloc(num_interp, sizeof(char *));
+   fn_ms_mgc = (char **) calloc(num_interp, sizeof(char *));
+   fn_ms_lf0 = (char **) calloc(num_interp, sizeof(char *));
+   fn_ms_lpf = (char **) calloc(num_interp, sizeof(char *));
    fn_ts_dur = (char **) calloc(num_interp, sizeof(char *));
-   fn_ms_gvl = (char **) calloc(num_interp, sizeof(char *));
+   fn_ts_mgc = (char **) calloc(num_interp, sizeof(char *));
+   fn_ts_lf0 = (char **) calloc(num_interp, sizeof(char *));
+   fn_ts_lpf = (char **) calloc(num_interp, sizeof(char *));
    fn_ms_gvm = (char **) calloc(num_interp, sizeof(char *));
-   fn_ts_gvl = (char **) calloc(num_interp, sizeof(char *));
+   fn_ms_gvl = (char **) calloc(num_interp, sizeof(char *));
+   fn_ms_gvf = (char **) calloc(num_interp, sizeof(char *));
    fn_ts_gvm = (char **) calloc(num_interp, sizeof(char *));
+   fn_ts_gvl = (char **) calloc(num_interp, sizeof(char *));
+   fn_ts_gvf = (char **) calloc(num_interp, sizeof(char *));
 
    /* read command */
    while (--argc) {
@@ -313,15 +335,18 @@ int main(int argc, char **argv)
             break;
          case 't':
             switch (*(*argv + 2)) {
+            case 'd':
+               fn_ts_dur[num_ts_dur++] = *++argv;
+               break;
+            case 'm':
+               fn_ts_mgc[num_ts_mgc++] = *++argv;
+               break;
             case 'f':
             case 'p':
                fn_ts_lf0[num_ts_lf0++] = *++argv;
                break;
-            case 'm':
-               fn_ts_mcp[num_ts_mcp++] = *++argv;
-               break;
-            case 'd':
-               fn_ts_dur[num_ts_dur++] = *++argv;
+            case 'l':
+               fn_ts_lpf[num_ts_lpf++] = *++argv;
                break;
             default:
                Error(1, "hts_engine: Invalid option '-t%c'.\n", *(*argv + 2));
@@ -330,15 +355,18 @@ int main(int argc, char **argv)
             break;
          case 'm':
             switch (*(*argv + 2)) {
+            case 'd':
+               fn_ms_dur[num_ms_dur++] = *++argv;
+               break;
+            case 'm':
+               fn_ms_mgc[num_ms_mgc++] = *++argv;
+               break;
             case 'f':
             case 'p':
                fn_ms_lf0[num_ms_lf0++] = *++argv;
                break;
-            case 'm':
-               fn_ms_mcp[num_ms_mcp++] = *++argv;
-               break;
-            case 'd':
-               fn_ms_dur[num_ms_dur++] = *++argv;
+            case 'l':
+               fn_ms_lpf[num_ms_lpf++] = *++argv;
                break;
             default:
                Error(1, "hts_engine: Invalid option '-m%c'.\n", *(*argv + 2));
@@ -347,14 +375,15 @@ int main(int argc, char **argv)
             break;
          case 'd':
             switch (*(*argv + 2)) {
+            case 'm':
+               fn_ws_mgc[num_ws_mgc++] = *++argv;
+               break;
             case 'f':
             case 'p':
-               fn_ws_lf0[num_ws_lf0] = *++argv;
-               num_ws_lf0++;
+               fn_ws_lf0[num_ws_lf0++] = *++argv;
                break;
-            case 'm':
-               fn_ws_mcp[num_ws_mcp] = *++argv;
-               num_ws_mcp++;
+            case 'l':
+               fn_ws_lpf[num_ws_lpf++] = *++argv;
                break;
             default:
                Error(1, "hts_engine: Invalid option '-d%c'.\n", *(*argv + 2));
@@ -369,17 +398,18 @@ int main(int argc, char **argv)
             case 'r':
                rawfp = Getfp(*++argv, "wb");
                break;
-#ifndef HTS_EMBEDDED
+            case 'd':
+               durfp = Getfp(*++argv, "wt");
+               break;
+            case 'm':
+               mgcfp = Getfp(*++argv, "wb");
+               break;
             case 'f':
             case 'p':
                lf0fp = Getfp(*++argv, "wb");
                break;
-            case 'm':
-               mcpfp = Getfp(*++argv, "wb");
-               break;
-#endif                          /* !HTS_EMBEDDED */
-            case 'd':
-               durfp = Getfp(*++argv, "wt");
+            case 'l':
+               lpffp = Getfp(*++argv, "wb");
                break;
             case 't':
                tracefp = Getfp(*++argv, "wt");
@@ -448,12 +478,15 @@ int main(int argc, char **argv)
             break;
          case 'e':
             switch (*(*argv + 2)) {
+            case 'm':
+               fn_ts_gvm[num_ts_gvm++] = *++argv;
+               break;
             case 'f':
             case 'p':
                fn_ts_gvl[num_ts_gvl++] = *++argv;
                break;
-            case 'm':
-               fn_ts_gvm[num_ts_gvm++] = *++argv;
+            case 'l':
+               fn_ts_gvf[num_ts_gvf++] = *++argv;
                break;
             default:
                Error(1, "hts_engine: Invalid option '-e%c'.\n", *(*argv + 2));
@@ -462,12 +495,15 @@ int main(int argc, char **argv)
             break;
          case 'c':
             switch (*(*argv + 2)) {
+            case 'm':
+               fn_ms_gvm[num_ms_gvm++] = *++argv;
+               break;
             case 'f':
             case 'p':
                fn_ms_gvl[num_ms_gvl++] = *++argv;
                break;
-            case 'm':
-               fn_ms_gvm[num_ms_gvm++] = *++argv;
+            case 'l':
+               fn_ms_gvf[num_ms_gvf++] = *++argv;
                break;
             default:
                Error(1, "hts_engine: Invalid option '-c%c'.\n", *(*argv + 2));
@@ -476,12 +512,15 @@ int main(int argc, char **argv)
             break;
          case 'j':
             switch (*(*argv + 2)) {
+            case 'm':
+               gv_weight_mgc = atof(*++argv);
+               break;
             case 'f':
             case 'p':
                gv_weight_lf0 = atof(*++argv);
                break;
-            case 'm':
-               gv_weight_mcp = atof(*++argv);
+            case 'l':
+               gv_weight_lpf = atof(*++argv);
                break;
             default:
                Error(1, "hts_engine: Invalid option '-j%c'.\n", *(*argv + 2));
@@ -504,22 +543,39 @@ int main(int argc, char **argv)
       }
    }
    /* number of models,trees check */
-   if (num_interp != num_ts_lf0 || num_interp != num_ts_mcp ||
-       num_interp != num_ts_dur || num_interp != num_ms_lf0 ||
-       num_interp != num_ms_mcp || num_interp != num_ms_dur) {
-      Error(1,
-            "hts_engine: specify %d models(trees) for each parameter.\n",
+   if (num_interp != num_ts_dur || num_interp != num_ts_mgc ||
+       num_interp != num_ts_lf0 || num_interp != num_ms_dur ||
+       num_interp != num_ms_mgc || num_interp != num_ms_lf0) {
+      Error(1, "hts_engine: specify %d models(trees) for each parameter.\n",
             num_interp);
+   }
+   if (num_ms_lpf > 0 || num_ts_lpf > 0) {
+      if (num_interp != num_ms_lpf || num_interp != num_ts_lpf) {
+         Error(1, "hts_engine: specify %d models(trees) for each parameter.\n",
+               num_interp);
+      }
+   }
+
+   /* initialize (stream[0] = spectrum, stream[1] = lf0, stream[2] = low-pass filter) */
+   if (num_ms_lpf > 0 || num_ts_lpf > 0) {
+      HTS_Engine_initialize(&engine, 3);
+   } else {
+      HTS_Engine_initialize(&engine, 2);
    }
 
    /* load duration model */
    HTS_Engine_load_duration_from_fn(&engine, fn_ms_dur, fn_ts_dur, num_interp);
    /* load stream[0] (spectrum model) */
-   HTS_Engine_load_parameter_from_fn(&engine, fn_ms_mcp, fn_ts_mcp, fn_ws_mcp,
-                                     0, FALSE, num_ws_mcp, num_interp);
+   HTS_Engine_load_parameter_from_fn(&engine, fn_ms_mgc, fn_ts_mgc, fn_ws_mgc,
+                                     0, FALSE, num_ws_mgc, num_interp);
    /* load stream[1] (lf0 model) */
    HTS_Engine_load_parameter_from_fn(&engine, fn_ms_lf0, fn_ts_lf0, fn_ws_lf0,
                                      1, TRUE, num_ws_lf0, num_interp);
+   /* load stream[2] (low-pass filter model) */
+   if (num_ms_lpf > 0 || num_ts_lpf > 0)
+      HTS_Engine_load_parameter_from_fn(&engine, fn_ms_lpf, fn_ts_lpf,
+                                        fn_ws_lpf, 2, FALSE, num_ws_lpf,
+                                        num_interp);
    /* load gv[0] (GV for spectrum) */
    if (num_interp == num_ms_gvm) {
       if (num_ms_gvm == num_ts_gvm)
@@ -536,6 +592,14 @@ int main(int argc, char **argv)
       else
          HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvl, NULL, 1, num_interp);
    }
+   /* load gv[2] (GV for low-pass filter) */
+   if (num_interp == num_ms_gvf && (num_ms_lpf > 0 || num_ts_lpf > 0)) {
+      if (num_ms_gvf == num_ts_gvf)
+         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvf, fn_ts_gvf, 0,
+                                    num_interp);
+      else
+         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvf, NULL, 2, num_interp);
+   }
    /* load GV switch */
    if (fn_gv_switch != NULL)
       HTS_Engine_load_gv_switch_from_fn(&engine, fn_gv_switch);
@@ -549,14 +613,19 @@ int main(int argc, char **argv)
    HTS_Engine_set_beta(&engine, beta);
    HTS_Engine_set_audio_buff_size(&engine, audio_buff_size);
    HTS_Engine_set_msd_threshold(&engine, 1, uv_threshold);      /* set voiced/unvoiced threshold for stream[1] */
-   HTS_Engine_set_gv_weight(&engine, 0, gv_weight_mcp);
+   HTS_Engine_set_gv_weight(&engine, 0, gv_weight_mgc);
    HTS_Engine_set_gv_weight(&engine, 1, gv_weight_lf0);
+   if (num_ms_lpf > 0 || num_ts_lpf > 0)
+      HTS_Engine_set_gv_weight(&engine, 2, gv_weight_lpf);
    for (i = 0; i < num_interp; i++) {
       HTS_Engine_set_duration_interpolation_weight(&engine, i, rate_interp[i]);
       HTS_Engine_set_parameter_interpolation_weight(&engine, 0, i,
                                                     rate_interp[i]);
       HTS_Engine_set_parameter_interpolation_weight(&engine, 1, i,
                                                     rate_interp[i]);
+      if (num_ms_lpf > 0 || num_ts_lpf > 0)
+         HTS_Engine_set_parameter_interpolation_weight(&engine, 2, i,
+                                                       rate_interp[i]);
    }
    if (num_interp == num_ms_gvm)
       for (i = 0; i < num_interp; i++)
@@ -564,6 +633,9 @@ int main(int argc, char **argv)
    if (num_interp == num_ms_gvl)
       for (i = 0; i < num_interp; i++)
          HTS_Engine_set_gv_interpolation_weight(&engine, 1, i, rate_interp[i]);
+   if (num_interp == num_ms_gvf && (num_ms_lpf > 0 || num_ts_lpf > 0))
+      for (i = 0; i < num_interp; i++)
+         HTS_Engine_set_gv_interpolation_weight(&engine, 2, i, rate_interp[i]);
 
    /* synthesis */
    HTS_Engine_load_label_from_fn(&engine, labfn);       /* load label file */
@@ -593,12 +665,12 @@ int main(int argc, char **argv)
       HTS_Engine_save_generated_speech(&engine, rawfp);
    if (wavfp)
       HTS_Engine_save_riff(&engine, wavfp);
-#ifndef HTS_EMBEDDED
-   if (mcpfp)
-      HTS_Engine_save_generated_parameter(&engine, mcpfp, 0);
+   if (mgcfp)
+      HTS_Engine_save_generated_parameter(&engine, mgcfp, 0);
    if (lf0fp)
       HTS_Engine_save_generated_parameter(&engine, lf0fp, 1);
-#endif                          /* !HTS_EMBEDDED */
+   if (lpffp)
+      HTS_Engine_save_generated_parameter(&engine, lpffp, 2);
 
    /* free */
    HTS_Engine_refresh(&engine);
@@ -606,32 +678,37 @@ int main(int argc, char **argv)
    /* free memory */
    HTS_Engine_clear(&engine);
    free(rate_interp);
-   free(fn_ws_mcp);
+   free(fn_ws_mgc);
    free(fn_ws_lf0);
-   free(fn_ms_mcp);
+   free(fn_ws_lpf);
+   free(fn_ms_mgc);
    free(fn_ms_lf0);
+   free(fn_ms_lpf);
    free(fn_ms_dur);
-   free(fn_ts_mcp);
+   free(fn_ts_mgc);
    free(fn_ts_lf0);
+   free(fn_ts_lpf);
    free(fn_ts_dur);
    free(fn_ms_gvm);
    free(fn_ms_gvl);
+   free(fn_ms_gvf);
    free(fn_ts_gvm);
    free(fn_ts_gvl);
+   free(fn_ts_gvf);
 
    /* close files */
-#ifndef HTS_EMBEDDED
-   if (mcpfp != NULL)
-      fclose(mcpfp);
+   if (durfp != NULL)
+      fclose(durfp);
+   if (mgcfp != NULL)
+      fclose(mgcfp);
    if (lf0fp != NULL)
       fclose(lf0fp);
-#endif                          /* !HTS_EMBEDDED */
+   if (lpffp != NULL)
+      fclose(lpffp);
    if (wavfp != NULL)
       fclose(wavfp);
    if (rawfp != NULL)
       fclose(rawfp);
-   if (durfp != NULL)
-      fclose(durfp);
    if (tracefp != NULL)
       fclose(tracefp);
 

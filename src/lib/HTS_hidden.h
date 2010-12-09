@@ -161,6 +161,8 @@ void HTS_Audio_close(HTS_Audio * as);
 #define IRLENG    96
 #endif                          /* HTS_EMBEDDED */
 
+#define PULSELISTSIZE 512
+
 /* for MGLSA filter */
 #define NORMFLG1 TRUE
 #define NORMFLG2 FALSE
