@@ -429,6 +429,12 @@ int HTS_Engine_get_state_duration(HTS_Engine * engine, int state_index)
    return HTS_SStreamSet_get_duration(&engine->sss, state_index);
 }
 
+/* HTS_Engine_get_nstream: get number of stream */
+int HTS_Engine_get_nstream(HTS_Engine * engine)
+{
+   return HTS_ModelSet_get_nstream(&engine->ms);
+}
+
 /* HTS_Engine_get_nstate: get number of state */
 int HTS_Engine_get_nstate(HTS_Engine * engine)
 {

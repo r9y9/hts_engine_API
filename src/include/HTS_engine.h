@@ -711,6 +711,9 @@ double HTS_Engine_get_state_mean(HTS_Engine * engine, int stream_index,
 /* HTS_Engine_get_state_duration: get state duration */
 int HTS_Engine_get_state_duration(HTS_Engine * engine, int state_index);
 
+/* HTS_Engine_get_nstream: get number of stream */
+int HTS_Engine_get_nstream(HTS_Engine * engine);
+
 /* HTS_Engine_get_nstate: get number of state */
 int HTS_Engine_get_nstate(HTS_Engine * engine);
 
