@@ -3,7 +3,7 @@ by the HMM-based speech synthesis system (HTS). This software is released
 under the New and Simplified BSD license. See the COPYING file in the same
 directory as this file for the license.
 
-The hts_engine_API has been developed by several members of HTS Working Group
+The hts_engine_API has been developed by several members of HTS working group
 and some graduate students in Nagoya Institute of Technology:
 
  Keiichi Tokuda      http://www.sp.nitech.ac.jp/~tokuda/

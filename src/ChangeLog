@@ -1,3 +1,7 @@
+2010-12-12 17:09  uratec
+
+	* ChangeLog, README: Fix a typo.
+
 2010-12-09 20:45  uratec
 
 	* ChangeLog, include/HTS_engine.h, lib/HTS_engine.c: Add
