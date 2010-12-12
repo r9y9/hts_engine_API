@@ -1,3 +1,8 @@
+2010-12-09 20:45  uratec
+
+	* ChangeLog, include/HTS_engine.h, lib/HTS_engine.c: Add
+	  HTS_Engine_get_nstream function.
+
 2010-12-09 19:52  uratec
 
 	* ChangeLog, NEWS, bin/hts_engine.c, include/HTS_engine.h,
