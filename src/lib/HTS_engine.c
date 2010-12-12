@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------- */
-/*           The HMM-Based Speech Synthesis System (HTS)             */
-/*           hts_engine API developed by HTS Working Group           */
+/*           The HMM-Based Speech Synthesis Engine "hts_engine API"  */
+/*           developed by HTS Working Group                          */
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
@@ -811,7 +811,7 @@ void HTS_get_copyright(char *str)
    char url[] = HTS_URL, version[] = HTS_VERSION;
    char *copyright[] = { HTS_COPYRIGHT };
 
-   sprintf(str, "\nThe HMM-based speech synthesis system (HTS)\n");
+   sprintf(str, "\nThe HMM-Based Speech Synthesis Engine \"hts_engine API\"\n");
    sprintf(str, "%shts_engine API version %s (%s)\n", str, version, url);
    for (i = 0; i < nCopyright; i++) {
       if (i == 0)

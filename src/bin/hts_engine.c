@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------- */
-/*           The HMM-Based Speech Synthesis System (HTS)             */
-/*           hts_engine API developed by HTS Working Group           */
+/*           The HMM-Based Speech Synthesis Engine "hts_engine API"  */
+/*           developed by HTS Working Group                          */
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
@@ -67,7 +67,7 @@ void Usage(void)
 {
    HTS_show_copyright(stderr);
    fprintf(stderr, "\n");
-   fprintf(stderr, "hts_engine - An HMM-based speech synthesis engine\n");
+   fprintf(stderr, "hts_engine - The HMM-based speech synthesis engine \"hts_engine API\"\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "  usage:\n");
    fprintf(stderr, "       hts_engine [ options ] [ infile ] \n");
