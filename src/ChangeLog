@@ -1,3 +1,11 @@
+2010-12-12 21:50  uratec
+
+	* ChangeLog, README, bin/hts_engine.c, include/HTS_engine.h,
+	  lib/HTS_audio.c, lib/HTS_engine.c, lib/HTS_gstream.c,
+	  lib/HTS_hidden.h, lib/HTS_label.c, lib/HTS_misc.c,
+	  lib/HTS_model.c, lib/HTS_pstream.c, lib/HTS_sstream.c,
+	  lib/HTS_vocoder.c: Update all documents.
+
 2010-12-12 17:36  uratec
 
 	* AUTHORS, COPYING, ChangeLog, README: Update documents.
