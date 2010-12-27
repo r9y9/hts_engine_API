@@ -131,7 +131,7 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
    if (HTS_PStreamSet_get_static_length(pss, 1) != 1)
       HTS_error(1,
                 "HTS_GStreamSet_create: The size of lf0 static vector should be 1.\n");
-   if (gss->nstream == 3 && gss->gstream[2].static_length % 2 == 0)
+   if (gss->nstream >= 3 && gss->gstream[2].static_length % 2 == 0)
       HTS_error(1,
                 "HTS_GStreamSet_create: The number of low-pass filter coefficient should be odd numbers.");
 
@@ -139,10 +139,10 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
    HTS_Vocoder_initialize(&v, gss->gstream[0].static_length - 1, stage,
                           use_log_gain, sampling_rate, fperiod,
                           audio_buff_size);
-   if (gss->nstream == 3)
+   if (gss->nstream >= 3)
       nlpf = (gss->gstream[2].static_length - 1) / 2;
    for (i = 0; i < gss->total_frame && (*stop) == FALSE; i++) {
-      if (gss->nstream == 3)
+      if (gss->nstream >= 3)
          lpf = &gss->gstream[2].par[i][0];
       HTS_Vocoder_synthesize(&v, gss->gstream[0].static_length - 1,
                              gss->gstream[1].par[i][0],

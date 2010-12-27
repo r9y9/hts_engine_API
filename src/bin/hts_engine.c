@@ -67,7 +67,8 @@ void Usage(void)
 {
    HTS_show_copyright(stderr);
    fprintf(stderr, "\n");
-   fprintf(stderr, "hts_engine - The HMM-based speech synthesis engine \"hts_engine API\"\n");
+   fprintf(stderr,
+           "hts_engine - The HMM-based speech synthesis engine \"hts_engine API\"\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "  usage:\n");
    fprintf(stderr, "       hts_engine [ options ] [ infile ] \n");
