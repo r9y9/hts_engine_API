@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2010  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2011  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -725,7 +725,7 @@ static void HTS_Vocoder_end_excitation(HTS_Vocoder * v, const int nlpf)
 /* HTS_Vocoder_initialize: initialize vocoder */
 void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
                             HTS_Boolean use_log_gain, const int rate,
-                            const int fperiod, int buff_size)
+                            const int fperiod)
 {
    /* set parameter */
    v->stage = stage;
@@ -743,12 +743,6 @@ void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
    v->p1 = -1.0;
    v->sw = 0;
    v->x = 0x55555555;
-   /* open audio device */
-   if (0 < buff_size && buff_size <= 48000) {
-      v->audio = (HTS_Audio *) HTS_calloc(1, sizeof(HTS_Audio));
-      HTS_Audio_open(v->audio, rate, buff_size);
-   } else
-      v->audio = NULL;
    /* init buffer */
    v->freqt_buff = NULL;
    v->freqt_size = 0;
@@ -780,7 +774,7 @@ void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
 void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
                             double *spectrum, const int nlpf, double *lpf,
                             double alpha, double beta, double volume,
-                            short *rawdata)
+                            short *rawdata, HTS_Audio * audio)
 {
    double x;
    int i, j;
@@ -854,8 +848,8 @@ void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
          xs = (short) x;
       if (rawdata)
          rawdata[rawidx++] = xs;
-      if (v->audio)
-         HTS_Audio_write(v->audio, xs);
+      if (audio)
+         HTS_Audio_write(audio, xs);
 
       if (!--i) {
          for (i = 0; i <= m; i++)
@@ -928,12 +922,6 @@ void HTS_Vocoder_clear(HTS_Vocoder * v)
       if (v->c != NULL) {
          HTS_free(v->c);
          v->c = NULL;
-      }
-      /* close audio device */
-      if (v->audio != NULL) {
-         HTS_Audio_close(v->audio);
-         HTS_free(v->audio);
-         v->audio = NULL;
       }
       if (v->pulse_list != NULL)
          HTS_free(v->pulse_list);

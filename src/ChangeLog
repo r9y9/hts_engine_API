@@ -1,3 +1,9 @@
+2010-12-27 12:37  uratec
+
+	* ChangeLog, bin/hts_engine.c, include/HTS_engine.h,
+	  lib/HTS_gstream.c, lib/HTS_vocoder.c: Avoid alloc and free for
+	  MLSA filter: suggested by Nicholas Volk.
+
 2010-12-18 15:57  uratec
 
 	* ChangeLog, README: modify spaces in readme.

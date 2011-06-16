@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2010  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2011  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -44,7 +44,6 @@
 
 #ifndef HTS_ENGINE_H
 #define HTS_ENGINE_H
-
 #ifdef __cplusplus
 #define HTS_ENGINE_H_START extern "C" {
 #define HTS_ENGINE_H_END   }
@@ -52,7 +51,6 @@
 #define HTS_ENGINE_H_START
 #define HTS_ENGINE_H_END
 #endif                          /* __CPLUSPLUS */
-
 HTS_ENGINE_H_START;
 
 #include <stdio.h>
@@ -65,7 +63,7 @@ HTS_ENGINE_H_START;
 #define HTS_VERSION   "1.04"
 #endif
 #define HTS_URL       "http://hts-engine.sourceforge.net/"
-#define HTS_COPYRIGHT "2001-2010  Nagoya Institute of Technology", \
+#define HTS_COPYRIGHT "2001-2011  Nagoya Institute of Technology", \
                       "2001-2008  Tokyo Institute of Technology"
 #define HTS_NCOPYRIGHT 2
 
@@ -88,6 +86,77 @@ typedef int HTS_Boolean;
 #define ZERO  1.0e-10           /* ~(0) */
 #define LZERO (-1.0e+10)        /* ~log(0) */
 #define LTPI  1.83787706640935  /* log(2*PI) */
+
+/*  -------------------------- audio ------------------------------  */
+
+#if !defined(AUDIO_PLAY_WINCE) && !defined(AUDIO_PLAY_WIN32) && !defined(AUDIO_PLAY_PORTAUDIO) && !defined(AUDIO_PLAY_NONE)
+#if defined(__WINCE__) || defined(_WINCE) || defined(_WINCE) || defined(__WINCE)
+#define AUDIO_PLAY_WINCE
+#elif defined(__WIN32__) || defined(__WIN32) || defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
+#define AUDIO_PLAY_WIN32
+#else
+#define AUDIO_PLAY_NONE
+#endif                          /* WINCE || WIN32 */
+#endif                          /* !AUDIO_PLAY_WINCE && !AUDIO_PLAY_WIN32 && !AUDIO_PLAY_PORTAUDIO && !AUDIO_PLAY_NONE */
+
+/* HTS_Audio: audio output for Windows */
+#if defined (AUDIO_PLAY_WIN32) || defined(AUDIO_PLAY_WINCE)
+#include <windows.h>
+#include <mmsystem.h>
+typedef struct _HTS_Audio {
+   int sampling_rate;           /* sampling rate */
+   int max_buff_size;           /* buffer size of audio output device */
+   HWAVEOUT hwaveout;           /* audio device handle */
+   WAVEFORMATEX waveformatex;   /* wave formatex */
+   short *buff;                 /* current buffer */
+   int buff_size;               /* current buffer size */
+   int which_buff;              /* double buffering flag */
+   HTS_Boolean now_buff_1;      /* double buffering flag */
+   HTS_Boolean now_buff_2;      /* double buffering flag */
+   WAVEHDR buff_1;              /* buffer */
+   WAVEHDR buff_2;              /* buffer */
+} HTS_Audio;
+#endif                          /* AUDIO_PLAY_WIN32 || AUDIO_PLAY_WINCE */
+
+/* HTS_Audio: audio output for PortAudio */
+#ifdef AUDIO_PLAY_PORTAUDIO
+#include "portaudio.h"
+typedef struct _HTS_Audio {
+   int sampling_rate;           /* sampling rate */
+   int max_buff_size;           /* buffer size of audio output device */
+   PaStreamParameters parameters;       /* parameters for output stream */
+   PaStream *stream;            /* output stream */
+   PaError err;                 /* error code */
+   short *buff;                 /* current buffer */
+   int buff_size;               /* current buffer size */
+} HTS_Audio;
+#endif                          /* AUDIO_PLAY_PORTAUDIO */
+
+/* HTS_Audio: dummy audio output */
+#ifdef AUDIO_PLAY_NONE
+typedef struct _HTS_Audio {
+   int i;                       /* make compiler happy */
+} HTS_Audio;
+#endif                          /* AUDIO_PLAY_NONE */
+
+/*  ------------------------ audio method -------------------------  */
+
+/* HTS_Audio_initialize: initialize audio */
+void HTS_Audio_initialize(HTS_Audio * audio, int sampling_rate,
+                          int max_buff_size);
+
+/* HTS_Audio_set_parameter: set parameters for audio */
+void HTS_Audio_set_parameter(HTS_Audio * audio, int sampling_rate,
+                             int max_buff_size);
+
+/* HTS_Audio_write: send data to audio */
+void HTS_Audio_write(HTS_Audio * audio, short data);
+
+/* HTS_Audio_flush: flush remain data */
+void HTS_Audio_flush(HTS_Audio * audio);
+
+/* HTS_Audio_clear: free audio */
+void HTS_Audio_clear(HTS_Audio * audio);
 
 /*  -------------------------- model ------------------------------  */
 
@@ -546,7 +615,7 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
                            int sampling_rate, int fperiod, double alpha,
                            double beta,
                            HTS_Boolean * stop, double volume,
-                           int audio_buff_size);
+                           HTS_Audio * audio);
 
 /* HTS_GStreamSet_get_total_nsample: get total number of sample */
 int HTS_GStreamSet_get_total_nsample(HTS_GStreamSet * gss);
@@ -590,6 +659,7 @@ typedef struct _HTS_Global {
 /* HTS_Engine: Engine itself. */
 typedef struct _HTS_Engine {
    HTS_Global global;           /* global settings */
+   HTS_Audio audio;             /* audio output */
    HTS_ModelSet ms;             /* set of duration models, HMMs and GV models */
    HTS_Label label;             /* label */
    HTS_SStreamSet sss;          /* set of state streams */
@@ -761,43 +831,6 @@ void HTS_Engine_refresh(HTS_Engine * engine);
 /* HTS_Engine_clear: free engine */
 void HTS_Engine_clear(HTS_Engine * engine);
 
-/*  -------------------------- audio ------------------------------  */
-
-#if !defined(AUDIO_PLAY_WINCE) && !defined(AUDIO_PLAY_WIN32) && !defined(AUDIO_PLAY_NONE)
-#if defined(__WINCE__) || defined(_WINCE) || defined(_WINCE) || defined(__WINCE)
-#define AUDIO_PLAY_WINCE
-#elif defined(__WIN32__) || defined(__WIN32) || defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
-#define AUDIO_PLAY_WIN32
-#else
-#define AUDIO_PLAY_NONE
-#endif                          /* WINCE || WIN32 */
-#endif                          /* !AUDIO_PLAY_WINCE && !AUDIO_PLAY_WIN32 && !AUDIO_PLAY_NONE */
-
-/* HTS_Audio: For MS Windows (Windows Mobile) audio output device. */
-#if defined (AUDIO_PLAY_WIN32) || defined(AUDIO_PLAY_WINCE)
-#include<windows.h>
-#include<mmsystem.h>
-typedef struct _HTS_Audio {
-   HWAVEOUT hwaveout;           /* audio device handle */
-   WAVEFORMATEX waveformatex;   /* wave formatex */
-   short *buff;                 /* current buffer */
-   int buff_size;               /* current buffer size */
-   int which_buff;              /* double buffering flag */
-   HTS_Boolean now_buff_1;      /* double buffering flag */
-   HTS_Boolean now_buff_2;      /* double buffering flag */
-   WAVEHDR buff_1;              /* buffer */
-   WAVEHDR buff_2;              /* buffer */
-   int max_buff_size;           /* buffer size of audio output device */
-} HTS_Audio;
-#endif                          /* AUDIO_PLAY_WIN32 || AUDIO_PLAY_WINCE */
-
-/* HTS_Audio: For Linux, etc. */
-#ifdef AUDIO_PLAY_NONE
-typedef struct _HTS_Audio {
-   int i;                       /* make compiler happy */
-} HTS_Audio;
-#endif                          /* AUDIO_PLAY_NONE */
-
 /*  -------------------------- vocoder ----------------------------  */
 
 /* HTS_Vocoder: structure for setting of vocoder */
@@ -818,7 +851,6 @@ typedef struct _HTS_Vocoder {
    double *pulse_list;          /* used in excitation generation */
    int sw;                      /* switch used in random generator */
    int x;                       /* excitation signal */
-   HTS_Audio *audio;            /* pointer for audio device */
    double *freqt_buff;          /* used in freqt */
    int freqt_size;              /* buffer size for freqt */
    double *spectrum2en_buff;    /* used in spectrum2en */
@@ -838,13 +870,13 @@ typedef struct _HTS_Vocoder {
 /* HTS_Vocoder_initialize: initialize vocoder */
 void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
                             HTS_Boolean use_log_gain, const int rate,
-                            const int fperiod, int buff_size);
+                            const int fperiod);
 
 /* HTS_Vocoder_synthesize: pulse/noise excitation and MLSA/MGLSA filster based waveform synthesis */
 void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
                             double *spectrum, const int nlpf, double *lpf,
                             double alpha, double beta, double volume,
-                            short *rawdata);
+                            short *rawdata, HTS_Audio * audio);
 
 /* HTS_Vocoder_postfilter_mcp: postfilter for MCP */
 void HTS_Vocoder_postfilter_mcp(HTS_Vocoder * v, double *mcp, const int m,

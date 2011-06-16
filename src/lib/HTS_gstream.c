@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2010  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2011  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -74,8 +74,7 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
                            int stage, HTS_Boolean use_log_gain,
                            int sampling_rate, int fperiod, double alpha,
                            double beta,
-                           HTS_Boolean * stop, double volume,
-                           int audio_buff_size)
+                           HTS_Boolean * stop, double volume, HTS_Audio * audio)
 {
    int i, j, k;
    int msd_frame;
@@ -137,8 +136,7 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
 
    /* synthesize speech waveform */
    HTS_Vocoder_initialize(&v, gss->gstream[0].static_length - 1, stage,
-                          use_log_gain, sampling_rate, fperiod,
-                          audio_buff_size);
+                          use_log_gain, sampling_rate, fperiod);
    if (gss->nstream >= 3)
       nlpf = (gss->gstream[2].static_length - 1) / 2;
    for (i = 0; i < gss->total_frame && (*stop) == FALSE; i++) {
@@ -147,9 +145,11 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
       HTS_Vocoder_synthesize(&v, gss->gstream[0].static_length - 1,
                              gss->gstream[1].par[i][0],
                              &gss->gstream[0].par[i][0], nlpf, lpf, alpha, beta,
-                             volume, &gss->gspeech[i * fperiod]);
+                             volume, &gss->gspeech[i * fperiod], audio);
    }
    HTS_Vocoder_clear(&v);
+   if (audio)
+      HTS_Audio_flush(audio);
 }
 
 /* HTS_GStreamSet_get_total_nsample: get total number of sample */

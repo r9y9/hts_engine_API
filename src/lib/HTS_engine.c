@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2010  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2011  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -98,6 +98,9 @@ void HTS_Engine_initialize(HTS_Engine * engine, int nstream)
    /* volume */
    engine->global.volume = 1.0;
 
+   /* initialize audio */
+   HTS_Audio_initialize(&engine->audio, engine->global.sampling_rate,
+                        engine->global.audio_buff_size);
    /* initialize model set */
    HTS_ModelSet_initialize(&engine->ms, nstream);
    /* initialize label list */
@@ -267,6 +270,8 @@ void HTS_Engine_set_sampling_rate(HTS_Engine * engine, int i)
    if (i > 48000)
       i = 48000;
    engine->global.sampling_rate = i;
+   HTS_Audio_set_parameter(&engine->audio, engine->global.sampling_rate,
+                           engine->global.audio_buff_size);
 }
 
 /* HTS_Engine_get_sampling_rate: get sampling rate */
@@ -333,6 +338,8 @@ void HTS_Engine_set_audio_buff_size(HTS_Engine * engine, int i)
    if (i > 48000)
       i = 48000;
    engine->global.audio_buff_size = i;
+   HTS_Audio_set_parameter(&engine->audio, engine->global.sampling_rate,
+                           engine->global.audio_buff_size);
 }
 
 /* HTS_Engine_get_audio_buff_size: get audio buffer size */
@@ -494,7 +501,7 @@ void HTS_Engine_create_gstream(HTS_Engine * engine)
                          engine->global.sampling_rate, engine->global.fperiod,
                          engine->global.alpha, engine->global.beta,
                          &engine->global.stop, engine->global.volume,
-                         engine->global.audio_buff_size);
+                         &engine->audio);
 }
 
 /* HTS_Engine_save_information: output trace information */
@@ -802,6 +809,7 @@ void HTS_Engine_clear(HTS_Engine * engine)
    HTS_free(engine->global.gv_weight);
 
    HTS_ModelSet_clear(&engine->ms);
+   HTS_Audio_clear(&engine->audio);
 }
 
 /* HTS_get_copyright: write copyright to string */
