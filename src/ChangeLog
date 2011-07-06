@@ -1,3 +1,12 @@
+2011-06-16 13:31  uratec
+
+	* COPYING, ChangeLog, README, configure.ac, bin/hts_engine.c,
+	  include/HTS_engine.h, lib/HTS_audio.c, lib/HTS_engine.c,
+	  lib/HTS_gstream.c, lib/HTS_hidden.h, lib/HTS_label.c,
+	  lib/HTS_misc.c, lib/HTS_model.c, lib/HTS_pstream.c,
+	  lib/HTS_sstream.c, lib/HTS_vocoder.c: Add PortAudio functions for
+	  audio output.
+
 2010-12-27 12:37  uratec
 
 	* ChangeLog, bin/hts_engine.c, include/HTS_engine.h,

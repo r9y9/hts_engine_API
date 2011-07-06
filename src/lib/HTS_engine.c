@@ -501,7 +501,8 @@ void HTS_Engine_create_gstream(HTS_Engine * engine)
                          engine->global.sampling_rate, engine->global.fperiod,
                          engine->global.alpha, engine->global.beta,
                          &engine->global.stop, engine->global.volume,
-                         &engine->audio);
+                         engine->global.audio_buff_size >
+                         0 ? &engine->audio : NULL);
 }
 
 /* HTS_Engine_save_information: output trace information */

@@ -60,7 +60,7 @@ HTS_ENGINE_H_START;
 #ifdef PACKAGE_VERSION
 #define HTS_VERSION   PACKAGE_VERSION
 #else
-#define HTS_VERSION   "1.04"
+#define HTS_VERSION   "1.05"
 #endif
 #define HTS_URL       "http://hts-engine.sourceforge.net/"
 #define HTS_COPYRIGHT "2001-2011  Nagoya Institute of Technology", \
