@@ -232,7 +232,7 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
          HTS_get_token_from_string(data[i], &data_index, buff);
          end = atof(buff);
          HTS_get_token_from_string(data[i], &data_index, buff);
-         lstring->name = HTS_strdup(&buff[data_index]);
+         lstring->name = HTS_strdup(buff);
          lstring->start = rate * start;
          lstring->end = rate * end;
       } else {

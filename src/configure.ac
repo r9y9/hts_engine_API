@@ -36,7 +36,7 @@ AC_TYPE_SIZE_T
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([sqrt strchr strrchr strstr])
 
-       
+
 # Checks for embedded device compile
 AC_ARG_ENABLE(embedded, [  --enable-embedded   turn on compiling for embedded devices (default=no)],,enable_embedded=no)
 AC_MSG_CHECKING(whether to enable compiling for embedded devices)
