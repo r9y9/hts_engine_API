@@ -279,7 +279,7 @@ static void HTS_Audio_close(HTS_Audio * audio)
 
    if (audio->buff_size > 0) {
       audio->err = Pa_WriteStream(audio->stream, audio->buff, audio->buff_size);
-      if (audio->err != paNoError)
+      if (audio->err != paNoError && audio->err != paOutputUnderflowed)
          HTS_error(0,
                    "hts_engine: Cannot send datablocks to your output audio device to play waveform.\n");
       audio->buff_size = 0;
@@ -371,7 +371,7 @@ void HTS_Audio_write(HTS_Audio * audio, short data)
    if (audio->buff_size >= audio->max_buff_size) {
       audio->err =
           Pa_WriteStream(audio->stream, audio->buff, audio->max_buff_size);
-      if (audio->err != paNoError)
+      if (audio->err != paNoError && audio->err != paOutputUnderflowed)
          HTS_error(0,
                    "hts_engine: Cannot send datablocks to your output audio device to play waveform.\n");
       audio->buff_size = 0;
@@ -383,7 +383,7 @@ void HTS_Audio_flush(HTS_Audio * audio)
 {
    if (audio->buff_size > 0) {
       audio->err = Pa_WriteStream(audio->stream, audio->buff, audio->buff_size);
-      if (audio->err != paNoError)
+      if (audio->err != paNoError && audio->err != paOutputUnderflowed)
          HTS_error(0,
                    "hts_engine: Cannot send datablocks to your output audio device to play waveform.\n");
       audio->buff_size = 0;
