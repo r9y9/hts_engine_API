@@ -55,32 +55,94 @@
 
 HTS_SSTREAM_C_START;
 
+#include <stdlib.h>
+
 /* hts_engine libraries */
 #include "HTS_hidden.h"
 
-static void HTS_set_duration(int *duration, double *mean, double *vari,
-                             double *remain, int size, double frame_length)
+/* HTS_set_duration: set duration from state duration probability distribution */
+static double HTS_set_duration(int *duration, double *mean, double *vari,
+                               int size, double frame_length)
 {
-   int i;
+   int i, j;
    double temp1, temp2;
    double rho = 0.0;
+   int sum = 0;
+   int target_length;
 
-   if (frame_length != 0.0) {   /* if frame length is specified, rho is determined */
-      temp1 = 0.0;
-      temp2 = 0.0;
+   /* if the frame length is not specified, only the mean vector is used */
+   if (frame_length == 0.0) {
       for (i = 0; i < size; i++) {
-         temp1 += mean[i];
-         temp2 += vari[i];
+         duration[i] = (int) (mean[i] + 0.5);
+         if (duration[i] < 1)
+            duration[i] = 1;
+         sum += duration[i];
       }
-      rho = (frame_length - temp1) / temp2;
+      return (double) sum;
    }
+
+   /* get the target frame length */
+   target_length = (int) (frame_length + 0.5);
+
+   /* check the specified duration */
+   if (target_length <= size) {
+      if (target_length < size)
+         HTS_error(-1,
+                   "HTS_set_duration: Specified frame length is too short.\n");
+      for (i = 0; i < size; i++)
+         duration[i] = 1;
+      return (double) size;
+   }
+
+   /* RHO calculation */
+   temp1 = 0.0;
+   temp2 = 0.0;
    for (i = 0; i < size; i++) {
-      temp1 = mean[i] + rho * vari[i] + *remain;
-      duration[i] = (int) (temp1 + 0.5);
+      temp1 += mean[i];
+      temp2 += vari[i];
+   }
+   rho = ((double) target_length - temp1) / temp2;
+
+   /* first estimation */
+   for (i = 0; i < size; i++) {
+      duration[i] = (int) (mean[i] + rho * vari[i] + 0.5);
       if (duration[i] < 1)
          duration[i] = 1;
-      *remain = temp1 - (double) duration[i];
+      sum += duration[i];
    }
+
+   /* loop estimation */
+   while (target_length != sum) {
+      /* sarch flexible state and modify its duration */
+      if (target_length > sum) {
+         j = -1;
+         for (i = 1; i < size; i++) {
+            temp2 = abs(rho - ((double) duration[i] + 1 - mean[i]) / vari[i]);
+            if (j < 0 || temp1 < temp2) {
+               j = i;
+               temp1 = temp2;
+            }
+         }
+         sum++;
+         duration[j]++;
+      } else {
+         j = -1;
+         for (i = 1; i < size; i++) {
+            if (duration[i] > 1) {
+               temp2 =
+                   abs(rho - ((double) duration[i] - 1 - mean[i]) / vari[i]);
+               if (j < 0 || temp1 < temp2) {
+                  j = i;
+                  temp1 = temp2;
+               }
+            }
+         }
+         sum--;
+         duration[j]--;
+      }
+   }
+
+   return (double) target_length;
 }
 
 /* HTS_SStreamSet_initialize: initialize state stream set */
@@ -100,11 +162,10 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
                            double **parameter_iw, double **gv_iw)
 {
    int i, j, k;
-   double temp1, temp2;
+   double temp;
    int state;
    HTS_SStream *sst;
    double *duration_mean, *duration_vari;
-   double duration_remain;
    double frame_length;
    int next_time;
    int next_state;
@@ -138,26 +199,26 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
    }
 
    /* check interpolation weights */
-   for (i = 0, temp1 = 0.0;
+   for (i = 0, temp = 0.0;
         i < HTS_ModelSet_get_duration_interpolation_size(ms); i++)
-      temp1 += duration_iw[i];
+      temp += duration_iw[i];
    for (i = 0; i < HTS_ModelSet_get_duration_interpolation_size(ms); i++)
       if (duration_iw[i] != 0.0)
-         duration_iw[i] /= temp1;
+         duration_iw[i] /= temp;
    for (i = 0; i < sss->nstream; i++) {
-      for (j = 0, temp1 = 0.0;
+      for (j = 0, temp = 0.0;
            j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
-         temp1 += parameter_iw[i][j];
+         temp += parameter_iw[i][j];
       for (j = 0; j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
          if (parameter_iw[i][j] != 0.0)
-            parameter_iw[i][j] /= temp1;
+            parameter_iw[i][j] /= temp;
       if (HTS_ModelSet_use_gv(ms, i)) {
-         for (j = 0, temp1 = 0.0;
+         for (j = 0, temp = 0.0;
               j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
-            temp1 += gv_iw[i][j];
+            temp += gv_iw[i][j];
          for (j = 0; j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
             if (gv_iw[i][j] != 0.0)
-               gv_iw[i][j] /= temp1;
+               gv_iw[i][j] /= temp;
       }
    }
 
@@ -168,7 +229,6 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
    duration_vari =
        (double *) HTS_calloc(sss->nstate * HTS_Label_get_size(label),
                              sizeof(double));
-   duration_remain = 0.0;
    for (i = 0; i < HTS_Label_get_size(label); i++)
       HTS_ModelSet_get_duration(ms, HTS_Label_get_string(label, i),
                                 &duration_mean[i * sss->nstate],
@@ -179,21 +239,21 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
       next_state = 0;
       state = 0;
       for (i = 0; i < HTS_Label_get_size(label); i++) {
-         temp1 = HTS_Label_get_start_frame(label, i);
-         temp2 = HTS_Label_get_end_frame(label, i);
-         if (temp2 >= 0) {
-            HTS_set_duration(&sss->duration[next_state],
-                             &duration_mean[next_state],
-                             &duration_vari[next_state], &duration_remain,
-                             state + sss->nstate - next_state,
-                             temp2 - next_time);
-            for (j = next_state; j < state + sss->nstate; j++)
-               next_time += sss->duration[j];
+         temp = HTS_Label_get_end_frame(label, i);
+         if (temp >= 0) {
+            next_time +=
+                HTS_set_duration(&sss->duration[next_state],
+                                 &duration_mean[next_state],
+                                 &duration_vari[next_state],
+                                 state + sss->nstate - next_state,
+                                 temp - next_time);
             next_state = state + sss->nstate;
          } else if (i + 1 == HTS_Label_get_size(label)) {
+            HTS_error(-1,
+                      "HTS_SStreamSet_create: The time of final label is not specified.\n");
             HTS_set_duration(&sss->duration[next_state],
                              &duration_mean[next_state],
-                             &duration_vari[next_state], &duration_remain,
+                             &duration_vari[next_state],
                              state + sss->nstate - next_state, 0.0);
          }
          state += sss->nstate;
@@ -201,17 +261,16 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
    } else {
       /* determine frame length */
       if (HTS_Label_get_speech_speed(label) != 1.0) {
-         temp1 = 0.0;
+         temp = 0.0;
          for (i = 0; i < HTS_Label_get_size(label) * sss->nstate; i++) {
-            temp1 += duration_mean[i];
+            temp += duration_mean[i];
          }
-         frame_length = temp1 / HTS_Label_get_speech_speed(label);
+         frame_length = temp / HTS_Label_get_speech_speed(label);
       } else {
          frame_length = 0.0;
       }
       /* set state duration */
       HTS_set_duration(sss->duration, duration_mean, duration_vari,
-                       &duration_remain,
                        HTS_Label_get_size(label) * sss->nstate, frame_length);
    }
    HTS_free(duration_mean);

@@ -118,27 +118,28 @@ void HTS_Engine_load_duration_from_fn(HTS_Engine * engine, char **pdf_fn,
                                       char **tree_fn, int interpolation_size)
 {
    int i;
-   FILE **pdf_fp, **tree_fp;
+   HTS_File **pdf_fp, **tree_fp;
 
-   pdf_fp = (FILE **) HTS_calloc(interpolation_size, sizeof(FILE *));
-   tree_fp = (FILE **) HTS_calloc(interpolation_size, sizeof(FILE *));
+   pdf_fp = (HTS_File **) HTS_calloc(interpolation_size, sizeof(HTS_File *));
+   tree_fp = (HTS_File **) HTS_calloc(interpolation_size, sizeof(HTS_File *));
    for (i = 0; i < interpolation_size; i++) {
-      pdf_fp[i] = HTS_get_fp(pdf_fn[i], "rb");
-      tree_fp[i] = HTS_get_fp(tree_fn[i], "r");
+      pdf_fp[i] = HTS_fopen(pdf_fn[i], "rb");
+      tree_fp[i] = HTS_fopen(tree_fn[i], "r");
    }
    HTS_Engine_load_duration_from_fp(engine, pdf_fp, tree_fp,
                                     interpolation_size);
    for (i = 0; i < interpolation_size; i++) {
-      fclose(pdf_fp[i]);
-      fclose(tree_fp[i]);
+      HTS_fclose(pdf_fp[i]);
+      HTS_fclose(tree_fp[i]);
    }
    HTS_free(pdf_fp);
    HTS_free(tree_fp);
 }
 
 /* HTS_Engine_load_duration_from_fp: load duration pdfs, trees and number of state from file pointers */
-void HTS_Engine_load_duration_from_fp(HTS_Engine * engine, FILE ** pdf_fp,
-                                      FILE ** tree_fp, int interpolation_size)
+void HTS_Engine_load_duration_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp,
+                                      HTS_File ** tree_fp,
+                                      int interpolation_size)
 {
    int i;
 
@@ -156,34 +157,34 @@ void HTS_Engine_load_parameter_from_fn(HTS_Engine * engine, char **pdf_fn,
                                        int window_size, int interpolation_size)
 {
    int i;
-   FILE **pdf_fp, **tree_fp, **win_fp;
+   HTS_File **pdf_fp, **tree_fp, **win_fp;
 
-   pdf_fp = (FILE **) HTS_calloc(interpolation_size, sizeof(FILE *));
-   tree_fp = (FILE **) HTS_calloc(interpolation_size, sizeof(FILE *));
-   win_fp = (FILE **) HTS_calloc(window_size, sizeof(FILE *));
+   pdf_fp = (HTS_File **) HTS_calloc(interpolation_size, sizeof(HTS_File *));
+   tree_fp = (HTS_File **) HTS_calloc(interpolation_size, sizeof(HTS_File *));
+   win_fp = (HTS_File **) HTS_calloc(window_size, sizeof(HTS_File *));
    for (i = 0; i < interpolation_size; i++) {
-      pdf_fp[i] = HTS_get_fp(pdf_fn[i], "rb");
-      tree_fp[i] = HTS_get_fp(tree_fn[i], "r");
+      pdf_fp[i] = HTS_fopen(pdf_fn[i], "rb");
+      tree_fp[i] = HTS_fopen(tree_fn[i], "r");
    }
    for (i = 0; i < window_size; i++)
-      win_fp[i] = HTS_get_fp(win_fn[i], "r");
+      win_fp[i] = HTS_fopen(win_fn[i], "r");
    HTS_Engine_load_parameter_from_fp(engine, pdf_fp, tree_fp, win_fp,
                                      stream_index, msd_flag,
                                      window_size, interpolation_size);
    for (i = 0; i < interpolation_size; i++) {
-      fclose(pdf_fp[i]);
-      fclose(tree_fp[i]);
+      HTS_fclose(pdf_fp[i]);
+      HTS_fclose(tree_fp[i]);
    }
    for (i = 0; i < window_size; i++)
-      fclose(win_fp[i]);
+      HTS_fclose(win_fp[i]);
    HTS_free(pdf_fp);
    HTS_free(tree_fp);
    HTS_free(win_fp);
 }
 
 /* HTS_Engine_load_parameter_from_fp: load parameter pdfs, trees and windows from file pointers */
-void HTS_Engine_load_parameter_from_fp(HTS_Engine * engine, FILE ** pdf_fp,
-                                       FILE ** tree_fp, FILE ** win_fp,
+void HTS_Engine_load_parameter_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp,
+                                       HTS_File ** tree_fp, HTS_File ** win_fp,
                                        int stream_index, HTS_Boolean msd_flag,
                                        int window_size, int interpolation_size)
 {
@@ -204,18 +205,19 @@ void HTS_Engine_load_gv_from_fn(HTS_Engine * engine, char **pdf_fn,
                                 int interpolation_size)
 {
    int i;
-   FILE **pdf_fp, **tree_fp;
+   HTS_File **pdf_fp, **tree_fp;
 
-   pdf_fp = (FILE **) HTS_calloc(interpolation_size, sizeof(FILE *));
+   pdf_fp = (HTS_File **) HTS_calloc(interpolation_size, sizeof(HTS_File *));
    if (tree_fn)
-      tree_fp = (FILE **) HTS_calloc(interpolation_size, sizeof(FILE *));
+      tree_fp =
+          (HTS_File **) HTS_calloc(interpolation_size, sizeof(HTS_File *));
    else
       tree_fp = NULL;
    for (i = 0; i < interpolation_size; i++) {
-      pdf_fp[i] = HTS_get_fp(pdf_fn[i], "rb");
+      pdf_fp[i] = HTS_fopen(pdf_fn[i], "rb");
       if (tree_fn) {
          if (tree_fn[i])
-            tree_fp[i] = HTS_get_fp(tree_fn[i], "r");
+            tree_fp[i] = HTS_fopen(tree_fn[i], "r");
          else
             tree_fp[i] = NULL;
       }
@@ -223,9 +225,9 @@ void HTS_Engine_load_gv_from_fn(HTS_Engine * engine, char **pdf_fn,
    HTS_Engine_load_gv_from_fp(engine, pdf_fp, tree_fp, stream_index,
                               interpolation_size);
    for (i = 0; i < interpolation_size; i++) {
-      fclose(pdf_fp[i]);
+      HTS_fclose(pdf_fp[i]);
       if (tree_fp && tree_fp[i])
-         fclose(tree_fp[i]);
+         HTS_fclose(tree_fp[i]);
    }
    HTS_free(pdf_fp);
    if (tree_fp)
@@ -233,8 +235,8 @@ void HTS_Engine_load_gv_from_fn(HTS_Engine * engine, char **pdf_fn,
 }
 
 /* HTS_Engine_load_gv_from_fp: load GV pdfs and trees from file pointers */
-void HTS_Engine_load_gv_from_fp(HTS_Engine * engine, FILE ** pdf_fp,
-                                FILE ** tree_fp, int stream_index,
+void HTS_Engine_load_gv_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp,
+                                HTS_File ** tree_fp, int stream_index,
                                 int interpolation_size)
 {
    int i;
@@ -250,14 +252,14 @@ void HTS_Engine_load_gv_from_fp(HTS_Engine * engine, FILE ** pdf_fp,
 /* HTS_Engine_load_gv_switch_from_fn: load GV switch from file name */
 void HTS_Engine_load_gv_switch_from_fn(HTS_Engine * engine, char *fn)
 {
-   FILE *fp = HTS_get_fp(fn, "r");
+   HTS_File *fp = HTS_fopen(fn, "r");
 
    HTS_Engine_load_gv_switch_from_fp(engine, fp);
-   fclose(fp);
+   HTS_fclose(fp);
 }
 
 /* HTS_Engine_load_gv_switch_from_fp: load GV switch from file pointer */
-void HTS_Engine_load_gv_switch_from_fp(HTS_Engine * engine, FILE * fp)
+void HTS_Engine_load_gv_switch_from_fp(HTS_Engine * engine, HTS_File * fp)
 {
    HTS_ModelSet_load_gv_switch(&engine->ms, fp);
 }
@@ -456,7 +458,7 @@ void HTS_Engine_load_label_from_fn(HTS_Engine * engine, char *fn)
 }
 
 /* HTS_Engine_load_label_from_fp: load label from file pointer */
-void HTS_Engine_load_label_from_fp(HTS_Engine * engine, FILE * fp)
+void HTS_Engine_load_label_from_fp(HTS_Engine * engine, HTS_File * fp)
 {
    HTS_Label_load_from_fp(&engine->label, engine->global.sampling_rate,
                           engine->global.fperiod, fp);
@@ -506,7 +508,7 @@ void HTS_Engine_create_gstream(HTS_Engine * engine)
 }
 
 /* HTS_Engine_save_information: output trace information */
-void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
+void HTS_Engine_save_information(HTS_Engine * engine, HTS_File * fp)
 {
    int i, j, k, l, m, n;
    double temp;
@@ -686,7 +688,7 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
 }
 
 /* HTS_Engine_save_label: output label with time */
-void HTS_Engine_save_label(HTS_Engine * engine, FILE * fp)
+void HTS_Engine_save_label(HTS_Engine * engine, HTS_File * fp)
 {
    int i, j;
    int frame, state, duration;
@@ -709,7 +711,7 @@ void HTS_Engine_save_label(HTS_Engine * engine, FILE * fp)
 }
 
 /* HTS_Engine_save_generated_parameter: output generated parameter */
-void HTS_Engine_save_generated_parameter(HTS_Engine * engine, FILE * fp,
+void HTS_Engine_save_generated_parameter(HTS_Engine * engine, HTS_File * fp,
                                          int stream_index)
 {
    int i, j;
@@ -724,7 +726,7 @@ void HTS_Engine_save_generated_parameter(HTS_Engine * engine, FILE * fp,
 }
 
 /* HTS_Engine_save_generated_speech: output generated speech */
-void HTS_Engine_save_generated_speech(HTS_Engine * engine, FILE * fp)
+void HTS_Engine_save_generated_speech(HTS_Engine * engine, HTS_File * fp)
 {
    int i;
    short temp;
@@ -737,7 +739,7 @@ void HTS_Engine_save_generated_speech(HTS_Engine * engine, FILE * fp)
 }
 
 /* HTS_Engine_save_riff: output RIFF format file */
-void HTS_Engine_save_riff(HTS_Engine * engine, FILE * fp)
+void HTS_Engine_save_riff(HTS_Engine * engine, HTS_File * fp)
 {
    int i;
    short temp;
@@ -834,7 +836,7 @@ void HTS_get_copyright(char *str)
 }
 
 /* HTS_show_copyright: write copyright to file pointer */
-void HTS_show_copyright(FILE * fp)
+void HTS_show_copyright(HTS_File * fp)
 {
    char buf[HTS_MAXBUFLEN];
 

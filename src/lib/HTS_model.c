@@ -159,7 +159,7 @@ static int HTS_get_state_num(char *string)
 }
 
 /* HTS_Question_load: Load questions from file */
-static void HTS_Question_load(HTS_Question * question, FILE * fp)
+static void HTS_Question_load(HTS_Question * question, HTS_File * fp)
 {
    char buff[HTS_MAXBUFLEN];
    HTS_Pattern *pattern, *last_pattern;
@@ -286,7 +286,8 @@ static void HTS_Tree_parse_pattern(HTS_Tree * tree, char *string)
 }
 
 /* HTS_Tree_load: Load trees */
-static void HTS_Tree_load(HTS_Tree * tree, FILE * fp, HTS_Question * question)
+static void HTS_Tree_load(HTS_Tree * tree, HTS_File * fp,
+                          HTS_Question * question)
 {
    char buff[HTS_MAXBUFLEN];
    HTS_Node *node, *last_node;
@@ -374,7 +375,7 @@ static void HTS_Window_initialize(HTS_Window * win)
 }
 
 /* HTS_Window_load: load dynamic windows */
-static void HTS_Window_load(HTS_Window * win, FILE ** fp, int size)
+static void HTS_Window_load(HTS_Window * win, HTS_File ** fp, int size)
 {
    int i, j;
    int fsize, length;
@@ -444,7 +445,7 @@ static void HTS_Model_initialize(HTS_Model * model)
 }
 
 /* HTS_Model_load_pdf: load pdfs */
-static void HTS_Model_load_pdf(HTS_Model * model, FILE * fp, int ntree,
+static void HTS_Model_load_pdf(HTS_Model * model, HTS_File * fp, int ntree,
                                HTS_Boolean msd_flag)
 {
    int i, j, k, l, m;
@@ -531,7 +532,7 @@ static void HTS_Model_load_pdf(HTS_Model * model, FILE * fp, int ntree,
 }
 
 /* HTS_Model_load_tree: load trees */
-static void HTS_Model_load_tree(HTS_Model * model, FILE * fp)
+static void HTS_Model_load_tree(HTS_Model * model, HTS_File * fp)
 {
    char buff[HTS_MAXBUFLEN];
    HTS_Question *question, *last_question;
@@ -545,7 +546,7 @@ static void HTS_Model_load_tree(HTS_Model * model, FILE * fp)
    model->ntree = 0;
    last_question = NULL;
    last_tree = NULL;
-   while (!feof(fp)) {
+   while (!HTS_feof(fp)) {
       HTS_get_pattern_token(fp, buff);
       /* parse questions */
       if (strcmp(buff, "QS") == 0) {
@@ -628,7 +629,7 @@ static void HTS_Stream_initialize(HTS_Stream * stream)
 }
 
 /* HTS_Stream_load_pdf: load pdf */
-static void HTS_Stream_load_pdf(HTS_Stream * stream, FILE ** fp, int ntree,
+static void HTS_Stream_load_pdf(HTS_Stream * stream, HTS_File ** fp, int ntree,
                                 HTS_Boolean msd_flag, int interpolation_size)
 {
    int i;
@@ -653,8 +654,10 @@ static void HTS_Stream_load_pdf(HTS_Stream * stream, FILE ** fp, int ntree,
 }
 
 /* HTS_Stream_load_pdf_and_tree: load PDFs and trees */
-static void HTS_Stream_load_pdf_and_tree(HTS_Stream * stream, FILE ** pdf_fp,
-                                         FILE ** tree_fp, HTS_Boolean msd_flag,
+static void HTS_Stream_load_pdf_and_tree(HTS_Stream * stream,
+                                         HTS_File ** pdf_fp,
+                                         HTS_File ** tree_fp,
+                                         HTS_Boolean msd_flag,
                                          int interpolation_size)
 {
    int i;
@@ -687,7 +690,7 @@ static void HTS_Stream_load_pdf_and_tree(HTS_Stream * stream, FILE ** pdf_fp,
 }
 
 /* HTS_Stream_load_dynamic_window: load windows */
-static void HTS_Stream_load_dynamic_window(HTS_Stream * stream, FILE ** fp,
+static void HTS_Stream_load_dynamic_window(HTS_Stream * stream, HTS_File ** fp,
                                            int size)
 {
    HTS_Window_load(&stream->window, fp, size);
@@ -719,8 +722,8 @@ void HTS_ModelSet_initialize(HTS_ModelSet * ms, int nstream)
 }
 
 /* HTS_ModelSet_load_duration: load duration model and number of state */
-void HTS_ModelSet_load_duration(HTS_ModelSet * ms, FILE ** pdf_fp,
-                                FILE ** tree_fp, int interpolation_size)
+void HTS_ModelSet_load_duration(HTS_ModelSet * ms, HTS_File ** pdf_fp,
+                                HTS_File ** tree_fp, int interpolation_size)
 {
    /* check */
    if (pdf_fp == NULL)
@@ -736,8 +739,8 @@ void HTS_ModelSet_load_duration(HTS_ModelSet * ms, FILE ** pdf_fp,
 }
 
 /* HTS_ModelSet_load_parameter: load model */
-void HTS_ModelSet_load_parameter(HTS_ModelSet * ms, FILE ** pdf_fp,
-                                 FILE ** tree_fp, FILE ** win_fp,
+void HTS_ModelSet_load_parameter(HTS_ModelSet * ms, HTS_File ** pdf_fp,
+                                 HTS_File ** tree_fp, HTS_File ** win_fp,
                                  int stream_index, HTS_Boolean msd_flag,
                                  int window_size, int interpolation_size)
 {
@@ -767,8 +770,9 @@ void HTS_ModelSet_load_parameter(HTS_ModelSet * ms, FILE ** pdf_fp,
 }
 
 /* HTS_ModelSet_load_gv: load GV model */
-void HTS_ModelSet_load_gv(HTS_ModelSet * ms, FILE ** pdf_fp, FILE ** tree_fp,
-                          int stream_index, int interpolation_size)
+void HTS_ModelSet_load_gv(HTS_ModelSet * ms, HTS_File ** pdf_fp,
+                          HTS_File ** tree_fp, int stream_index,
+                          int interpolation_size)
 {
    int i;
 
@@ -802,7 +806,7 @@ HTS_Boolean HTS_ModelSet_have_gv_tree(HTS_ModelSet * ms, int stream_index)
 }
 
 /* HTS_ModelSet_load_gv_switch: load GV switch */
-void HTS_ModelSet_load_gv_switch(HTS_ModelSet * ms, FILE * fp)
+void HTS_ModelSet_load_gv_switch(HTS_ModelSet * ms, HTS_File * fp)
 {
    if (fp != NULL)
       HTS_Model_load_tree(&ms->gv_switch, fp);

@@ -108,14 +108,14 @@ static void HTS_Label_check_time(HTS_Label * label)
 void HTS_Label_load_from_fn(HTS_Label * label, int sampling_rate, int fperiod,
                             char *fn)
 {
-   FILE *fp = HTS_get_fp(fn, "r");
+   HTS_File *fp = HTS_fopen(fn, "r");
    HTS_Label_load_from_fp(label, sampling_rate, fperiod, fp);
-   fclose(fp);
+   HTS_fclose(fp);
 }
 
 /* HTS_Label_load_from_fp: load label from file pointer */
 void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
-                            FILE * fp)
+                            HTS_File * fp)
 {
    char buff[HTS_MAXBUFLEN];
    HTS_LabelString *lstring = NULL;

@@ -191,17 +191,6 @@ void Error(const int error, char *message, ...)
       exit(error);
 }
 
-/* Getfp: wrapper for fopen */
-FILE *Getfp(const char *name, const char *opt)
-{
-   FILE *fp = fopen(name, opt);
-
-   if (fp == NULL)
-      Error(2, "Getfp: Cannot open %s.\n", name);
-
-   return (fp);
-}
-
 /* GetNumInterp: get number of speakers for interpolation from argv */
 int GetNumInterp(int argc, char **argv_search)
 {
@@ -225,8 +214,8 @@ int main(int argc, char **argv)
    int i;
    double f;
    char *labfn = NULL;
-   FILE *durfp = NULL, *mgcfp = NULL, *lf0fp = NULL, *lpffp = NULL;
-   FILE *wavfp = NULL, *rawfp = NULL, *tracefp = NULL;
+   HTS_File *durfp = NULL, *mgcfp = NULL, *lf0fp = NULL, *lpffp = NULL;
+   HTS_File *wavfp = NULL, *rawfp = NULL, *tracefp = NULL;
 
    /* number of speakers for interpolation */
    int num_interp = 0;
@@ -394,26 +383,26 @@ int main(int argc, char **argv)
          case 'o':
             switch (*(*argv + 2)) {
             case 'w':
-               wavfp = Getfp(*++argv, "wb");
+               wavfp = HTS_fopen(*++argv, "wb");
                break;
             case 'r':
-               rawfp = Getfp(*++argv, "wb");
+               rawfp = HTS_fopen(*++argv, "wb");
                break;
             case 'd':
-               durfp = Getfp(*++argv, "wt");
+               durfp = HTS_fopen(*++argv, "wt");
                break;
             case 'm':
-               mgcfp = Getfp(*++argv, "wb");
+               mgcfp = HTS_fopen(*++argv, "wb");
                break;
             case 'f':
             case 'p':
-               lf0fp = Getfp(*++argv, "wb");
+               lf0fp = HTS_fopen(*++argv, "wb");
                break;
             case 'l':
-               lpffp = Getfp(*++argv, "wb");
+               lpffp = HTS_fopen(*++argv, "wb");
                break;
             case 't':
-               tracefp = Getfp(*++argv, "wt");
+               tracefp = HTS_fopen(*++argv, "wt");
                break;
             default:
                Error(1, "hts_engine: Invalid option '-o%c'.\n", *(*argv + 2));
@@ -699,19 +688,19 @@ int main(int argc, char **argv)
 
    /* close files */
    if (durfp != NULL)
-      fclose(durfp);
+      HTS_fclose(durfp);
    if (mgcfp != NULL)
-      fclose(mgcfp);
+      HTS_fclose(mgcfp);
    if (lf0fp != NULL)
-      fclose(lf0fp);
+      HTS_fclose(lf0fp);
    if (lpffp != NULL)
-      fclose(lpffp);
+      HTS_fclose(lpffp);
    if (wavfp != NULL)
-      fclose(wavfp);
+      HTS_fclose(wavfp);
    if (rawfp != NULL)
-      fclose(rawfp);
+      HTS_fclose(rawfp);
    if (tracefp != NULL)
-      fclose(tracefp);
+      HTS_fclose(tracefp);
 
    return 0;
 }

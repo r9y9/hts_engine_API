@@ -44,6 +44,7 @@
 
 #ifndef HTS_ENGINE_H
 #define HTS_ENGINE_H
+
 #ifdef __cplusplus
 #define HTS_ENGINE_H_START extern "C" {
 #define HTS_ENGINE_H_END   }
@@ -51,27 +52,10 @@
 #define HTS_ENGINE_H_START
 #define HTS_ENGINE_H_END
 #endif                          /* __CPLUSPLUS */
+
 HTS_ENGINE_H_START;
 
 #include <stdio.h>
-
-/*  ------------------------ copyright ----------------------------  */
-
-#ifdef PACKAGE_VERSION
-#define HTS_VERSION   PACKAGE_VERSION
-#else
-#define HTS_VERSION   "1.05"
-#endif
-#define HTS_URL       "http://hts-engine.sourceforge.net/"
-#define HTS_COPYRIGHT "2001-2011  Nagoya Institute of Technology", \
-                      "2001-2008  Tokyo Institute of Technology"
-#define HTS_NCOPYRIGHT 2
-
-/* HTS_show_copyright: write copyright to file pointer */
-void HTS_show_copyright(FILE * fp);
-
-/* HTS_get_copyright: write copyright to string */
-void HTS_get_copyright(char *str);
 
 /*  -------------------------- common -----------------------------  */
 
@@ -86,6 +70,32 @@ typedef int HTS_Boolean;
 #define ZERO  1.0e-10           /* ~(0) */
 #define LZERO (-1.0e+10)        /* ~log(0) */
 #define LTPI  1.83787706640935  /* log(2*PI) */
+
+typedef FILE HTS_File;
+
+/* HTS_fopen: wrapper for fopen */
+HTS_File *HTS_fopen(const char *name, const char *opt);
+
+/* HTS_fclose: wrapper for fclose */
+void HTS_fclose(HTS_File * fp);
+
+/*  ------------------------ copyright ----------------------------  */
+
+#ifdef PACKAGE_VERSION
+#define HTS_VERSION   PACKAGE_VERSION
+#else
+#define HTS_VERSION   "1.05"
+#endif
+#define HTS_URL       "http://hts-engine.sourceforge.net/"
+#define HTS_COPYRIGHT "2001-2011  Nagoya Institute of Technology", \
+                      "2001-2008  Tokyo Institute of Technology"
+#define HTS_NCOPYRIGHT 2
+
+/* HTS_show_copyright: write copyright to file pointer */
+void HTS_show_copyright(HTS_File * fp);
+
+/* HTS_get_copyright: write copyright to string */
+void HTS_get_copyright(char *str);
 
 /*  -------------------------- audio ------------------------------  */
 
@@ -235,24 +245,25 @@ typedef struct _HTS_ModelSet {
 void HTS_ModelSet_initialize(HTS_ModelSet * ms, int nstream);
 
 /* HTS_ModelSet_load_duration: load duration model and number of state */
-void HTS_ModelSet_load_duration(HTS_ModelSet * ms, FILE ** pdf_fp,
-                                FILE ** tree_fp, int interpolation_size);
+void HTS_ModelSet_load_duration(HTS_ModelSet * ms, HTS_File ** pdf_fp,
+                                HTS_File ** tree_fp, int interpolation_size);
 
 /* HTS_ModelSet_load_parameter: load parameter model */
-void HTS_ModelSet_load_parameter(HTS_ModelSet * ms, FILE ** pdf_fp,
-                                 FILE ** tree_fp, FILE ** win_fp,
+void HTS_ModelSet_load_parameter(HTS_ModelSet * ms, HTS_File ** pdf_fp,
+                                 HTS_File ** tree_fp, HTS_File ** win_fp,
                                  int stream_index, HTS_Boolean msd_flag,
                                  int window_size, int interpolation_size);
 
 /* HTS_ModelSet_load_gv: load GV model */
-void HTS_ModelSet_load_gv(HTS_ModelSet * ms, FILE ** pdf_fp, FILE ** tree_fp,
-                          int stream_index, int interpolation_size);
+void HTS_ModelSet_load_gv(HTS_ModelSet * ms, HTS_File ** pdf_fp,
+                          HTS_File ** tree_fp, int stream_index,
+                          int interpolation_size);
 
 /* HTS_ModelSet_have_gv_tree: if context-dependent GV is used, return true */
 HTS_Boolean HTS_ModelSet_have_gv_tree(HTS_ModelSet * ms, int stream_index);
 
 /* HTS_ModelSet_load_gv_switch: load GV switch */
-void HTS_ModelSet_load_gv_switch(HTS_ModelSet * ms, FILE * fp);
+void HTS_ModelSet_load_gv_switch(HTS_ModelSet * ms, HTS_File * fp);
 
 /* HTS_ModelSet_have_gv_switch: if GV switch is used, return true */
 HTS_Boolean HTS_ModelSet_have_gv_switch(HTS_ModelSet * ms);
@@ -360,7 +371,7 @@ void HTS_Label_load_from_fn(HTS_Label * label, int sampling_rate, int fperiod,
 
 /* HTS_Label_load_from_fp: load label list from file pointer */
 void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
-                            FILE * fp);
+                            HTS_File * fp);
 
 /* HTS_Label_load_from_string: load label from string */
 void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
@@ -677,8 +688,9 @@ void HTS_Engine_load_duration_from_fn(HTS_Engine * engine, char **pdf_fn,
                                       char **tree_fn, int interpolation_size);
 
 /* HTS_Engine_load_duration_from_fp: load duration pdfs, trees and number of state from file pointers */
-void HTS_Engine_load_duration_from_fp(HTS_Engine * engine, FILE ** pdf_fp,
-                                      FILE ** tree_fp, int interpolation_size);
+void HTS_Engine_load_duration_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp,
+                                      HTS_File ** tree_fp,
+                                      int interpolation_size);
 
 /* HTS_Engine_load_parameter_from_fn: load parameter pdfs, trees and windows from file names */
 void HTS_Engine_load_parameter_from_fn(HTS_Engine * engine, char **pdf_fn,
@@ -687,8 +699,8 @@ void HTS_Engine_load_parameter_from_fn(HTS_Engine * engine, char **pdf_fn,
                                        int window_size, int interpolation_size);
 
 /* HTS_Engine_load_parameter_from_fp: load parameter pdfs, trees and windows from file pointers */
-void HTS_Engine_load_parameter_from_fp(HTS_Engine * engine, FILE ** pdf_fp,
-                                       FILE ** tree_fp, FILE ** win_fp,
+void HTS_Engine_load_parameter_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp,
+                                       HTS_File ** tree_fp, HTS_File ** win_fp,
                                        int stream_index, HTS_Boolean msd_flag,
                                        int window_size, int interpolation_size);
 
@@ -698,15 +710,15 @@ void HTS_Engine_load_gv_from_fn(HTS_Engine * engine, char **pdf_fn,
                                 int interpolation_size);
 
 /* HTS_Engine_load_gv_from_fp: load GV pdfs and trees from file pointers */
-void HTS_Engine_load_gv_from_fp(HTS_Engine * engine, FILE ** pdf_fp,
-                                FILE ** tree_fp, int stream_index,
+void HTS_Engine_load_gv_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp,
+                                HTS_File ** tree_fp, int stream_index,
                                 int interpolation_size);
 
 /* HTS_Engine_load_gv_switch_from_fn: load GV switch from file names */
 void HTS_Engine_load_gv_switch_from_fn(HTS_Engine * engine, char *fn);
 
 /* HTS_Engine_load_gv_switch_from_fp: load GV switch from file pointers */
-void HTS_Engine_load_gv_switch_from_fp(HTS_Engine * engine, FILE * fp);
+void HTS_Engine_load_gv_switch_from_fp(HTS_Engine * engine, HTS_File * fp);
 
 /* HTS_Engine_set_sampling_rate: set sampling rate */
 void HTS_Engine_set_sampling_rate(HTS_Engine * engine, int i);
@@ -791,7 +803,7 @@ int HTS_Engine_get_nstate(HTS_Engine * engine);
 void HTS_Engine_load_label_from_fn(HTS_Engine * engine, char *fn);
 
 /* HTS_Engine_load_label_from_fp: load label from file name */
-void HTS_Engine_load_label_from_fp(HTS_Engine * engine, FILE * fp);
+void HTS_Engine_load_label_from_fp(HTS_Engine * engine, HTS_File * fp);
 
 /* HTS_Engine_load_label_from_string: load label from string */
 void HTS_Engine_load_label_from_string(HTS_Engine * engine, char *data);
@@ -810,20 +822,20 @@ void HTS_Engine_create_pstream(HTS_Engine * engine);
 void HTS_Engine_create_gstream(HTS_Engine * engine);
 
 /* HTS_Engine_save_information: output trace information */
-void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp);
+void HTS_Engine_save_information(HTS_Engine * engine, HTS_File * fp);
 
 /* HTS_Engine_save_label: output label with time */
-void HTS_Engine_save_label(HTS_Engine * engine, FILE * fp);
+void HTS_Engine_save_label(HTS_Engine * engine, HTS_File * fp);
 
 /* HTS_Engine_save_generated_parameter: output generated parameter */
-void HTS_Engine_save_generated_parameter(HTS_Engine * engine, FILE * fp,
+void HTS_Engine_save_generated_parameter(HTS_Engine * engine, HTS_File * fp,
                                          int stream_index);
 
 /* HTS_Engine_save_generated_speech: output generated speech */
-void HTS_Engine_save_generated_speech(HTS_Engine * engine, FILE * fp);
+void HTS_Engine_save_generated_speech(HTS_Engine * engine, HTS_File * fp);
 
 /* HTS_Engine_save_riff: output RIFF format file */
-void HTS_Engine_save_riff(HTS_Engine * engine, FILE * wavfp);
+void HTS_Engine_save_riff(HTS_Engine * engine, HTS_File * wavfp);
 
 /* HTS_Engine_refresh: free memory per one time synthesis */
 void HTS_Engine_refresh(HTS_Engine * engine);

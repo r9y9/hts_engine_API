@@ -1,3 +1,8 @@
+2011-08-10 21:16  uratec
+
+	* ChangeLog, configure.ac, lib/HTS_label.c: fix a small bug in
+	  label loader.
+
 2011-08-10 21:14  uratec
 
 	* lib/HTS_audio.c: remove warning message of PortAudio.
