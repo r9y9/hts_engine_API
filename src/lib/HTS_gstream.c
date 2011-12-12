@@ -70,11 +70,7 @@ void HTS_GStreamSet_initialize(HTS_GStreamSet * gss)
 
 /* HTS_GStreamSet_create: generate speech */
 /* (stream[0] == spectrum && stream[1] == lf0) */
-void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
-                           int stage, HTS_Boolean use_log_gain,
-                           int sampling_rate, int fperiod, double alpha,
-                           double beta,
-                           HTS_Boolean * stop, double volume, HTS_Audio * audio)
+void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss, int stage, HTS_Boolean use_log_gain, int sampling_rate, int fperiod, double alpha, double beta, HTS_Boolean * stop, double volume, HTS_Audio * audio)
 {
    int i, j, k;
    int msd_frame;
@@ -84,8 +80,7 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
 
    /* check */
    if (gss->gstream || gss->gspeech)
-      HTS_error(1,
-                "HTS_GStreamSet_create: HTS_GStreamSet is not initialized.\n");
+      HTS_error(1, "HTS_GStreamSet_create: HTS_GStreamSet is not initialized.\n");
 
    /* initialize */
    gss->nstream = HTS_PStreamSet_get_nstream(pss);
@@ -94,12 +89,9 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
    gss->gstream = (HTS_GStream *) HTS_calloc(gss->nstream, sizeof(HTS_GStream));
    for (i = 0; i < gss->nstream; i++) {
       gss->gstream[i].static_length = HTS_PStreamSet_get_static_length(pss, i);
-      gss->gstream[i].par =
-          (double **) HTS_calloc(gss->total_frame, sizeof(double *));
+      gss->gstream[i].par = (double **) HTS_calloc(gss->total_frame, sizeof(double *));
       for (j = 0; j < gss->total_frame; j++)
-         gss->gstream[i].par[j] =
-             (double *) HTS_calloc(gss->gstream[i].static_length,
-                                   sizeof(double));
+         gss->gstream[i].par[j] = (double *) HTS_calloc(gss->gstream[i].static_length, sizeof(double));
    }
    gss->gspeech = (short *) HTS_calloc(gss->total_nsample, sizeof(short));
 
@@ -109,8 +101,7 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
          for (j = 0, msd_frame = 0; j < gss->total_frame; j++)
             if (HTS_PStreamSet_get_msd_flag(pss, i, j)) {
                for (k = 0; k < gss->gstream[i].static_length; k++)
-                  gss->gstream[i].par[j][k] =
-                      HTS_PStreamSet_get_parameter(pss, i, msd_frame, k);
+                  gss->gstream[i].par[j][k] = HTS_PStreamSet_get_parameter(pss, i, msd_frame, k);
                msd_frame++;
             } else
                for (k = 0; k < gss->gstream[i].static_length; k++)
@@ -118,34 +109,26 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
       } else {                  /* for non MSD */
          for (j = 0; j < gss->total_frame; j++)
             for (k = 0; k < gss->gstream[i].static_length; k++)
-               gss->gstream[i].par[j][k] =
-                   HTS_PStreamSet_get_parameter(pss, i, j, k);
+               gss->gstream[i].par[j][k] = HTS_PStreamSet_get_parameter(pss, i, j, k);
       }
    }
 
    /* check */
    if (gss->nstream != 2 && gss->nstream != 3)
-      HTS_error(1,
-                "HTS_GStreamSet_create: The number of streams should be 2 or 3.\n");
+      HTS_error(1, "HTS_GStreamSet_create: The number of streams should be 2 or 3.\n");
    if (HTS_PStreamSet_get_static_length(pss, 1) != 1)
-      HTS_error(1,
-                "HTS_GStreamSet_create: The size of lf0 static vector should be 1.\n");
+      HTS_error(1, "HTS_GStreamSet_create: The size of lf0 static vector should be 1.\n");
    if (gss->nstream >= 3 && gss->gstream[2].static_length % 2 == 0)
-      HTS_error(1,
-                "HTS_GStreamSet_create: The number of low-pass filter coefficient should be odd numbers.");
+      HTS_error(1, "HTS_GStreamSet_create: The number of low-pass filter coefficient should be odd numbers.");
 
    /* synthesize speech waveform */
-   HTS_Vocoder_initialize(&v, gss->gstream[0].static_length - 1, stage,
-                          use_log_gain, sampling_rate, fperiod);
+   HTS_Vocoder_initialize(&v, gss->gstream[0].static_length - 1, stage, use_log_gain, sampling_rate, fperiod);
    if (gss->nstream >= 3)
       nlpf = (gss->gstream[2].static_length - 1) / 2;
    for (i = 0; i < gss->total_frame && (*stop) == FALSE; i++) {
       if (gss->nstream >= 3)
          lpf = &gss->gstream[2].par[i][0];
-      HTS_Vocoder_synthesize(&v, gss->gstream[0].static_length - 1,
-                             gss->gstream[1].par[i][0],
-                             &gss->gstream[0].par[i][0], nlpf, lpf, alpha, beta,
-                             volume, &gss->gspeech[i * fperiod], audio);
+      HTS_Vocoder_synthesize(&v, gss->gstream[0].static_length - 1, gss->gstream[1].par[i][0], &gss->gstream[0].par[i][0], nlpf, lpf, alpha, beta, volume, &gss->gspeech[i * fperiod], audio);
    }
    HTS_Vocoder_clear(&v);
    if (audio)
@@ -177,8 +160,7 @@ short HTS_GStreamSet_get_speech(HTS_GStreamSet * gss, int sample_index)
 }
 
 /* HTS_GStreamSet_get_parameter: get generated parameter */
-double HTS_GStreamSet_get_parameter(HTS_GStreamSet * gss, int stream_index,
-                                    int frame_index, int vector_index)
+double HTS_GStreamSet_get_parameter(HTS_GStreamSet * gss, int stream_index, int frame_index, int vector_index)
 {
    return gss->gstream[stream_index].par[frame_index][vector_index];
 }

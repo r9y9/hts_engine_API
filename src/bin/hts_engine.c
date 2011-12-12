@@ -67,102 +67,57 @@ void Usage(void)
 {
    HTS_show_copyright(stderr);
    fprintf(stderr, "\n");
-   fprintf(stderr,
-           "hts_engine - The HMM-based speech synthesis engine \"hts_engine API\"\n");
+   fprintf(stderr, "hts_engine - The HMM-based speech synthesis engine \"hts_engine API\"\n");
    fprintf(stderr, "\n");
    fprintf(stderr, "  usage:\n");
    fprintf(stderr, "       hts_engine [ options ] [ infile ] \n");
-   fprintf(stderr,
-           "  options:                                                                   [  def][ min--max]\n");
-   fprintf(stderr,
-           "    -td tree       : decision tree files for state duration                  [  N/A]\n");
-   fprintf(stderr,
-           "    -tm tree       : decision tree files for spectrum                        [  N/A]\n");
-   fprintf(stderr,
-           "    -tf tree       : decision tree files for Log F0                          [  N/A]\n");
-   fprintf(stderr,
-           "    -tl tree       : decision tree files for low-pass filter                 [  N/A]\n");
-   fprintf(stderr,
-           "    -md pdf        : model files for state duration                          [  N/A]\n");
-   fprintf(stderr,
-           "    -mm pdf        : model files for spectrum                                [  N/A]\n");
-   fprintf(stderr,
-           "    -mf pdf        : model files for Log F0                                  [  N/A]\n");
-   fprintf(stderr,
-           "    -ml pdf        : model files for low-pass filter                         [  N/A]\n");
-   fprintf(stderr,
-           "    -dm win        : window files for calculation delta of spectrum          [  N/A]\n");
-   fprintf(stderr,
-           "    -df win        : window files for calculation delta of Log F0            [  N/A]\n");
-   fprintf(stderr,
-           "    -dl win        : window files for calculation delta of low-pass filter   [  N/A]\n");
-   fprintf(stderr,
-           "    -od s          : filename of output label with duration                  [  N/A]\n");
-   fprintf(stderr,
-           "    -om s          : filename of output spectrum                             [  N/A]\n");
-   fprintf(stderr,
-           "    -of s          : filename of output Log F0                               [  N/A]\n");
-   fprintf(stderr,
-           "    -ol s          : filename of output low-pass filter                      [  N/A]\n");
-   fprintf(stderr,
-           "    -or s          : filename of output raw audio (generated speech)         [  N/A]\n");
-   fprintf(stderr,
-           "    -ow s          : filename of output wav audio (generated speech)         [  N/A]\n");
-   fprintf(stderr,
-           "    -ot s          : filename of output trace information                    [  N/A]\n");
-   fprintf(stderr,
-           "    -vp            : use phoneme alignment for duration                      [  N/A]\n");
-   fprintf(stderr,
-           "    -i  i f1 .. fi : enable interpolation & specify number(i),coefficient(f) [    1][   1-- ]\n");
-   fprintf(stderr,
-           "    -s  i          : sampling frequency                                      [16000][   1--48000]\n");
-   fprintf(stderr,
-           "    -p  i          : frame period (point)                                    [   80][   1--]\n");
-   fprintf(stderr,
-           "    -a  f          : all-pass constant                                       [ 0.42][ 0.0--1.0]\n");
-   fprintf(stderr,
-           "    -g  i          : gamma = -1 / i (if i=0 then gamma=0)                    [    0][   0-- ]\n");
-   fprintf(stderr,
-           "    -b  f          : postfiltering coefficient                               [  0.0][-0.8--0.8]\n");
-   fprintf(stderr,
-           "    -l             : regard input as log gain and output linear one (LSP)    [  N/A]\n");
-   fprintf(stderr,
-           "    -r  f          : speech speed rate                                       [  1.0][ 0.0--10.0]\n");
-   fprintf(stderr,
-           "    -fm f          : add half-tone                                           [  0.0][-24.0--24.0]\n");
-   fprintf(stderr,
-           "    -u  f          : voiced/unvoiced threshold                               [  0.5][ 0.0--1.0]\n");
-   fprintf(stderr,
-           "    -em tree       : decision tree files for GV of spectrum                  [  N/A]\n");
-   fprintf(stderr,
-           "    -ef tree       : decision tree files for GV of Log F0                    [  N/A]\n");
-   fprintf(stderr,
-           "    -el tree       : decision tree files for GV of low-pass filter           [  N/A]\n");
-   fprintf(stderr,
-           "    -cm pdf        : filenames of GV for spectrum                            [  N/A]\n");
-   fprintf(stderr,
-           "    -cf pdf        : filenames of GV for Log F0                              [  N/A]\n");
-   fprintf(stderr,
-           "    -cl pdf        : filenames of GV for low-pass filter                     [  N/A]\n");
-   fprintf(stderr,
-           "    -jm f          : weight of GV for spectrum                               [  1.0][ 0.0--2.0]\n");
-   fprintf(stderr,
-           "    -jf f          : weight of GV for Log F0                                 [  1.0][ 0.0--2.0]\n");
-   fprintf(stderr,
-           "    -jl f          : weight of GV for low-pass filter                        [  1.0][ 0.0--2.0]\n");
-   fprintf(stderr,
-           "    -k  tree       : GV switch                                               [  N/A]\n");
-   fprintf(stderr,
-           "    -z  i          : audio buffer size                                       [ 1600][   0--48000]\n");
+   fprintf(stderr, "  options:                                                                   [  def][ min--max]\n");
+   fprintf(stderr, "    -td tree       : decision tree files for state duration                  [  N/A]\n");
+   fprintf(stderr, "    -tm tree       : decision tree files for spectrum                        [  N/A]\n");
+   fprintf(stderr, "    -tf tree       : decision tree files for Log F0                          [  N/A]\n");
+   fprintf(stderr, "    -tl tree       : decision tree files for low-pass filter                 [  N/A]\n");
+   fprintf(stderr, "    -md pdf        : model files for state duration                          [  N/A]\n");
+   fprintf(stderr, "    -mm pdf        : model files for spectrum                                [  N/A]\n");
+   fprintf(stderr, "    -mf pdf        : model files for Log F0                                  [  N/A]\n");
+   fprintf(stderr, "    -ml pdf        : model files for low-pass filter                         [  N/A]\n");
+   fprintf(stderr, "    -dm win        : window files for calculation delta of spectrum          [  N/A]\n");
+   fprintf(stderr, "    -df win        : window files for calculation delta of Log F0            [  N/A]\n");
+   fprintf(stderr, "    -dl win        : window files for calculation delta of low-pass filter   [  N/A]\n");
+   fprintf(stderr, "    -od s          : filename of output label with duration                  [  N/A]\n");
+   fprintf(stderr, "    -om s          : filename of output spectrum                             [  N/A]\n");
+   fprintf(stderr, "    -of s          : filename of output Log F0                               [  N/A]\n");
+   fprintf(stderr, "    -ol s          : filename of output low-pass filter                      [  N/A]\n");
+   fprintf(stderr, "    -or s          : filename of output raw audio (generated speech)         [  N/A]\n");
+   fprintf(stderr, "    -ow s          : filename of output wav audio (generated speech)         [  N/A]\n");
+   fprintf(stderr, "    -ot s          : filename of output trace information                    [  N/A]\n");
+   fprintf(stderr, "    -vp            : use phoneme alignment for duration                      [  N/A]\n");
+   fprintf(stderr, "    -i  i f1 .. fi : enable interpolation & specify number(i),coefficient(f) [    1][   1-- ]\n");
+   fprintf(stderr, "    -s  i          : sampling frequency                                      [16000][   1--48000]\n");
+   fprintf(stderr, "    -p  i          : frame period (point)                                    [   80][   1--]\n");
+   fprintf(stderr, "    -a  f          : all-pass constant                                       [ 0.42][ 0.0--1.0]\n");
+   fprintf(stderr, "    -g  i          : gamma = -1 / i (if i=0 then gamma=0)                    [    0][   0-- ]\n");
+   fprintf(stderr, "    -b  f          : postfiltering coefficient                               [  0.0][-0.8--0.8]\n");
+   fprintf(stderr, "    -l             : regard input as log gain and output linear one (LSP)    [  N/A]\n");
+   fprintf(stderr, "    -r  f          : speech speed rate                                       [  1.0][ 0.0--10.0]\n");
+   fprintf(stderr, "    -fm f          : add half-tone                                           [  0.0][-24.0--24.0]\n");
+   fprintf(stderr, "    -u  f          : voiced/unvoiced threshold                               [  0.5][ 0.0--1.0]\n");
+   fprintf(stderr, "    -em tree       : decision tree files for GV of spectrum                  [  N/A]\n");
+   fprintf(stderr, "    -ef tree       : decision tree files for GV of Log F0                    [  N/A]\n");
+   fprintf(stderr, "    -el tree       : decision tree files for GV of low-pass filter           [  N/A]\n");
+   fprintf(stderr, "    -cm pdf        : filenames of GV for spectrum                            [  N/A]\n");
+   fprintf(stderr, "    -cf pdf        : filenames of GV for Log F0                              [  N/A]\n");
+   fprintf(stderr, "    -cl pdf        : filenames of GV for low-pass filter                     [  N/A]\n");
+   fprintf(stderr, "    -jm f          : weight of GV for spectrum                               [  1.0][ 0.0--2.0]\n");
+   fprintf(stderr, "    -jf f          : weight of GV for Log F0                                 [  1.0][ 0.0--2.0]\n");
+   fprintf(stderr, "    -jl f          : weight of GV for low-pass filter                        [  1.0][ 0.0--2.0]\n");
+   fprintf(stderr, "    -k  tree       : GV switch                                               [  N/A]\n");
+   fprintf(stderr, "    -z  i          : audio buffer size                                       [ 1600][   0--48000]\n");
    fprintf(stderr, "  infile:\n");
    fprintf(stderr, "    label file\n");
    fprintf(stderr, "  note:\n");
-   fprintf(stderr,
-           "    option '-d' may be repeated to use multiple delta parameters.\n");
-   fprintf(stderr,
-           "    generated spectrum, log F0, and low-pass filter coefficient\n");
-   fprintf(stderr,
-           "    sequences are saved in natural endian, binary (float) format.\n");
+   fprintf(stderr, "    option '-d' may be repeated to use multiple delta parameters.\n");
+   fprintf(stderr, "    generated spectrum, log F0, and low-pass filter coefficient\n");
+   fprintf(stderr, "    sequences are saved in natural endian, binary (float) format.\n");
    fprintf(stderr, "\n");
 
    exit(0);
@@ -533,16 +488,12 @@ int main(int argc, char **argv)
       }
    }
    /* number of models,trees check */
-   if (num_interp != num_ts_dur || num_interp != num_ts_mgc ||
-       num_interp != num_ts_lf0 || num_interp != num_ms_dur ||
-       num_interp != num_ms_mgc || num_interp != num_ms_lf0) {
-      Error(1, "hts_engine: specify %d models(trees) for each parameter.\n",
-            num_interp);
+   if (num_interp != num_ts_dur || num_interp != num_ts_mgc || num_interp != num_ts_lf0 || num_interp != num_ms_dur || num_interp != num_ms_mgc || num_interp != num_ms_lf0) {
+      Error(1, "hts_engine: specify %d models(trees) for each parameter.\n", num_interp);
    }
    if (num_ms_lpf > 0 || num_ts_lpf > 0) {
       if (num_interp != num_ms_lpf || num_interp != num_ts_lpf) {
-         Error(1, "hts_engine: specify %d models(trees) for each parameter.\n",
-               num_interp);
+         Error(1, "hts_engine: specify %d models(trees) for each parameter.\n", num_interp);
       }
    }
 
@@ -556,37 +507,30 @@ int main(int argc, char **argv)
    /* load duration model */
    HTS_Engine_load_duration_from_fn(&engine, fn_ms_dur, fn_ts_dur, num_interp);
    /* load stream[0] (spectrum model) */
-   HTS_Engine_load_parameter_from_fn(&engine, fn_ms_mgc, fn_ts_mgc, fn_ws_mgc,
-                                     0, FALSE, num_ws_mgc, num_interp);
+   HTS_Engine_load_parameter_from_fn(&engine, fn_ms_mgc, fn_ts_mgc, fn_ws_mgc, 0, FALSE, num_ws_mgc, num_interp);
    /* load stream[1] (lf0 model) */
-   HTS_Engine_load_parameter_from_fn(&engine, fn_ms_lf0, fn_ts_lf0, fn_ws_lf0,
-                                     1, TRUE, num_ws_lf0, num_interp);
+   HTS_Engine_load_parameter_from_fn(&engine, fn_ms_lf0, fn_ts_lf0, fn_ws_lf0, 1, TRUE, num_ws_lf0, num_interp);
    /* load stream[2] (low-pass filter model) */
    if (num_ms_lpf > 0 || num_ts_lpf > 0)
-      HTS_Engine_load_parameter_from_fn(&engine, fn_ms_lpf, fn_ts_lpf,
-                                        fn_ws_lpf, 2, FALSE, num_ws_lpf,
-                                        num_interp);
+      HTS_Engine_load_parameter_from_fn(&engine, fn_ms_lpf, fn_ts_lpf, fn_ws_lpf, 2, FALSE, num_ws_lpf, num_interp);
    /* load gv[0] (GV for spectrum) */
    if (num_interp == num_ms_gvm) {
       if (num_ms_gvm == num_ts_gvm)
-         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvm, fn_ts_gvm, 0,
-                                    num_interp);
+         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvm, fn_ts_gvm, 0, num_interp);
       else
          HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvm, NULL, 0, num_interp);
    }
    /* load gv[1] (GV for lf0) */
    if (num_interp == num_ms_gvl) {
       if (num_ms_gvl == num_ts_gvl)
-         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvl, fn_ts_gvl, 1,
-                                    num_interp);
+         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvl, fn_ts_gvl, 1, num_interp);
       else
          HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvl, NULL, 1, num_interp);
    }
    /* load gv[2] (GV for low-pass filter) */
    if (num_interp == num_ms_gvf && (num_ms_lpf > 0 || num_ts_lpf > 0)) {
       if (num_ms_gvf == num_ts_gvf)
-         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvf, fn_ts_gvf, 0,
-                                    num_interp);
+         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvf, fn_ts_gvf, 0, num_interp);
       else
          HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvf, NULL, 2, num_interp);
    }
@@ -609,13 +553,10 @@ int main(int argc, char **argv)
       HTS_Engine_set_gv_weight(&engine, 2, gv_weight_lpf);
    for (i = 0; i < num_interp; i++) {
       HTS_Engine_set_duration_interpolation_weight(&engine, i, rate_interp[i]);
-      HTS_Engine_set_parameter_interpolation_weight(&engine, 0, i,
-                                                    rate_interp[i]);
-      HTS_Engine_set_parameter_interpolation_weight(&engine, 1, i,
-                                                    rate_interp[i]);
+      HTS_Engine_set_parameter_interpolation_weight(&engine, 0, i, rate_interp[i]);
+      HTS_Engine_set_parameter_interpolation_weight(&engine, 1, i, rate_interp[i]);
       if (num_ms_lpf > 0 || num_ts_lpf > 0)
-         HTS_Engine_set_parameter_interpolation_weight(&engine, 2, i,
-                                                       rate_interp[i]);
+         HTS_Engine_set_parameter_interpolation_weight(&engine, 2, i, rate_interp[i]);
    }
    if (num_interp == num_ms_gvm)
       for (i = 0; i < num_interp; i++)

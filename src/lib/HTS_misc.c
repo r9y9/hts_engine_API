@@ -263,8 +263,7 @@ int HTS_fread_big_endian(void *p, const int size, const int num, HTS_File * fp)
 }
 
 /* HTS_fwrite_little_endian: fwrite with byteswap */
-int HTS_fwrite_little_endian(void *p, const int size, const int num,
-                             HTS_File * fp)
+int HTS_fwrite_little_endian(void *p, const int size, const int num, HTS_File * fp)
 {
    const int block = num * size;
 

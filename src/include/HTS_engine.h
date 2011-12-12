@@ -152,12 +152,10 @@ typedef struct _HTS_Audio {
 /*  ------------------------ audio method -------------------------  */
 
 /* HTS_Audio_initialize: initialize audio */
-void HTS_Audio_initialize(HTS_Audio * audio, int sampling_rate,
-                          int max_buff_size);
+void HTS_Audio_initialize(HTS_Audio * audio, int sampling_rate, int max_buff_size);
 
 /* HTS_Audio_set_parameter: set parameters for audio */
-void HTS_Audio_set_parameter(HTS_Audio * audio, int sampling_rate,
-                             int max_buff_size);
+void HTS_Audio_set_parameter(HTS_Audio * audio, int sampling_rate, int max_buff_size);
 
 /* HTS_Audio_write: send data to audio */
 void HTS_Audio_write(HTS_Audio * audio, short data);
@@ -245,19 +243,13 @@ typedef struct _HTS_ModelSet {
 void HTS_ModelSet_initialize(HTS_ModelSet * ms, int nstream);
 
 /* HTS_ModelSet_load_duration: load duration model and number of state */
-void HTS_ModelSet_load_duration(HTS_ModelSet * ms, HTS_File ** pdf_fp,
-                                HTS_File ** tree_fp, int interpolation_size);
+void HTS_ModelSet_load_duration(HTS_ModelSet * ms, HTS_File ** pdf_fp, HTS_File ** tree_fp, int interpolation_size);
 
 /* HTS_ModelSet_load_parameter: load parameter model */
-void HTS_ModelSet_load_parameter(HTS_ModelSet * ms, HTS_File ** pdf_fp,
-                                 HTS_File ** tree_fp, HTS_File ** win_fp,
-                                 int stream_index, HTS_Boolean msd_flag,
-                                 int window_size, int interpolation_size);
+void HTS_ModelSet_load_parameter(HTS_ModelSet * ms, HTS_File ** pdf_fp, HTS_File ** tree_fp, HTS_File ** win_fp, int stream_index, HTS_Boolean msd_flag, int window_size, int interpolation_size);
 
 /* HTS_ModelSet_load_gv: load GV model */
-void HTS_ModelSet_load_gv(HTS_ModelSet * ms, HTS_File ** pdf_fp,
-                          HTS_File ** tree_fp, int stream_index,
-                          int interpolation_size);
+void HTS_ModelSet_load_gv(HTS_ModelSet * ms, HTS_File ** pdf_fp, HTS_File ** tree_fp, int stream_index, int interpolation_size);
 
 /* HTS_ModelSet_have_gv_tree: if context-dependent GV is used, return true */
 HTS_Boolean HTS_ModelSet_have_gv_tree(HTS_ModelSet * ms, int stream_index);
@@ -284,17 +276,13 @@ HTS_Boolean HTS_ModelSet_is_msd(HTS_ModelSet * ms, int stream_index);
 int HTS_ModelSet_get_window_size(HTS_ModelSet * ms, int stream_index);
 
 /* HTS_ModelSet_get_window_left_width: get left width of dynamic window */
-int HTS_ModelSet_get_window_left_width(HTS_ModelSet * ms, int stream_index,
-                                       int window_index);
+int HTS_ModelSet_get_window_left_width(HTS_ModelSet * ms, int stream_index, int window_index);
 
 /* HTS_ModelSet_get_window_right_width: get right width of dynamic window */
-int HTS_ModelSet_get_window_right_width(HTS_ModelSet * ms, int stream_index,
-                                        int window_index);
+int HTS_ModelSet_get_window_right_width(HTS_ModelSet * ms, int stream_index, int window_index);
 
 /* HTS_ModelSet_get_window_coefficient: get coefficient of dynamic window */
-double HTS_ModelSet_get_window_coefficient(HTS_ModelSet * ms, int stream_index,
-                                           int window_index,
-                                           int coefficient_index);
+double HTS_ModelSet_get_window_coefficient(HTS_ModelSet * ms, int stream_index, int window_index, int coefficient_index);
 
 /* HTS_ModelSet_get_window_max_width: get max width of dynamic window */
 int HTS_ModelSet_get_window_max_width(HTS_ModelSet * ms, int stream_index);
@@ -303,8 +291,7 @@ int HTS_ModelSet_get_window_max_width(HTS_ModelSet * ms, int stream_index);
 int HTS_ModelSet_get_duration_interpolation_size(HTS_ModelSet * ms);
 
 /* HTS_ModelSet_get_parameter_interpolation_size: get interpolation size (parameter model) */
-int HTS_ModelSet_get_parameter_interpolation_size(HTS_ModelSet * ms,
-                                                  int stream_index);
+int HTS_ModelSet_get_parameter_interpolation_size(HTS_ModelSet * ms, int stream_index);
 
 /* HTS_ModelSet_get_gv_interpolation_size: get interpolation size (GV model) */
 int HTS_ModelSet_get_gv_interpolation_size(HTS_ModelSet * ms, int stream_index);
@@ -313,28 +300,19 @@ int HTS_ModelSet_get_gv_interpolation_size(HTS_ModelSet * ms, int stream_index);
 HTS_Boolean HTS_ModelSet_use_gv(HTS_ModelSet * ms, int index);
 
 /* HTS_ModelSet_get_duration_index: get index of duration tree and PDF */
-void HTS_ModelSet_get_duration_index(HTS_ModelSet * ms, char *string,
-                                     int *tree_index, int *pdf_index,
-                                     int interpolation_index);
+void HTS_ModelSet_get_duration_index(HTS_ModelSet * ms, char *string, int *tree_index, int *pdf_index, int interpolation_index);
 
 /* HTS_ModelSet_get_duration: get duration using interpolation weight */
-void HTS_ModelSet_get_duration(HTS_ModelSet * ms, char *string, double *mean,
-                               double *vari, double *iw);
+void HTS_ModelSet_get_duration(HTS_ModelSet * ms, char *string, double *mean, double *vari, double *iw);
 
 /* HTS_ModelSet_get_parameter_index: get index of parameter tree and PDF */
-void HTS_ModelSet_get_parameter_index(HTS_ModelSet * ms, char *string,
-                                      int *tree_index, int *pdf_index,
-                                      int stream_index, int state_index,
-                                      int interpolation_index);
+void HTS_ModelSet_get_parameter_index(HTS_ModelSet * ms, char *string, int *tree_index, int *pdf_index, int stream_index, int state_index, int interpolation_index);
 
 /* HTS_ModelSet_get_parameter: get parameter using interpolation weight */
-void HTS_ModelSet_get_parameter(HTS_ModelSet * ms, char *string, double *mean,
-                                double *vari, double *msd, int stream_index,
-                                int state_index, double *iw);
+void HTS_ModelSet_get_parameter(HTS_ModelSet * ms, char *string, double *mean, double *vari, double *msd, int stream_index, int state_index, double *iw);
 
 /* HTS_ModelSet_get_gv: get GV using interpolation weight */
-void HTS_ModelSet_get_gv(HTS_ModelSet * ms, char *string, double *mean,
-                         double *vari, int stream_index, double *iw);
+void HTS_ModelSet_get_gv(HTS_ModelSet * ms, char *string, double *mean, double *vari, int stream_index, double *iw);
 
 /* HTS_ModelSet_get_gv_switch: get GV switch */
 HTS_Boolean HTS_ModelSet_get_gv_switch(HTS_ModelSet * ms, char *string);
@@ -366,20 +344,16 @@ typedef struct _HTS_Label {
 void HTS_Label_initialize(HTS_Label * label);
 
 /* HTS_Label_load_from_fn: load label from file name */
-void HTS_Label_load_from_fn(HTS_Label * label, int sampling_rate, int fperiod,
-                            char *fn);
+void HTS_Label_load_from_fn(HTS_Label * label, int sampling_rate, int fperiod, char *fn);
 
 /* HTS_Label_load_from_fp: load label list from file pointer */
-void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
-                            HTS_File * fp);
+void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod, HTS_File * fp);
 
 /* HTS_Label_load_from_string: load label from string */
-void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
-                                int fperiod, char *data);
+void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate, int fperiod, char *data);
 
 /* HTS_Label_load_from_string_list: load label list from string list */
-void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
-                                     int fperiod, char **data, int size);
+void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate, int fperiod, char **data, int size);
 
 /* HTS_Label_set_speech_speed: set speech speed rate */
 void HTS_Label_set_speech_speed(HTS_Label * label, double f);
@@ -442,9 +416,7 @@ typedef struct _HTS_SStreamSet {
 void HTS_SStreamSet_initialize(HTS_SStreamSet * sss);
 
 /* HTS_SStreamSet_create: parse label and determine state duration */
-void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms,
-                           HTS_Label * label, double *duration_iw,
-                           double **parameter_iw, double **gv_iw);
+void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms, HTS_Label * label, double *duration_iw, double **parameter_iw, double **gv_iw);
 
 /* HTS_SStreamSet_get_nstream: get number of stream */
 int HTS_SStreamSet_get_nstream(HTS_SStreamSet * sss);
@@ -462,24 +434,19 @@ int HTS_SStreamSet_get_total_state(HTS_SStreamSet * sss);
 int HTS_SStreamSet_get_total_frame(HTS_SStreamSet * sss);
 
 /* HTS_SStreamSet_get_msd: get msd parameter */
-double HTS_SStreamSet_get_msd(HTS_SStreamSet * sss, int stream_index,
-                              int state_index);
+double HTS_SStreamSet_get_msd(HTS_SStreamSet * sss, int stream_index, int state_index);
 
 /* HTS_SStreamSet_window_size: get dynamic window size */
 int HTS_SStreamSet_get_window_size(HTS_SStreamSet * sss, int stream_index);
 
 /* HTS_SStreamSet_get_window_left_width: get left width of dynamic window */
-int HTS_SStreamSet_get_window_left_width(HTS_SStreamSet * sss, int stream_index,
-                                         int window_index);
+int HTS_SStreamSet_get_window_left_width(HTS_SStreamSet * sss, int stream_index, int window_index);
 
 /* HTS_SStreamSet_get_window_right_width: get right width of dynamic window */
-int HTS_SStreamSet_get_window_right_width(HTS_SStreamSet * sss,
-                                          int stream_index, int window_index);
+int HTS_SStreamSet_get_window_right_width(HTS_SStreamSet * sss, int stream_index, int window_index);
 
 /* HTS_SStreamSet_get_window_coefficient: get coefficient of dynamic window */
-double HTS_SStreamSet_get_window_coefficient(HTS_SStreamSet * sss,
-                                             int stream_index, int window_index,
-                                             int coefficient_index);
+double HTS_SStreamSet_get_window_coefficient(HTS_SStreamSet * sss, int stream_index, int window_index, int coefficient_index);
 
 /* HTS_SStreamSet_get_window_max_width: get max width of dynamic window */
 int HTS_SStreamSet_get_window_max_width(HTS_SStreamSet * sss, int stream_index);
@@ -491,36 +458,28 @@ HTS_Boolean HTS_SStreamSet_use_gv(HTS_SStreamSet * sss, int stream_index);
 int HTS_SStreamSet_get_duration(HTS_SStreamSet * sss, int state_index);
 
 /* HTS_SStreamSet_get_mean: get mean parameter */
-double HTS_SStreamSet_get_mean(HTS_SStreamSet * sss, int stream_index,
-                               int state_index, int vector_index);
+double HTS_SStreamSet_get_mean(HTS_SStreamSet * sss, int stream_index, int state_index, int vector_index);
 
 /* HTS_SStreamSet_set_mean: set mean parameter */
-void HTS_SStreamSet_set_mean(HTS_SStreamSet * sss, int stream_index,
-                             int state_index, int vector_index, double f);
+void HTS_SStreamSet_set_mean(HTS_SStreamSet * sss, int stream_index, int state_index, int vector_index, double f);
 
 /* HTS_SStreamSet_get_vari: get variance parameter */
-double HTS_SStreamSet_get_vari(HTS_SStreamSet * sss, int stream_index,
-                               int state_index, int vector_index);
+double HTS_SStreamSet_get_vari(HTS_SStreamSet * sss, int stream_index, int state_index, int vector_index);
 
 /* HTS_SStreamSet_set_vari: set variance parameter */
-void HTS_SStreamSet_set_vari(HTS_SStreamSet * sss, int stream_index,
-                             int state_index, int vector_index, double f);
+void HTS_SStreamSet_set_vari(HTS_SStreamSet * sss, int stream_index, int state_index, int vector_index, double f);
 
 /* HTS_SStreamSet_get_gv_mean: get GV mean parameter */
-double HTS_SStreamSet_get_gv_mean(HTS_SStreamSet * sss, int stream_index,
-                                  int vector_index);
+double HTS_SStreamSet_get_gv_mean(HTS_SStreamSet * sss, int stream_index, int vector_index);
 
 /* HTS_SStreamSet_get_gv_mean: get GV variance parameter */
-double HTS_SStreamSet_get_gv_vari(HTS_SStreamSet * sss, int stream_index,
-                                  int vector_index);
+double HTS_SStreamSet_get_gv_vari(HTS_SStreamSet * sss, int stream_index, int vector_index);
 
 /* HTS_SStreamSet_set_gv_switch: set GV switch */
-void HTS_SStreamSet_set_gv_switch(HTS_SStreamSet * sss, int stream_index,
-                                  int state_index, HTS_Boolean i);
+void HTS_SStreamSet_set_gv_switch(HTS_SStreamSet * sss, int stream_index, int state_index, HTS_Boolean i);
 
 /* HTS_SStreamSet_get_gv_switch: get GV switch */
-HTS_Boolean HTS_SStreamSet_get_gv_switch(HTS_SStreamSet * sss, int stream_index,
-                                         int state_index);
+HTS_Boolean HTS_SStreamSet_get_gv_switch(HTS_SStreamSet * sss, int stream_index, int state_index);
 
 /* HTS_SStreamSet_clear: free state stream set */
 void HTS_SStreamSet_clear(HTS_SStreamSet * sss);
@@ -568,8 +527,7 @@ typedef struct _HTS_PStreamSet {
 void HTS_PStreamSet_initialize(HTS_PStreamSet * pss);
 
 /* HTS_PStreamSet_create: parameter generation using GV weight */
-void HTS_PStreamSet_create(HTS_PStreamSet * pss, HTS_SStreamSet * sss,
-                           double *msd_threshold, double *gv_weight);
+void HTS_PStreamSet_create(HTS_PStreamSet * pss, HTS_SStreamSet * sss, double *msd_threshold, double *gv_weight);
 
 /* HTS_PStreamSet_get_nstream: get number of stream */
 int HTS_PStreamSet_get_nstream(HTS_PStreamSet * pss);
@@ -581,16 +539,13 @@ int HTS_PStreamSet_get_static_length(HTS_PStreamSet * pss, int stream_index);
 int HTS_PStreamSet_get_total_frame(HTS_PStreamSet * pss);
 
 /* HTS_PStreamSet_get_parameter: get parameter */
-double HTS_PStreamSet_get_parameter(HTS_PStreamSet * pss, int stream_index,
-                                    int frame_index, int vector_index);
+double HTS_PStreamSet_get_parameter(HTS_PStreamSet * pss, int stream_index, int frame_index, int vector_index);
 
 /* HTS_PStreamSet_get_parameter_vector: get parameter vector */
-double *HTS_PStreamSet_get_parameter_vector(HTS_PStreamSet * pss,
-                                            int stream_index, int frame_index);
+double *HTS_PStreamSet_get_parameter_vector(HTS_PStreamSet * pss, int stream_index, int frame_index);
 
 /* HTS_PStreamSet_get_msd_flag: get generated MSD flag per frame */
-HTS_Boolean HTS_PStreamSet_get_msd_flag(HTS_PStreamSet * pss, int stream_index,
-                                        int frame_index);
+HTS_Boolean HTS_PStreamSet_get_msd_flag(HTS_PStreamSet * pss, int stream_index, int frame_index);
 
 /* HTS_PStreamSet_is_msd: get MSD flag */
 HTS_Boolean HTS_PStreamSet_is_msd(HTS_PStreamSet * pss, int stream_index);
@@ -621,12 +576,7 @@ typedef struct _HTS_GStreamSet {
 void HTS_GStreamSet_initialize(HTS_GStreamSet * gss);
 
 /* HTS_GStreamSet_create: generate speech */
-void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss,
-                           int stage, HTS_Boolean use_log_gain,
-                           int sampling_rate, int fperiod, double alpha,
-                           double beta,
-                           HTS_Boolean * stop, double volume,
-                           HTS_Audio * audio);
+void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss, int stage, HTS_Boolean use_log_gain, int sampling_rate, int fperiod, double alpha, double beta, HTS_Boolean * stop, double volume, HTS_Audio * audio);
 
 /* HTS_GStreamSet_get_total_nsample: get total number of sample */
 int HTS_GStreamSet_get_total_nsample(HTS_GStreamSet * gss);
@@ -641,8 +591,7 @@ int HTS_GStreamSet_get_static_length(HTS_GStreamSet * gss, int stream_index);
 short HTS_GStreamSet_get_speech(HTS_GStreamSet * gss, int sample_index);
 
 /* HTS_GStreamSet_get_parameter: get generated parameter */
-double HTS_GStreamSet_get_parameter(HTS_GStreamSet * gss, int stream_index,
-                                    int frame_index, int vector_index);
+double HTS_GStreamSet_get_parameter(HTS_GStreamSet * gss, int stream_index, int frame_index, int vector_index);
 
 /* HTS_GStreamSet_clear: free generated parameter stream set */
 void HTS_GStreamSet_clear(HTS_GStreamSet * gss);
@@ -684,35 +633,22 @@ typedef struct _HTS_Engine {
 void HTS_Engine_initialize(HTS_Engine * engine, int nstream);
 
 /* HTS_engine_load_duration_from_fn: load duration pdfs ,trees and number of state from file names */
-void HTS_Engine_load_duration_from_fn(HTS_Engine * engine, char **pdf_fn,
-                                      char **tree_fn, int interpolation_size);
+void HTS_Engine_load_duration_from_fn(HTS_Engine * engine, char **pdf_fn, char **tree_fn, int interpolation_size);
 
 /* HTS_Engine_load_duration_from_fp: load duration pdfs, trees and number of state from file pointers */
-void HTS_Engine_load_duration_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp,
-                                      HTS_File ** tree_fp,
-                                      int interpolation_size);
+void HTS_Engine_load_duration_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp, HTS_File ** tree_fp, int interpolation_size);
 
 /* HTS_Engine_load_parameter_from_fn: load parameter pdfs, trees and windows from file names */
-void HTS_Engine_load_parameter_from_fn(HTS_Engine * engine, char **pdf_fn,
-                                       char **tree_fn, char **win_fn,
-                                       int stream_index, HTS_Boolean msd_flag,
-                                       int window_size, int interpolation_size);
+void HTS_Engine_load_parameter_from_fn(HTS_Engine * engine, char **pdf_fn, char **tree_fn, char **win_fn, int stream_index, HTS_Boolean msd_flag, int window_size, int interpolation_size);
 
 /* HTS_Engine_load_parameter_from_fp: load parameter pdfs, trees and windows from file pointers */
-void HTS_Engine_load_parameter_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp,
-                                       HTS_File ** tree_fp, HTS_File ** win_fp,
-                                       int stream_index, HTS_Boolean msd_flag,
-                                       int window_size, int interpolation_size);
+void HTS_Engine_load_parameter_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp, HTS_File ** tree_fp, HTS_File ** win_fp, int stream_index, HTS_Boolean msd_flag, int window_size, int interpolation_size);
 
 /* HTS_Engine_load_gv_from_fn: load GV pdfs and trees from file names */
-void HTS_Engine_load_gv_from_fn(HTS_Engine * engine, char **pdf_fn,
-                                char **tree_fn, int stream_index,
-                                int interpolation_size);
+void HTS_Engine_load_gv_from_fn(HTS_Engine * engine, char **pdf_fn, char **tree_fn, int stream_index, int interpolation_size);
 
 /* HTS_Engine_load_gv_from_fp: load GV pdfs and trees from file pointers */
-void HTS_Engine_load_gv_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp,
-                                HTS_File ** tree_fp, int stream_index,
-                                int interpolation_size);
+void HTS_Engine_load_gv_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp, HTS_File ** tree_fp, int stream_index, int interpolation_size);
 
 /* HTS_Engine_load_gv_switch_from_fn: load GV switch from file names */
 void HTS_Engine_load_gv_switch_from_fn(HTS_Engine * engine, char *fn);
@@ -751,24 +687,16 @@ void HTS_Engine_set_audio_buff_size(HTS_Engine * engine, int i);
 int HTS_Engine_get_audio_buff_size(HTS_Engine * engine);
 
 /* HTS_Egnine_set_msd_threshold: set MSD threshold */
-void HTS_Engine_set_msd_threshold(HTS_Engine * engine, int stream_index,
-                                  double f);
+void HTS_Engine_set_msd_threshold(HTS_Engine * engine, int stream_index, double f);
 
 /* HTS_Engine_set_duration_interpolation_weight: set interpolation weight for duration */
-void HTS_Engine_set_duration_interpolation_weight(HTS_Engine * engine,
-                                                  int interpolation_index,
-                                                  double f);
+void HTS_Engine_set_duration_interpolation_weight(HTS_Engine * engine, int interpolation_index, double f);
 
 /* HTS_Engine_set_parameter_interpolation_weight: set interpolation weight for parameter */
-void HTS_Engine_set_parameter_interpolation_weight(HTS_Engine * engine,
-                                                   int stream_index,
-                                                   int interpolation_index,
-                                                   double f);
+void HTS_Engine_set_parameter_interpolation_weight(HTS_Engine * engine, int stream_index, int interpolation_index, double f);
 
 /* HTS_Engine_set_gv_interpolation_weight: set interpolation weight for GV */
-void HTS_Engine_set_gv_interpolation_weight(HTS_Engine * engine,
-                                            int stream_index,
-                                            int interpolation_index, double f);
+void HTS_Engine_set_gv_interpolation_weight(HTS_Engine * engine, int stream_index, int interpolation_index, double f);
 
 /* HTS_Engine_set_gv_weight: set GV weight */
 void HTS_Engine_set_gv_weight(HTS_Engine * engine, int stream_index, double f);
@@ -783,12 +711,10 @@ void HTS_Engine_set_volume(HTS_Engine * engine, double f);
 int HTS_Engine_get_total_state(HTS_Engine * engine);
 
 /* HTS_Engine_set_state_mean: set mean value of state */
-void HTS_Engine_set_state_mean(HTS_Engine * engine, int stream_index,
-                               int state_index, int vector_index, double f);
+void HTS_Engine_set_state_mean(HTS_Engine * engine, int stream_index, int state_index, int vector_index, double f);
 
 /* HTS_Engine_get_state_mean: get mean value of state */
-double HTS_Engine_get_state_mean(HTS_Engine * engine, int stream_index,
-                                 int state_index, int vector_index);
+double HTS_Engine_get_state_mean(HTS_Engine * engine, int stream_index, int state_index, int vector_index);
 
 /* HTS_Engine_get_state_duration: get state duration */
 int HTS_Engine_get_state_duration(HTS_Engine * engine, int state_index);
@@ -809,8 +735,7 @@ void HTS_Engine_load_label_from_fp(HTS_Engine * engine, HTS_File * fp);
 void HTS_Engine_load_label_from_string(HTS_Engine * engine, char *data);
 
 /* HTS_Engine_load_label_from_string_list: load label from string list */
-void HTS_Engine_load_label_from_string_list(HTS_Engine * engine, char **data,
-                                            int size);
+void HTS_Engine_load_label_from_string_list(HTS_Engine * engine, char **data, int size);
 
 /* HTS_Engine_create_sstream: parse label and determine state duration */
 void HTS_Engine_create_sstream(HTS_Engine * engine);
@@ -828,8 +753,7 @@ void HTS_Engine_save_information(HTS_Engine * engine, HTS_File * fp);
 void HTS_Engine_save_label(HTS_Engine * engine, HTS_File * fp);
 
 /* HTS_Engine_save_generated_parameter: output generated parameter */
-void HTS_Engine_save_generated_parameter(HTS_Engine * engine, HTS_File * fp,
-                                         int stream_index);
+void HTS_Engine_save_generated_parameter(HTS_Engine * engine, HTS_File * fp, int stream_index);
 
 /* HTS_Engine_save_generated_speech: output generated speech */
 void HTS_Engine_save_generated_speech(HTS_Engine * engine, HTS_File * fp);
@@ -880,19 +804,13 @@ typedef struct _HTS_Vocoder {
 /*  ----------------------- vocoder method ------------------------  */
 
 /* HTS_Vocoder_initialize: initialize vocoder */
-void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage,
-                            HTS_Boolean use_log_gain, const int rate,
-                            const int fperiod);
+void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage, HTS_Boolean use_log_gain, const int rate, const int fperiod);
 
 /* HTS_Vocoder_synthesize: pulse/noise excitation and MLSA/MGLSA filster based waveform synthesis */
-void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0,
-                            double *spectrum, const int nlpf, double *lpf,
-                            double alpha, double beta, double volume,
-                            short *rawdata, HTS_Audio * audio);
+void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0, double *spectrum, const int nlpf, double *lpf, double alpha, double beta, double volume, short *rawdata, HTS_Audio * audio);
 
 /* HTS_Vocoder_postfilter_mcp: postfilter for MCP */
-void HTS_Vocoder_postfilter_mcp(HTS_Vocoder * v, double *mcp, const int m,
-                                double alpha, double beta);
+void HTS_Vocoder_postfilter_mcp(HTS_Vocoder * v, double *mcp, const int m, double alpha, double beta);
 
 /* HTS_Vocoder_clear: clear vocoder */
 void HTS_Vocoder_clear(HTS_Vocoder * v);

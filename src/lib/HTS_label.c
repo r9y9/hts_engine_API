@@ -105,8 +105,7 @@ static void HTS_Label_check_time(HTS_Label * label)
 }
 
 /* HTS_Label_load_from_fn: load label from file name */
-void HTS_Label_load_from_fn(HTS_Label * label, int sampling_rate, int fperiod,
-                            char *fn)
+void HTS_Label_load_from_fn(HTS_Label * label, int sampling_rate, int fperiod, char *fn)
 {
    HTS_File *fp = HTS_fopen(fn, "r");
    HTS_Label_load_from_fp(label, sampling_rate, fperiod, fp);
@@ -114,8 +113,7 @@ void HTS_Label_load_from_fn(HTS_Label * label, int sampling_rate, int fperiod,
 }
 
 /* HTS_Label_load_from_fp: load label from file pointer */
-void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
-                            HTS_File * fp)
+void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod, HTS_File * fp)
 {
    char buff[HTS_MAXBUFLEN];
    HTS_LabelString *lstring = NULL;
@@ -131,8 +129,7 @@ void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
       label->size++;
 
       if (lstring) {
-         lstring->next =
-             (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
+         lstring->next = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
          lstring = lstring->next;
       } else {                  /* first time */
          lstring = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
@@ -156,8 +153,7 @@ void HTS_Label_load_from_fp(HTS_Label * label, int sampling_rate, int fperiod,
 }
 
 /* HTS_Label_load_from_string: load label from string */
-void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
-                                int fperiod, char *data)
+void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate, int fperiod, char *data)
 {
    char buff[HTS_MAXBUFLEN];
    HTS_LabelString *lstring = NULL;
@@ -174,8 +170,7 @@ void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
       label->size++;
 
       if (lstring) {
-         lstring->next =
-             (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
+         lstring->next = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
          lstring = lstring->next;
       } else {                  /* first time */
          lstring = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
@@ -199,8 +194,7 @@ void HTS_Label_load_from_string(HTS_Label * label, int sampling_rate,
 }
 
 /* HTS_Label_load_from_string_list: load label from string list */
-void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
-                                     int fperiod, char **data, int size)
+void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate, int fperiod, char **data, int size)
 {
    char buff[HTS_MAXBUFLEN];
    HTS_LabelString *lstring = NULL;
@@ -218,8 +212,7 @@ void HTS_Label_load_from_string_list(HTS_Label * label, int sampling_rate,
       label->size++;
 
       if (lstring) {
-         lstring->next =
-             (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
+         lstring->next = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));
          lstring = lstring->next;
       } else {                  /* first time */
          lstring = (HTS_LabelString *) HTS_calloc(1, sizeof(HTS_LabelString));

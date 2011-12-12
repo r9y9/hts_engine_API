@@ -1,3 +1,10 @@
+2011-12-12 11:15  uratec
+
+	* ChangeLog, bin/hts_engine.c, include/HTS_engine.h,
+	  lib/HTS_engine.c, lib/HTS_hidden.h, lib/HTS_label.c,
+	  lib/HTS_misc.c, lib/HTS_model.c, lib/HTS_sstream.c: Add FILE
+	  wrapper. Modify state duration calculation.
+
 2011-08-10 21:16  uratec
 
 	* ChangeLog, configure.ac, lib/HTS_label.c: fix a small bug in
