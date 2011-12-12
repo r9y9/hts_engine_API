@@ -134,13 +134,13 @@ int HTS_feof(HTS_File * fp)
    return feof(fp);
 }
 
-/* HTS_fread: wrappter for fread */
+/* HTS_fread: wrapper for fread */
 size_t HTS_fread(void *buf, size_t size, size_t n, HTS_File * fp)
 {
    return fread(buf, size, n, fp);
 }
 
-/* HTS_fwrite: wrappter for fwrite */
+/* HTS_fwrite: wrapper for fwrite */
 size_t HTS_fwrite(const void *buf, size_t size, size_t n, HTS_File * fp)
 {
    return fwrite(buf, size, n, fp);
@@ -153,30 +153,39 @@ void HTS_fclose(HTS_File * fp)
 }
 
 /* HTS_get_pattern_token: get pattern token */
-void HTS_get_pattern_token(HTS_File * fp, char *buff)
+HTS_Boolean HTS_get_pattern_token(HTS_File * fp, char *buff)
 {
    char c;
    int i;
    HTS_Boolean squote = FALSE, dquote = FALSE;
 
+   if (fp == NULL || HTS_feof(fp))
+      return FALSE;
    c = HTS_fgetc(fp);
 
-   while (c == ' ' || c == '\n')
+   while (c == ' ' || c == '\n') {
+      if (HTS_feof(fp))
+         return FALSE;
       c = HTS_fgetc(fp);
+   }
 
    if (c == '\'') {             /* single quote case */
+      if (HTS_feof(fp))
+         return FALSE;
       c = HTS_fgetc(fp);
       squote = TRUE;
    }
 
    if (c == '\"') {             /*double quote case */
+      if (HTS_feof(fp))
+         return FALSE;
       c = HTS_fgetc(fp);
       dquote = TRUE;
    }
 
    if (c == ',') {              /*special character ',' */
       strcpy(buff, ",");
-      return;
+      return TRUE;
    }
 
    i = 0;
@@ -198,6 +207,7 @@ void HTS_get_pattern_token(HTS_File * fp, char *buff)
    }
 
    buff[i] = '\0';
+   return TRUE;
 }
 
 /* HTS_get_token: get token (separators are space, tab, and line break) */
@@ -206,7 +216,7 @@ HTS_Boolean HTS_get_token(HTS_File * fp, char *buff)
    char c;
    int i;
 
-   if (HTS_feof(fp))
+   if (fp == NULL || HTS_feof(fp))
       return FALSE;
    c = HTS_fgetc(fp);
    while (c == ' ' || c == '\n' || c == '\t') {

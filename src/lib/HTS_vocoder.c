@@ -566,6 +566,7 @@ static double HTS_mglsadf(double x, const double *b, const int m, const double a
    return x;
 }
 
+/* HTS_white_noise: return white noise */
 static double HTS_white_noise(HTS_Vocoder * v)
 {
    if (v->gauss)

@@ -204,9 +204,7 @@ static double HTS_PStream_calc_derivative(HTS_PStream * pst, const int m)
 
    for (t = 0, hmmobj = 0.0; t < pst->length; t++) {
       hmmobj += W1 * w * pst->par[t][m] * (pst->sm.wum[t] - 0.5 * pst->sm.g[t]);
-      h = -W1 * w * pst->sm.wuw[t][1 - 1]
-          - W2 * 2.0 / (pst->length * pst->length) * ((pst->length - 1) * pst->gv_vari[m] * (vari - pst->gv_mean[m])
-                                                      + 2.0 * pst->gv_vari[m] * (pst->par[t][m] - mean) * (pst->par[t][m] - mean));
+      h = -W1 * w * pst->sm.wuw[t][1 - 1] - W2 * 2.0 / (pst->length * pst->length) * ((pst->length - 1) * pst->gv_vari[m] * (vari - pst->gv_mean[m]) + 2.0 * pst->gv_vari[m] * (pst->par[t][m] - mean) * (pst->par[t][m] - mean));
       if (pst->gv_switch[t])
          pst->sm.g[t] = 1.0 / h * (W1 * w * (-pst->sm.g[t] + pst->sm.wum[t]) + W2 * dv * (pst->par[t][m] - mean));
       else
@@ -270,7 +268,7 @@ void HTS_PStreamSet_initialize(HTS_PStreamSet * pss)
 }
 
 /* HTS_PStreamSet_create: parameter generation using GV weight */
-void HTS_PStreamSet_create(HTS_PStreamSet * pss, HTS_SStreamSet * sss, double *msd_threshold, double *gv_weight)
+HTS_Boolean HTS_PStreamSet_create(HTS_PStreamSet * pss, HTS_SStreamSet * sss, double *msd_threshold, double *gv_weight)
 {
    int i, j, k, l, m;
    int frame, msd_frame, state;
@@ -278,8 +276,10 @@ void HTS_PStreamSet_create(HTS_PStreamSet * pss, HTS_SStreamSet * sss, double *m
    HTS_PStream *pst;
    HTS_Boolean not_bound;
 
-   if (pss->nstream)
+   if (pss->nstream) {
       HTS_error(1, "HTS_PstreamSet_create: HTS_PStreamSet should be clear.\n");
+      return FALSE;
+   }
 
    /* initialize */
    pss->nstream = HTS_SStreamSet_get_nstream(sss);
@@ -416,6 +416,8 @@ void HTS_PStreamSet_create(HTS_PStreamSet * pss, HTS_SStreamSet * sss, double *m
       /* parameter generation */
       HTS_PStream_mlpg(pst);
    }
+
+   return TRUE;
 }
 
 /* HTS_PStreamSet_get_nstream: get number of stream */

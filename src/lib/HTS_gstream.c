@@ -70,7 +70,7 @@ void HTS_GStreamSet_initialize(HTS_GStreamSet * gss)
 
 /* HTS_GStreamSet_create: generate speech */
 /* (stream[0] == spectrum && stream[1] == lf0) */
-void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss, int stage, HTS_Boolean use_log_gain, int sampling_rate, int fperiod, double alpha, double beta, HTS_Boolean * stop, double volume, HTS_Audio * audio)
+HTS_Boolean HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss, int stage, HTS_Boolean use_log_gain, int sampling_rate, int fperiod, double alpha, double beta, HTS_Boolean * stop, double volume, HTS_Audio * audio)
 {
    int i, j, k;
    int msd_frame;
@@ -79,8 +79,10 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss, int stage
    double *lpf = NULL;
 
    /* check */
-   if (gss->gstream || gss->gspeech)
+   if (gss->gstream || gss->gspeech) {
       HTS_error(1, "HTS_GStreamSet_create: HTS_GStreamSet is not initialized.\n");
+      return FALSE;
+   }
 
    /* initialize */
    gss->nstream = HTS_PStreamSet_get_nstream(pss);
@@ -114,12 +116,21 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss, int stage
    }
 
    /* check */
-   if (gss->nstream != 2 && gss->nstream != 3)
+   if (gss->nstream != 2 && gss->nstream != 3) {
       HTS_error(1, "HTS_GStreamSet_create: The number of streams should be 2 or 3.\n");
-   if (HTS_PStreamSet_get_static_length(pss, 1) != 1)
+      HTS_GStreamSet_clear(gss);
+      return FALSE;
+   }
+   if (HTS_PStreamSet_get_static_length(pss, 1) != 1) {
       HTS_error(1, "HTS_GStreamSet_create: The size of lf0 static vector should be 1.\n");
-   if (gss->nstream >= 3 && gss->gstream[2].static_length % 2 == 0)
+      HTS_GStreamSet_clear(gss);
+      return FALSE;
+   }
+   if (gss->nstream >= 3 && gss->gstream[2].static_length % 2 == 0) {
       HTS_error(1, "HTS_GStreamSet_create: The number of low-pass filter coefficient should be odd numbers.");
+      HTS_GStreamSet_clear(gss);
+      return FALSE;
+   }
 
    /* synthesize speech waveform */
    HTS_Vocoder_initialize(&v, gss->gstream[0].static_length - 1, stage, use_log_gain, sampling_rate, fperiod);
@@ -133,6 +144,8 @@ void HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss, int stage
    HTS_Vocoder_clear(&v);
    if (audio)
       HTS_Audio_flush(audio);
+
+   return TRUE;
 }
 
 /* HTS_GStreamSet_get_total_nsample: get total number of sample */

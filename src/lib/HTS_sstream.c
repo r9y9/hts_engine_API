@@ -154,7 +154,7 @@ void HTS_SStreamSet_initialize(HTS_SStreamSet * sss)
 }
 
 /* HTS_SStreamSet_create: parse label and determine state duration */
-void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms, HTS_Label * label, double *duration_iw, double **parameter_iw, double **gv_iw)
+HTS_Boolean HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms, HTS_Label * label, double *duration_iw, double **parameter_iw, double **gv_iw)
 {
    int i, j, k;
    double temp;
@@ -164,6 +164,23 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms, HTS_Label * 
    double frame_length;
    int next_time;
    int next_state;
+
+   /* check interpolation weights */
+   for (i = 0, temp = 0.0; i < HTS_ModelSet_get_duration_interpolation_size(ms); i++)
+      temp += duration_iw[i];
+   if (temp == 0.0)
+      return FALSE;
+   for (i = 0; i < sss->nstream; i++) {
+      for (j = 0, temp = 0.0; j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
+         temp += parameter_iw[i][j];
+      if (temp == 0.0)
+         return FALSE;
+      if (HTS_ModelSet_use_gv(ms, i)) {
+         for (j = 0, temp = 0.0; j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
+            temp += gv_iw[i][j];
+         return FALSE;
+      }
+   }
 
    /* initialize state sequence */
    sss->nstate = HTS_ModelSet_get_nstate(ms);
@@ -304,6 +321,8 @@ void HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms, HTS_Label * 
             for (j = 0; j < sss->nstream; j++)
                for (k = 0; k < sss->nstate; k++)
                   sss->sstream[j].gv_switch[i * sss->nstate + k] = FALSE;
+
+   return TRUE;
 }
 
 /* HTS_SStreamSet_get_nstream: get number of stream */

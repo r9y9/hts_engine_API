@@ -79,7 +79,7 @@ int HTS_fgetc(HTS_File * fp);
 int HTS_feof(HTS_File * fp);
 
 /* HTS_get_pattern_token: get pattern token */
-void HTS_get_pattern_token(HTS_File * fp, char *buff);
+HTS_Boolean HTS_get_pattern_token(HTS_File * fp, char *buff);
 
 /* HTS_get_token: get token (separator are space,tab,line break) */
 HTS_Boolean HTS_get_token(HTS_File * fp, char *buff);
@@ -153,7 +153,7 @@ void HTS_free(void *p);
 #define IRLENG    96
 #endif                          /* HTS_EMBEDDED */
 
-#define PULSELISTSIZE 512
+#define PULSELISTSIZE 1024
 
 /* for MGLSA filter */
 #define NORMFLG1 TRUE

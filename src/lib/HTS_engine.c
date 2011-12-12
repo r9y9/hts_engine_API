@@ -111,10 +111,11 @@ void HTS_Engine_initialize(HTS_Engine * engine, int nstream)
 }
 
 /* HTS_Engine_load_duratin_from_fn: load duration pdfs, trees and number of state from file names */
-void HTS_Engine_load_duration_from_fn(HTS_Engine * engine, char **pdf_fn, char **tree_fn, int interpolation_size)
+HTS_Boolean HTS_Engine_load_duration_from_fn(HTS_Engine * engine, char **pdf_fn, char **tree_fn, int interpolation_size)
 {
    int i;
    HTS_File **pdf_fp, **tree_fp;
+   HTS_Boolean result;
 
    pdf_fp = (HTS_File **) HTS_calloc(interpolation_size, sizeof(HTS_File *));
    tree_fp = (HTS_File **) HTS_calloc(interpolation_size, sizeof(HTS_File *));
@@ -122,31 +123,38 @@ void HTS_Engine_load_duration_from_fn(HTS_Engine * engine, char **pdf_fn, char *
       pdf_fp[i] = HTS_fopen(pdf_fn[i], "rb");
       tree_fp[i] = HTS_fopen(tree_fn[i], "r");
    }
-   HTS_Engine_load_duration_from_fp(engine, pdf_fp, tree_fp, interpolation_size);
+   result = HTS_Engine_load_duration_from_fp(engine, pdf_fp, tree_fp, interpolation_size);
    for (i = 0; i < interpolation_size; i++) {
       HTS_fclose(pdf_fp[i]);
       HTS_fclose(tree_fp[i]);
    }
    HTS_free(pdf_fp);
    HTS_free(tree_fp);
+
+   return result;
 }
 
 /* HTS_Engine_load_duration_from_fp: load duration pdfs, trees and number of state from file pointers */
-void HTS_Engine_load_duration_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp, HTS_File ** tree_fp, int interpolation_size)
+HTS_Boolean HTS_Engine_load_duration_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp, HTS_File ** tree_fp, int interpolation_size)
 {
    int i;
 
-   HTS_ModelSet_load_duration(&engine->ms, pdf_fp, tree_fp, interpolation_size);
+   if (HTS_ModelSet_load_duration(&engine->ms, pdf_fp, tree_fp, interpolation_size) == FALSE) {
+      return FALSE;
+   }
    engine->global.duration_iw = (double *) HTS_calloc(interpolation_size, sizeof(double));
    for (i = 0; i < interpolation_size; i++)
       engine->global.duration_iw[i] = 1.0 / interpolation_size;
+
+   return TRUE;
 }
 
 /* HTS_Engine_load_parameter_from_fn: load parameter pdfs, trees and windows from file names */
-void HTS_Engine_load_parameter_from_fn(HTS_Engine * engine, char **pdf_fn, char **tree_fn, char **win_fn, int stream_index, HTS_Boolean msd_flag, int window_size, int interpolation_size)
+HTS_Boolean HTS_Engine_load_parameter_from_fn(HTS_Engine * engine, char **pdf_fn, char **tree_fn, char **win_fn, int stream_index, HTS_Boolean msd_flag, int window_size, int interpolation_size)
 {
    int i;
    HTS_File **pdf_fp, **tree_fp, **win_fp;
+   HTS_Boolean result;
 
    pdf_fp = (HTS_File **) HTS_calloc(interpolation_size, sizeof(HTS_File *));
    tree_fp = (HTS_File **) HTS_calloc(interpolation_size, sizeof(HTS_File *));
@@ -157,7 +165,7 @@ void HTS_Engine_load_parameter_from_fn(HTS_Engine * engine, char **pdf_fn, char 
    }
    for (i = 0; i < window_size; i++)
       win_fp[i] = HTS_fopen(win_fn[i], "r");
-   HTS_Engine_load_parameter_from_fp(engine, pdf_fp, tree_fp, win_fp, stream_index, msd_flag, window_size, interpolation_size);
+   result = HTS_Engine_load_parameter_from_fp(engine, pdf_fp, tree_fp, win_fp, stream_index, msd_flag, window_size, interpolation_size);
    for (i = 0; i < interpolation_size; i++) {
       HTS_fclose(pdf_fp[i]);
       HTS_fclose(tree_fp[i]);
@@ -167,24 +175,31 @@ void HTS_Engine_load_parameter_from_fn(HTS_Engine * engine, char **pdf_fn, char 
    HTS_free(pdf_fp);
    HTS_free(tree_fp);
    HTS_free(win_fp);
+
+   return result;
 }
 
 /* HTS_Engine_load_parameter_from_fp: load parameter pdfs, trees and windows from file pointers */
-void HTS_Engine_load_parameter_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp, HTS_File ** tree_fp, HTS_File ** win_fp, int stream_index, HTS_Boolean msd_flag, int window_size, int interpolation_size)
+HTS_Boolean HTS_Engine_load_parameter_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp, HTS_File ** tree_fp, HTS_File ** win_fp, int stream_index, HTS_Boolean msd_flag, int window_size, int interpolation_size)
 {
    int i;
 
-   HTS_ModelSet_load_parameter(&engine->ms, pdf_fp, tree_fp, win_fp, stream_index, msd_flag, window_size, interpolation_size);
+   if (HTS_ModelSet_load_parameter(&engine->ms, pdf_fp, tree_fp, win_fp, stream_index, msd_flag, window_size, interpolation_size) == FALSE) {
+      return FALSE;
+   }
    engine->global.parameter_iw[stream_index] = (double *) HTS_calloc(interpolation_size, sizeof(double));
    for (i = 0; i < interpolation_size; i++)
       engine->global.parameter_iw[stream_index][i] = 1.0 / interpolation_size;
+
+   return TRUE;
 }
 
 /* HTS_Engine_load_gv_from_fn: load GV pdfs and trees from file names */
-void HTS_Engine_load_gv_from_fn(HTS_Engine * engine, char **pdf_fn, char **tree_fn, int stream_index, int interpolation_size)
+HTS_Boolean HTS_Engine_load_gv_from_fn(HTS_Engine * engine, char **pdf_fn, char **tree_fn, int stream_index, int interpolation_size)
 {
    int i;
    HTS_File **pdf_fp, **tree_fp;
+   HTS_Boolean result;
 
    pdf_fp = (HTS_File **) HTS_calloc(interpolation_size, sizeof(HTS_File *));
    if (tree_fn)
@@ -200,7 +215,7 @@ void HTS_Engine_load_gv_from_fn(HTS_Engine * engine, char **pdf_fn, char **tree_
             tree_fp[i] = NULL;
       }
    }
-   HTS_Engine_load_gv_from_fp(engine, pdf_fp, tree_fp, stream_index, interpolation_size);
+   result = HTS_Engine_load_gv_from_fp(engine, pdf_fp, tree_fp, stream_index, interpolation_size);
    for (i = 0; i < interpolation_size; i++) {
       HTS_fclose(pdf_fp[i]);
       if (tree_fp && tree_fp[i])
@@ -209,32 +224,41 @@ void HTS_Engine_load_gv_from_fn(HTS_Engine * engine, char **pdf_fn, char **tree_
    HTS_free(pdf_fp);
    if (tree_fp)
       HTS_free(tree_fp);
+
+   return result;
 }
 
 /* HTS_Engine_load_gv_from_fp: load GV pdfs and trees from file pointers */
-void HTS_Engine_load_gv_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp, HTS_File ** tree_fp, int stream_index, int interpolation_size)
+HTS_Boolean HTS_Engine_load_gv_from_fp(HTS_Engine * engine, HTS_File ** pdf_fp, HTS_File ** tree_fp, int stream_index, int interpolation_size)
 {
    int i;
 
-   HTS_ModelSet_load_gv(&engine->ms, pdf_fp, tree_fp, stream_index, interpolation_size);
+   if (HTS_ModelSet_load_gv(&engine->ms, pdf_fp, tree_fp, stream_index, interpolation_size) == FALSE) {
+      return FALSE;
+   }
    engine->global.gv_iw[stream_index] = (double *) HTS_calloc(interpolation_size, sizeof(double));
    for (i = 0; i < interpolation_size; i++)
       engine->global.gv_iw[stream_index][i] = 1.0 / interpolation_size;
+
+   return TRUE;
 }
 
 /* HTS_Engine_load_gv_switch_from_fn: load GV switch from file name */
-void HTS_Engine_load_gv_switch_from_fn(HTS_Engine * engine, char *fn)
+HTS_Boolean HTS_Engine_load_gv_switch_from_fn(HTS_Engine * engine, char *fn)
 {
    HTS_File *fp = HTS_fopen(fn, "r");
+   HTS_Boolean result;
 
-   HTS_Engine_load_gv_switch_from_fp(engine, fp);
+   result = HTS_Engine_load_gv_switch_from_fp(engine, fp);
    HTS_fclose(fp);
+
+   return result;
 }
 
 /* HTS_Engine_load_gv_switch_from_fp: load GV switch from file pointer */
-void HTS_Engine_load_gv_switch_from_fp(HTS_Engine * engine, HTS_File * fp)
+HTS_Boolean HTS_Engine_load_gv_switch_from_fp(HTS_Engine * engine, HTS_File * fp)
 {
-   HTS_ModelSet_load_gv_switch(&engine->ms, fp);
+   return HTS_ModelSet_load_gv_switch(&engine->ms, fp);
 }
 
 /* HTS_Engine_set_sampling_rate: set sampling rate */
@@ -434,21 +458,21 @@ void HTS_Engine_load_label_from_string_list(HTS_Engine * engine, char **data, in
 }
 
 /* HTS_Engine_create_sstream: parse label and determine state duration */
-void HTS_Engine_create_sstream(HTS_Engine * engine)
+HTS_Boolean HTS_Engine_create_sstream(HTS_Engine * engine)
 {
-   HTS_SStreamSet_create(&engine->sss, &engine->ms, &engine->label, engine->global.duration_iw, engine->global.parameter_iw, engine->global.gv_iw);
+   return HTS_SStreamSet_create(&engine->sss, &engine->ms, &engine->label, engine->global.duration_iw, engine->global.parameter_iw, engine->global.gv_iw);
 }
 
 /* HTS_Engine_create_pstream: generate speech parameter vector sequence */
-void HTS_Engine_create_pstream(HTS_Engine * engine)
+HTS_Boolean HTS_Engine_create_pstream(HTS_Engine * engine)
 {
-   HTS_PStreamSet_create(&engine->pss, &engine->sss, engine->global.msd_threshold, engine->global.gv_weight);
+   return HTS_PStreamSet_create(&engine->pss, &engine->sss, engine->global.msd_threshold, engine->global.gv_weight);
 }
 
 /* HTS_Engine_create_gstream: synthesis speech */
-void HTS_Engine_create_gstream(HTS_Engine * engine)
+HTS_Boolean HTS_Engine_create_gstream(HTS_Engine * engine)
 {
-   HTS_GStreamSet_create(&engine->gss, &engine->pss, engine->global.stage, engine->global.use_log_gain, engine->global.sampling_rate, engine->global.fperiod, engine->global.alpha, engine->global.beta, &engine->global.stop, engine->global.volume, engine->global.audio_buff_size > 0 ? &engine->audio : NULL);
+   return HTS_GStreamSet_create(&engine->gss, &engine->pss, engine->global.stage, engine->global.use_log_gain, engine->global.sampling_rate, engine->global.fperiod, engine->global.alpha, engine->global.beta, &engine->global.stop, engine->global.volume, engine->global.audio_buff_size > 0 ? &engine->audio : NULL);
 }
 
 /* HTS_Engine_save_information: output trace information */
