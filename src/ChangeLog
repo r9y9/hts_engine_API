@@ -1,3 +1,8 @@
+2011-12-20 11:24  uratec
+
+	* ChangeLog, NEWS, README, configure.ac, include/HTS_engine.h:
+	  Update documents to version 1.06
+
 2011-12-20 11:21  uratec
 
 	* lib/HTS_misc.c: Fix a tiny bug of file loading
