@@ -225,8 +225,10 @@ HTS_Boolean HTS_get_token(HTS_File * fp, char *buff)
       c = HTS_fgetc(fp);
    }
 
-   for (i = 0; c != ' ' && c != '\n' && c != '\t' && !HTS_feof(fp); i++) {
-      buff[i] = c;
+   for (i = 0; c != ' ' && c != '\n' && c != '\t';) {
+      buff[i++] = c;
+      if (HTS_feof(fp))
+         break;
       c = HTS_fgetc(fp);
    }
 
