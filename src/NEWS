@@ -1,3 +1,9 @@
+Version 1.06:
+ * modify state duration calculation algorithm.
+ * change many function from void to boolean.
+ * change source format.
+ * bug fixes.
+
 Version 1.05:
  * support PortAudio for audio output.
 
