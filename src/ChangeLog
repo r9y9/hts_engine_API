@@ -1,3 +1,7 @@
+2011-12-20 13:18  uratec
+
+	* ChangeLog, include/HTS_engine.h: Fix macro
+
 2011-12-20 11:24  uratec
 
 	* ChangeLog, NEWS, README, configure.ac, include/HTS_engine.h:
