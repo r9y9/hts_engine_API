@@ -1,3 +1,7 @@
+2011-12-20 23:46  uratec
+
+	* AUTHORS, ChangeLog, README: Fix documents.
+
 2011-12-20 13:18  uratec
 
 	* ChangeLog, include/HTS_engine.h: Fix macro
