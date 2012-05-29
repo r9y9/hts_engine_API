@@ -170,15 +170,25 @@ HTS_Boolean HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms, HTS_L
       temp += duration_iw[i];
    if (temp == 0.0)
       return FALSE;
+   for (i = 0; i < HTS_ModelSet_get_duration_interpolation_size(ms); i++)
+      if (duration_iw[i] != 0.0)
+         duration_iw[i] /= temp;
    for (i = 0; i < sss->nstream; i++) {
       for (j = 0, temp = 0.0; j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
          temp += parameter_iw[i][j];
       if (temp == 0.0)
          return FALSE;
+      for (j = 0; j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
+         if (parameter_iw[i][j] != 0.0)
+            parameter_iw[i][j] /= temp;
       if (HTS_ModelSet_use_gv(ms, i)) {
          for (j = 0, temp = 0.0; j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
             temp += gv_iw[i][j];
-         return FALSE;
+         if (temp == 0.0)
+            return FALSE;
+         for (j = 0; j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
+            if (gv_iw[i][j] != 0.0)
+               gv_iw[i][j] /= temp;
       }
    }
 
@@ -207,30 +217,9 @@ HTS_Boolean HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms, HTS_L
          sst->gv_switch[j] = TRUE;
    }
 
-   /* check interpolation weights */
-   for (i = 0, temp = 0.0; i < HTS_ModelSet_get_duration_interpolation_size(ms); i++)
-      temp += duration_iw[i];
-   for (i = 0; i < HTS_ModelSet_get_duration_interpolation_size(ms); i++)
-      if (duration_iw[i] != 0.0)
-         duration_iw[i] /= temp;
-   for (i = 0; i < sss->nstream; i++) {
-      for (j = 0, temp = 0.0; j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
-         temp += parameter_iw[i][j];
-      for (j = 0; j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
-         if (parameter_iw[i][j] != 0.0)
-            parameter_iw[i][j] /= temp;
-      if (HTS_ModelSet_use_gv(ms, i)) {
-         for (j = 0, temp = 0.0; j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
-            temp += gv_iw[i][j];
-         for (j = 0; j < HTS_ModelSet_get_gv_interpolation_size(ms, i); j++)
-            if (gv_iw[i][j] != 0.0)
-               gv_iw[i][j] /= temp;
-      }
-   }
-
    /* determine state duration */
-   duration_mean = (double *) HTS_calloc(sss->nstate * HTS_Label_get_size(label), sizeof(double));
-   duration_vari = (double *) HTS_calloc(sss->nstate * HTS_Label_get_size(label), sizeof(double));
+   duration_mean = (double *) HTS_calloc(sss->total_state, sizeof(double));
+   duration_vari = (double *) HTS_calloc(sss->total_state, sizeof(double));
    for (i = 0; i < HTS_Label_get_size(label); i++)
       HTS_ModelSet_get_duration(ms, HTS_Label_get_string(label, i), &duration_mean[i * sss->nstate], &duration_vari[i * sss->nstate], duration_iw);
    if (HTS_Label_get_frame_specified_flag(label)) {
@@ -253,7 +242,7 @@ HTS_Boolean HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms, HTS_L
       /* determine frame length */
       if (HTS_Label_get_speech_speed(label) != 1.0) {
          temp = 0.0;
-         for (i = 0; i < HTS_Label_get_size(label) * sss->nstate; i++) {
+         for (i = 0; i < sss->total_state; i++) {
             temp += duration_mean[i];
          }
          frame_length = temp / HTS_Label_get_speech_speed(label);
@@ -261,7 +250,7 @@ HTS_Boolean HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms, HTS_L
          frame_length = 0.0;
       }
       /* set state duration */
-      HTS_set_duration(sss->duration, duration_mean, duration_vari, HTS_Label_get_size(label) * sss->nstate, frame_length);
+      HTS_set_duration(sss->duration, duration_mean, duration_vari, sss->total_state, frame_length);
    }
    HTS_free(duration_mean);
    HTS_free(duration_vari);
