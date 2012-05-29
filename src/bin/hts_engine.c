@@ -530,7 +530,7 @@ int main(int argc, char **argv)
    /* load gv[2] (GV for low-pass filter) */
    if (num_interp == num_ms_gvf && (num_ms_lpf > 0 || num_ts_lpf > 0)) {
       if (num_ms_gvf == num_ts_gvf)
-         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvf, fn_ts_gvf, 0, num_interp);
+         HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvf, fn_ts_gvf, 2, num_interp);
       else
          HTS_Engine_load_gv_from_fn(&engine, fn_ms_gvf, NULL, 2, num_interp);
    }
