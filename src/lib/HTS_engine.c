@@ -433,6 +433,18 @@ int HTS_Engine_get_nstate(HTS_Engine * engine)
    return HTS_ModelSet_get_nstate(&engine->ms);
 }
 
+/* HTS_Engine_get_nsamples: get number of samples */
+int HTS_Engine_get_nsamples(HTS_Engine * engine)
+{
+   return engine->gss.total_nsample;
+}
+
+/* HTS_Engine_get_speech: output generated speech */
+double HTS_Engine_get_speech(HTS_Engine * engine, int index)
+{
+   return HTS_GStreamSet_get_speech(&engine->gss, index);
+}
+
 /* HTS_Engine_load_label_from_fn: load label from file name */
 void HTS_Engine_load_label_from_fn(HTS_Engine * engine, char *fn)
 {
@@ -642,11 +654,18 @@ void HTS_Engine_save_generated_parameter(HTS_Engine * engine, HTS_File * fp, int
 void HTS_Engine_save_generated_speech(HTS_Engine * engine, HTS_File * fp)
 {
    int i;
+   double x;
    short temp;
    HTS_GStreamSet *gss = &engine->gss;
 
    for (i = 0; i < HTS_GStreamSet_get_total_nsample(gss); i++) {
-      temp = HTS_GStreamSet_get_speech(gss, i);
+      x = HTS_GStreamSet_get_speech(gss, i);
+      if (x > 32767.0)
+         temp = 32767;
+      else if (x < -32768.0)
+         temp = -32768;
+      else
+         temp = (short) x;
       fwrite(&temp, sizeof(short), 1, fp);
    }
 }
@@ -655,6 +674,7 @@ void HTS_Engine_save_generated_speech(HTS_Engine * engine, HTS_File * fp)
 void HTS_Engine_save_riff(HTS_Engine * engine, HTS_File * fp)
 {
    int i;
+   double x;
    short temp;
 
    HTS_GStreamSet *gss = &engine->gss;
@@ -688,7 +708,13 @@ void HTS_Engine_save_riff(HTS_Engine * engine, HTS_File * fp)
    HTS_fwrite_little_endian(&data_41_44, sizeof(int), 1, fp);
    /* write data */
    for (i = 0; i < HTS_GStreamSet_get_total_nsample(gss); i++) {
-      temp = HTS_GStreamSet_get_speech(gss, i);
+      x = HTS_GStreamSet_get_speech(gss, i);
+      if (x > 32767.0)
+         temp = 32767;
+      else if (x < -32768.0)
+         temp = -32768;
+      else
+         temp = (short) x;
       HTS_fwrite_little_endian(&temp, sizeof(short), 1, fp);
    }
 }

@@ -95,7 +95,7 @@ HTS_Boolean HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss, in
       for (j = 0; j < gss->total_frame; j++)
          gss->gstream[i].par[j] = (double *) HTS_calloc(gss->gstream[i].static_length, sizeof(double));
    }
-   gss->gspeech = (short *) HTS_calloc(gss->total_nsample, sizeof(short));
+   gss->gspeech = (double *) HTS_calloc(gss->total_nsample, sizeof(double));
 
    /* copy generated parameter */
    for (i = 0; i < gss->nstream; i++) {
@@ -167,7 +167,7 @@ int HTS_GStreamSet_get_static_length(HTS_GStreamSet * gss, int stream_index)
 }
 
 /* HTS_GStreamSet_get_speech: get synthesized speech parameter */
-short HTS_GStreamSet_get_speech(HTS_GStreamSet * gss, int sample_index)
+double HTS_GStreamSet_get_speech(HTS_GStreamSet * gss, int sample_index)
 {
    return gss->gspeech[sample_index];
 }

@@ -563,7 +563,7 @@ typedef struct _HTS_GStreamSet {
    int total_frame;             /* total frame */
    int nstream;                 /* # of streams */
    HTS_GStream *gstream;        /* generated parameter streams */
-   short *gspeech;              /* generated speech */
+   double *gspeech;             /* generated speech */
 } HTS_GStreamSet;
 
 /*  ----------------------- gstream method ------------------------  */
@@ -584,7 +584,7 @@ int HTS_GStreamSet_get_total_frame(HTS_GStreamSet * gss);
 int HTS_GStreamSet_get_static_length(HTS_GStreamSet * gss, int stream_index);
 
 /* HTS_GStreamSet_get_speech: get synthesized speech parameter */
-short HTS_GStreamSet_get_speech(HTS_GStreamSet * gss, int sample_index);
+double HTS_GStreamSet_get_speech(HTS_GStreamSet * gss, int sample_index);
 
 /* HTS_GStreamSet_get_parameter: get generated parameter */
 double HTS_GStreamSet_get_parameter(HTS_GStreamSet * gss, int stream_index, int frame_index, int vector_index);
@@ -721,6 +721,12 @@ int HTS_Engine_get_nstream(HTS_Engine * engine);
 /* HTS_Engine_get_nstate: get number of state */
 int HTS_Engine_get_nstate(HTS_Engine * engine);
 
+/* HTS_Engine_get_nsamples: get number of samples */
+int HTS_Engine_get_nsamples(HTS_Engine * engine);
+
+/* HTS_Engine_get_speech: output generated speech */
+double HTS_Engine_get_speech(HTS_Engine * engine, int index);
+
 /* HTS_Engine_load_label_from_fn: load label from file pointer */
 void HTS_Engine_load_label_from_fn(HTS_Engine * engine, char *fn);
 
@@ -803,7 +809,7 @@ typedef struct _HTS_Vocoder {
 void HTS_Vocoder_initialize(HTS_Vocoder * v, const int m, const int stage, HTS_Boolean use_log_gain, const int rate, const int fperiod);
 
 /* HTS_Vocoder_synthesize: pulse/noise excitation and MLSA/MGLSA filster based waveform synthesis */
-void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0, double *spectrum, const int nlpf, double *lpf, double alpha, double beta, double volume, short *rawdata, HTS_Audio * audio);
+void HTS_Vocoder_synthesize(HTS_Vocoder * v, const int m, double lf0, double *spectrum, const int nlpf, double *lpf, double alpha, double beta, double volume, double *rawdata, HTS_Audio * audio);
 
 /* HTS_Vocoder_postfilter_mcp: postfilter for MCP */
 void HTS_Vocoder_postfilter_mcp(HTS_Vocoder * v, double *mcp, const int m, double alpha, double beta);
