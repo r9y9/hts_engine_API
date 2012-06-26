@@ -173,7 +173,7 @@ HTS_Boolean HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms, HTS_L
    for (i = 0; i < HTS_ModelSet_get_duration_interpolation_size(ms); i++)
       if (duration_iw[i] != 0.0)
          duration_iw[i] /= temp;
-   for (i = 0; i < sss->nstream; i++) {
+   for (i = 0; i < HTS_ModelSet_get_nstream(ms); i++) {
       for (j = 0, temp = 0.0; j < HTS_ModelSet_get_parameter_interpolation_size(ms, i); j++)
          temp += parameter_iw[i][j];
       if (temp == 0.0)
