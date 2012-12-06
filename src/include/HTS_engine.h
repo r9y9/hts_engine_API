@@ -700,7 +700,7 @@ void HTS_Engine_set_gv_weight(HTS_Engine * engine, int stream_index, double f);
 /* HTS_Engine_set_stop_flag: set stop flag */
 void HTS_Engine_set_stop_flag(HTS_Engine * engine, HTS_Boolean b);
 
-/* HTS_Engine_set_volume: set volume */
+/* HTS_Engine_set_volume: set volume in db */
 void HTS_Engine_set_volume(HTS_Engine * engine, double f);
 
 /* HTS_Engine_get_total_state: get total number of state */

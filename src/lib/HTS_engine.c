@@ -56,6 +56,7 @@
 HTS_ENGINE_C_START;
 
 #include <string.h>             /* for strcpy() */
+#include <math.h>               /* for pow() */
 
 /* hts_engine libraries */
 #include "HTS_hidden.h"
@@ -389,12 +390,10 @@ void HTS_Engine_set_stop_flag(HTS_Engine * engine, HTS_Boolean b)
    engine->global.stop = b;
 }
 
-/* HTS_Engine_set_volume: set volume */
+/* HTS_Engine_set_volume: set volume in db */
 void HTS_Engine_set_volume(HTS_Engine * engine, double f)
 {
-   if (f < 0.0)
-      f = 0.0;
-   engine->global.volume = f;
+   engine->global.volume = pow(10.0, f / 20.0);
 }
 
 /* HTS_Engine_get_total_state: get total number of state */
