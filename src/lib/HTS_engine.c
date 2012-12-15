@@ -296,10 +296,10 @@ double HTS_Engine_get_alpha(HTS_Engine * engine)
 /* HTS_Engine_set_beta: set beta */
 void HTS_Engine_set_beta(HTS_Engine * engine, double f)
 {
-   if (f < -0.9)
-      f = -0.9;
-   if (f > 0.9)
-      f = 0.9;
+   if (f < 0.0)
+      f = 0.0;
+   if (f > 1.0)
+      f = 1.0;
    engine->condition.beta = f;
 }
 

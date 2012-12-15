@@ -560,6 +560,72 @@ static double HTS_mglsadf(double x, const double *b, const int m, const double a
    return x;
 }
 
+/* THS_check_lsp_stability: check LSP stability */
+static void HTS_check_lsp_stability(double *lsp, size_t m)
+{
+   size_t i, j;
+   double tmp;
+   double min = (CHECK_LSP_STABILITY_MIN * PI) / (m + 1);
+
+   for (i = 0; i < CHECK_LSP_STABILITY_NUM; i++) {
+      for (j = 1; j < m; j++) {
+         tmp = lsp[j + 1] - lsp[j];
+         if (tmp < min) {
+            lsp[j] -= 0.5 * (min - tmp);
+            lsp[j + 1] += 0.5 * (min - tmp);
+         }
+      }
+
+      if (lsp[1] < 0.5 * min) {
+         tmp = (lsp[m] - 0.5 * min) / (lsp[m] - lsp[1]);
+         for (j = 1; j < m; j++)
+            lsp[j] = lsp[j] * tmp + lsp[m] * (1.0 - tmp);
+      }
+      if (lsp[m] + 0.5 * min > PI) {
+         tmp = (PI - 0.5 * min - lsp[1]) / (lsp[m] - lsp[1]);
+         for (j = 2; j <= m; j++)
+            lsp[j] = lsp[j] * tmp - lsp[1] * (1.0 - tmp);
+      }
+   }
+}
+
+/* HTS_lsp2en: calculate frame energy */
+static double HTS_lsp2en(HTS_Vocoder * v, double *lsp, size_t m, double alpha)
+{
+   size_t i;
+   double en = 0.0;
+   double *buff;
+
+   if (v->spectrum2en_size < m) {
+      if (v->spectrum2en_buff != NULL)
+         HTS_free(v->spectrum2en_buff);
+      v->spectrum2en_buff = (double *) HTS_calloc(m + 1 + IRLENG, sizeof(double));
+      v->spectrum2en_size = m;
+   }
+   buff = v->spectrum2en_buff + m + 1;
+
+   /* lsp2lpc */
+   HTS_lsp2lpc(v, lsp + 1, v->spectrum2en_buff, m);
+   if (v->use_log_gain)
+      v->spectrum2en_buff[0] = exp(lsp[0]);
+   else
+      v->spectrum2en_buff[0] = lsp[0];
+
+   /* mgc2mgc */
+   if (NORMFLG1)
+      HTS_ignorm(v->spectrum2en_buff, v->spectrum2en_buff, m, v->gamma);
+   else if (MULGFLG1)
+      v->spectrum2en_buff[0] = (1.0 - v->spectrum2en_buff[0]) * ((double) v->stage);
+   if (MULGFLG1)
+      for (i = 1; i <= m; i++)
+         v->spectrum2en_buff[i] *= -((double) v->stage);
+   HTS_mgc2mgc(v, v->spectrum2en_buff, m, alpha, v->gamma, buff, IRLENG - 1, 0.0, 1);
+
+   for (i = 0; i < IRLENG; i++)
+      en += buff[i] * buff[i];
+   return en;
+}
+
 /* HTS_white_noise: return white noise */
 static double HTS_white_noise(HTS_Vocoder * v)
 {
@@ -721,6 +787,46 @@ static void HTS_Vocoder_postfilter_mcp(HTS_Vocoder * v, double *mcp, const int m
    }
 }
 
+/* HTS_Vocoder_postfilter_lsp: postfilter for LSP */
+static void HTS_Vocoder_postfilter_lsp(HTS_Vocoder * v, double *lsp, size_t m, double alpha, double beta)
+{
+   double e1, e2;
+   size_t i;
+   double d1, d2;
+
+   if (beta > 0.0 && m > 1) {
+      if (v->postfilter_size < m) {
+         if (v->postfilter_buff != NULL)
+            HTS_free(v->postfilter_buff);
+         v->postfilter_buff = (double *) HTS_calloc(m + 1, sizeof(double));
+         v->postfilter_size = m;
+      }
+
+      e1 = HTS_lsp2en(v, lsp, m, alpha);
+
+      /* postfiltering */
+      for (i = 0; i <= m; i++) {
+         if (i > 1 && i < m) {
+            d1 = beta * (lsp[i + 1] - lsp[i]);
+            d2 = beta * (lsp[i] - lsp[i - 1]);
+            v->postfilter_buff[i] = lsp[i - 1] + d2 + (d2 * d2 * ((lsp[i + 1] - lsp[i - 1]) - (d1 + d2))) / ((d2 * d2) + (d1 * d1));
+         } else {
+            v->postfilter_buff[i] = lsp[i];
+         }
+      }
+      HTS_movem(v->postfilter_buff, lsp, m + 1);
+
+      e2 = HTS_lsp2en(v, lsp, m, alpha);
+
+      if (e1 != e2) {
+         if (v->use_log_gain)
+            lsp[0] += 0.5 * log(e1 / e2);
+         else
+            lsp[0] *= sqrt(e1 / e2);
+      }
+   }
+}
+
 /* HTS_Vocoder_initialize: initialize vocoder */
 void HTS_Vocoder_initialize(HTS_Vocoder * v, size_t m, size_t stage, HTS_Boolean use_log_gain, size_t rate, size_t fperiod)
 {
@@ -805,6 +911,8 @@ void HTS_Vocoder_synthesize(HTS_Vocoder * v, size_t m, double lf0, double *spect
       for (i = 0; i <= m; i++)
          v->cinc[i] = (v->cc[i] - v->c[i]) * IPERIOD / v->fprd;
    } else {                     /* for LSP */
+      HTS_Vocoder_postfilter_lsp(v, spectrum, m, alpha, beta);
+      HTS_check_lsp_stability(spectrum, m);
       HTS_lsp2mgc(v, spectrum, v->cc, m, alpha);
       HTS_mc2b(v->cc, v->cc, m, alpha);
       HTS_gnorm(v->cc, v->cc, m, v->gamma);
