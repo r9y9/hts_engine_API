@@ -566,26 +566,31 @@ static void HTS_check_lsp_stability(double *lsp, size_t m)
    size_t i, j;
    double tmp;
    double min = (CHECK_LSP_STABILITY_MIN * PI) / (m + 1);
+   HTS_Boolean find;
 
    for (i = 0; i < CHECK_LSP_STABILITY_NUM; i++) {
+      find = FALSE;
+
       for (j = 1; j < m; j++) {
          tmp = lsp[j + 1] - lsp[j];
          if (tmp < min) {
             lsp[j] -= 0.5 * (min - tmp);
             lsp[j + 1] += 0.5 * (min - tmp);
+            find = TRUE;
          }
       }
 
-      if (lsp[1] < 0.5 * min) {
-         tmp = (lsp[m] - 0.5 * min) / (lsp[m] - lsp[1]);
-         for (j = 1; j < m; j++)
-            lsp[j] = lsp[j] * tmp + lsp[m] * (1.0 - tmp);
+      if (lsp[1] < min) {
+         lsp[1] = min;
+         find = TRUE;
       }
-      if (lsp[m] + 0.5 * min > PI) {
-         tmp = (PI - 0.5 * min - lsp[1]) / (lsp[m] - lsp[1]);
-         for (j = 2; j <= m; j++)
-            lsp[j] = lsp[j] * tmp - lsp[1] * (1.0 - tmp);
+      if (lsp[m] > PI - min) {
+         lsp[m] = PI - min;
+         find = TRUE;
       }
+
+      if (find == FALSE)
+         break;
    }
 }
 

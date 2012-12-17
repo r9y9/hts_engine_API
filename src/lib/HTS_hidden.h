@@ -450,7 +450,7 @@ void HTS_GStreamSet_clear(HTS_GStreamSet * gss);
 #define PULSELISTSIZE 1024
 
 #define CHECK_LSP_STABILITY_MIN 0.1
-#define CHECK_LSP_STABILITY_NUM 2
+#define CHECK_LSP_STABILITY_NUM 4
 
 /* for MGLSA filter */
 #define NORMFLG1 TRUE
