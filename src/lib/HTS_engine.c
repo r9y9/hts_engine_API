@@ -224,13 +224,13 @@ HTS_Boolean HTS_Engine_get_stop_flag(HTS_Engine * engine)
 /* HTS_Engine_set_volume: set volume in db */
 void HTS_Engine_set_volume(HTS_Engine * engine, double f)
 {
-   engine->condition.volume = pow(10.0, f / 20.0);
+   engine->condition.volume = exp(f * DB);
 }
 
 /* HTS_Engine_get_volume: get volume in db */
 double HTS_Engine_get_volume(HTS_Engine * engine)
 {
-   return 20.0 * log(engine->condition.volume) / log(10.0);
+   return log(engine->condition.volume) / DB;
 }
 
 /* HTS_Egnine_set_msd_threshold: set MSD threshold */
@@ -266,8 +266,8 @@ double HTS_Engine_get_gv_weight(HTS_Engine * engine, size_t stream_index)
 /* HTS_Engine_set_speed: set speech speed */
 void HTS_Engine_set_speed(HTS_Engine * engine, double f)
 {
-   if (f <= 0.1)
-      f = 0.1;
+   if (f < 1.0E-06)
+      f = 1.0E-06;
    engine->condition.speed = f;
 }
 
