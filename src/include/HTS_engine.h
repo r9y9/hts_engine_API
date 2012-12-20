@@ -79,7 +79,7 @@ typedef int HTS_Boolean;
 
 /* audio ----------------------------------------------------------- */
 
-/* HTS_Audio: audio output */
+/* HTS_Audio: audio output wrapper */
 typedef struct _HTS_Audio {
    size_t sampling_frequency;   /* sampling frequency */
    size_t max_buff_size;        /* buffer size for audio output interface */
@@ -92,7 +92,7 @@ typedef struct _HTS_Audio {
 
 /* HTS_Window: window coefficients to calculate dynamic features. */
 typedef struct _HTS_Window {
-   size_t size;                 /* number of windows (static + deltas) */
+   size_t size;                 /* # of windows (static + deltas) */
    int *l_width;                /* left width of windows */
    int *r_width;                /* right width of windows */
    double **coefficient;        /* window coefficient */
@@ -115,7 +115,7 @@ typedef struct _HTS_Question {
 /* HTS_Node: list of tree nodes in a tree. */
 typedef struct _HTS_Node {
    int index;                   /* index of this node */
-   size_t pdf;                  /* index of PDF for this node  (leaf node only) */
+   size_t pdf;                  /* index of PDF for this node (leaf node only) */
    struct _HTS_Node *yes;       /* pointer to its child node (yes) */
    struct _HTS_Node *no;        /* pointer to its child node (no) */
    struct _HTS_Node *next;      /* pointer to the next node */
@@ -132,9 +132,9 @@ typedef struct _HTS_Tree {
 
 /* HTS_Model: set of PDFs, decision trees and questions. */
 typedef struct _HTS_Model {
-   size_t vector_length;        /* vector length (only static features) */
-   size_t num_windows;
-   HTS_Boolean is_msd;
+   size_t vector_length;        /* vector length (static features only) */
+   size_t num_windows;          /* # of windows for delta */
+   HTS_Boolean is_msd;          /* flag for MSD */
    size_t ntree;                /* # of trees */
    size_t *npdf;                /* # of PDFs at each tree */
    float ***pdf;                /* PDFs */
@@ -144,21 +144,20 @@ typedef struct _HTS_Model {
 
 /* HTS_ModelSet: set of duration models, HMMs and GV models. */
 typedef struct _HTS_ModelSet {
-   char *hts_voice_version;
-   size_t sampling_frequency;
-   size_t frame_period;
-   size_t num_voices;
-   size_t num_states;
-   size_t num_streams;
-   char *stream_type;
-   char *fullcontext_format;
-   char *fullcontext_version;
-   HTS_Question *gv_off_context;
-   char **option;
-
+   char *hts_voice_version;     /* verion of HTS voice format */
+   size_t sampling_frequency;   /* sampling frequency */
+   size_t frame_period;         /* frame period */
+   size_t num_voices;           /* # of HTS voices */
+   size_t num_states;           /* # of HMM states */
+   size_t num_streams;          /* # of streams */
+   char *stream_type;           /* stream type */
+   char *fullcontext_format;    /* fullcontext label format */
+   char *fullcontext_version;   /* version of fullcontext label */
+   HTS_Question *gv_off_context;        /* GV switch */
+   char **option;               /* options for each stream */
    HTS_Model *duration;         /* duration PDFs and trees */
-   HTS_Window *window;          /* parameter PDFs and trees */
-   HTS_Model **stream;          /* parameter windows */
+   HTS_Window *window;          /* window coefficients for delta */
+   HTS_Model **stream;          /* parameter PDfs and trees */
    HTS_Model **gv;              /* GV PDFs and trees */
 } HTS_ModelSet;
 
@@ -182,7 +181,7 @@ typedef struct _HTS_Label {
 
 /* HTS_SStream: individual state stream */
 typedef struct _HTS_SStream {
-   size_t vector_length;        /* vector length (only static features) */
+   size_t vector_length;        /* vector length (static features only) */
    double **mean;               /* mean vector sequence */
    double **vari;               /* variance vector sequence */
    double *msd;                 /* MSD parameter sequence */
@@ -219,7 +218,7 @@ typedef struct _HTS_SMatrices {
 
 /* HTS_PStream: individual PDF stream. */
 typedef struct _HTS_PStream {
-   size_t vector_length;        /* vector length (only static features) */
+   size_t vector_length;        /* vector length (static features only) */
    size_t length;               /* stream length */
    size_t width;                /* width of dynamic window */
    double **par;                /* output parameter vector */
@@ -246,7 +245,7 @@ typedef struct _HTS_PStreamSet {
 
 /* HTS_GStream: generated parameter stream. */
 typedef struct _HTS_GStream {
-   size_t vector_length;
+   size_t vector_length;        /* vector length (static features only) */
    double **par;                /* generated parameter */
 } HTS_GStream;
 
@@ -415,7 +414,7 @@ size_t HTS_Engine_get_nstate(HTS_Engine * engine);
 /* HTS_Engine_get_nsamples: get number of samples */
 size_t HTS_Engine_get_nsamples(HTS_Engine * engine);
 
-/* HTS_Engine_get_speech: output generated speech */
+/* HTS_Engine_get_speech: get generated speech */
 double HTS_Engine_get_speech(HTS_Engine * engine, size_t index);
 
 /* HTS_Engine_synthesize_from_fn: synthesize speech from file name */
@@ -437,7 +436,7 @@ void HTS_Engine_save_generated_parameter(HTS_Engine * engine, size_t stream_inde
 void HTS_Engine_save_generated_speech(HTS_Engine * engine, FILE * fp);
 
 /* HTS_Engine_save_riff: save RIFF format file */
-void HTS_Engine_save_riff(HTS_Engine * engine, FILE * wavfp);
+void HTS_Engine_save_riff(HTS_Engine * engine, FILE * fp);
 
 /* HTS_Engine_refresh: free memory per one time synthesis */
 void HTS_Engine_refresh(HTS_Engine * engine);
