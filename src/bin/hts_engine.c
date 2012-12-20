@@ -82,7 +82,7 @@ void usage(void)
    fprintf(stderr, "    -p  i          : frame period (point)                                    [ auto][   1--    ]\n");
    fprintf(stderr, "    -a  f          : all-pass constant                                       [ auto][ 0.0-- 1.0]\n");
    fprintf(stderr, "    -b  f          : postfiltering coefficient                               [  0.0][ 0.0-- 1.0]\n");
-   fprintf(stderr, "    -r  f          : speech speed rate                                       [  1.0][ 0.1--    ]\n");
+   fprintf(stderr, "    -r  f          : speech speed rate                                       [  1.0][ 0.0--    ]\n");
    fprintf(stderr, "    -fm f          : additional half-tone                                    [  0.0][    --    ]\n");
    fprintf(stderr, "    -u  f          : voiced/unvoiced threshold                               [  0.5][ 0.0-- 1.0]\n");
    fprintf(stderr, "    -jm f          : weight of GV for spectrum                               [  1.0][ 0.0--    ]\n");
