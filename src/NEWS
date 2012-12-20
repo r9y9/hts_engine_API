@@ -1,3 +1,10 @@
+Version 1.07:
+ * support new HTS voice format.
+ * add LSP postfilter.
+ * change volume unit to DB.
+ * add function to get generated speech.
+ * bug fixes.
+
 Version 1.06:
  * modify state duration calculation algorithm.
  * change many function from void to boolean.

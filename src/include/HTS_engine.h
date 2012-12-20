@@ -115,7 +115,7 @@ typedef struct _HTS_Question {
 /* HTS_Node: list of tree nodes in a tree. */
 typedef struct _HTS_Node {
    int index;                   /* index of this node */
-   size_t pdf;                  /* index of PDF for this node  ( leaf node only ) */
+   size_t pdf;                  /* index of PDF for this node  (leaf node only) */
    struct _HTS_Node *yes;       /* pointer to its child node (yes) */
    struct _HTS_Node *no;        /* pointer to its child node (no) */
    struct _HTS_Node *next;      /* pointer to the next node */
