@@ -475,8 +475,8 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
 
    /* global parameter */
    fprintf(fp, "[Global parameter]\n");
-   fprintf(fp, "Sampring frequency                     -> %8d(Hz)\n", condition->sampling_frequency);
-   fprintf(fp, "Frame period                           -> %8d(point)\n", condition->fperiod);
+   fprintf(fp, "Sampring frequency                     -> %8lu(Hz)\n", (unsigned long) condition->sampling_frequency);
+   fprintf(fp, "Frame period                           -> %8lu(point)\n", (unsigned long) condition->fperiod);
    fprintf(fp, "                                          %8.5f(msec)\n", 1e+3 * condition->fperiod / condition->sampling_frequency);
    fprintf(fp, "All-pass constant                      -> %8.5f\n", (float) condition->alpha);
    fprintf(fp, "Gamma                                  -> %8.5f\n", (float) (condition->stage == 0 ? 0.0 : -1.0 / condition->stage));
@@ -487,13 +487,13 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
          fprintf(fp, "Log gain flag                          ->    FALSE\n");
    }
    fprintf(fp, "Postfiltering coefficient              -> %8.5f\n", (float) condition->beta);
-   fprintf(fp, "Audio buffer size                      -> %8d(sample)\n", condition->audio_buff_size);
+   fprintf(fp, "Audio buffer size                      -> %8lu(sample)\n", (unsigned long) condition->audio_buff_size);
    fprintf(fp, "\n");
 
    /* duration parameter */
    fprintf(fp, "[Duration parameter]\n");
-   fprintf(fp, "Number of states                       -> %8d\n", HTS_ModelSet_get_nstate(ms));
-   fprintf(fp, "         Interpolation size            -> %8d\n", HTS_ModelSet_get_nvoices(ms));
+   fprintf(fp, "Number of states                       -> %8lu\n", (unsigned long) HTS_ModelSet_get_nstate(ms));
+   fprintf(fp, "         Interpolation size            -> %8lu\n", (unsigned long) HTS_ModelSet_get_nvoices(ms));
    /* check interpolation */
    for (i = 0, temp = 0.0; i < HTS_ModelSet_get_nvoices(ms); i++)
       temp += condition->duration_iw[i];
@@ -501,23 +501,23 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
       if (condition->duration_iw[i] != 0.0)
          condition->duration_iw[i] /= temp;
    for (i = 0; i < HTS_ModelSet_get_nvoices(ms); i++)
-      fprintf(fp, "         Interpolation weight[%2d]      -> %8.0f(%%)\n", i, (float) (100 * condition->duration_iw[i]));
+      fprintf(fp, "         Interpolation weight[%2lu]      -> %8.0f(%%)\n", (unsigned long) i, (float) (100 * condition->duration_iw[i]));
    fprintf(fp, "\n");
 
    fprintf(fp, "[Stream parameter]\n");
    for (i = 0; i < HTS_ModelSet_get_nstream(ms); i++) {
       /* stream parameter */
-      fprintf(fp, "Stream[%2d] vector length               -> %8d\n", i, HTS_ModelSet_get_vector_length(ms, i));
-      fprintf(fp, "           Dynamic window size         -> %8d\n", HTS_ModelSet_get_window_size(ms, i));
+      fprintf(fp, "Stream[%2lu] vector length               -> %8lu\n", (unsigned long) i, (unsigned long) HTS_ModelSet_get_vector_length(ms, i));
+      fprintf(fp, "           Dynamic window size         -> %8lu\n", (unsigned long) HTS_ModelSet_get_window_size(ms, i));
       /* interpolation */
-      fprintf(fp, "           Interpolation size          -> %8d\n", HTS_ModelSet_get_nvoices(ms));
+      fprintf(fp, "           Interpolation size          -> %8lu\n", (unsigned long) HTS_ModelSet_get_nvoices(ms));
       for (j = 0, temp = 0.0; j < HTS_ModelSet_get_nvoices(ms); j++)
          temp += condition->parameter_iw[i][j];
       for (j = 0; j < HTS_ModelSet_get_nvoices(ms); j++)
          if (condition->parameter_iw[i][j] != 0.0)
             condition->parameter_iw[i][j] /= temp;
       for (j = 0; j < HTS_ModelSet_get_nvoices(ms); j++)
-         fprintf(fp, "           Interpolation weight[%2d]    -> %8.0f(%%)\n", j, (float) (100 * condition->parameter_iw[i][j]));
+         fprintf(fp, "           Interpolation weight[%2lu]    -> %8.0f(%%)\n", (unsigned long) j, (float) (100 * condition->parameter_iw[i][j]));
       /* MSD */
       if (HTS_ModelSet_is_msd(ms, i)) { /* for MSD */
          fprintf(fp, "           MSD flag                    ->     TRUE\n");
@@ -529,7 +529,7 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
       if (HTS_ModelSet_use_gv(ms, i)) {
          fprintf(fp, "           GV flag                     ->     TRUE\n");
          fprintf(fp, "           GV weight                   -> %8.0f(%%)\n", (float) (100 * condition->gv_weight[i]));
-         fprintf(fp, "           GV interpolation size       -> %8d\n", HTS_ModelSet_get_nvoices(ms));
+         fprintf(fp, "           GV interpolation size       -> %8lu\n", (unsigned long) HTS_ModelSet_get_nvoices(ms));
          /* interpolation */
          for (j = 0, temp = 0.0; j < HTS_ModelSet_get_nvoices(ms); j++)
             temp += condition->gv_iw[i][j];
@@ -537,7 +537,7 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
             if (condition->gv_iw[i][j] != 0.0)
                condition->gv_iw[i][j] /= temp;
          for (j = 0; j < HTS_ModelSet_get_nvoices(ms); j++)
-            fprintf(fp, "           GV interpolation weight[%2d] -> %8.0f(%%)\n", j, (float) (100 * condition->gv_iw[i][j]));
+            fprintf(fp, "           GV interpolation weight[%2lu] -> %8.0f(%%)\n", (unsigned long) j, (float) (100 * condition->gv_iw[i][j]));
       } else {
          fprintf(fp, "           GV flag                     ->    FALSE\n");
       }
@@ -546,26 +546,26 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
 
    /* generated sequence */
    fprintf(fp, "[Generated sequence]\n");
-   fprintf(fp, "Number of HMMs                         -> %8d\n", HTS_Label_get_size(label));
-   fprintf(fp, "Number of stats                        -> %8d\n", HTS_Label_get_size(label) * HTS_ModelSet_get_nstate(ms));
+   fprintf(fp, "Number of HMMs                         -> %8lu\n", (unsigned long) HTS_Label_get_size(label));
+   fprintf(fp, "Number of stats                        -> %8lu\n", (unsigned long) HTS_Label_get_size(label) * HTS_ModelSet_get_nstate(ms));
    fprintf(fp, "Length of this speech                  -> %8.3f(sec)\n", (float) ((double) HTS_PStreamSet_get_total_frame(pss) * condition->fperiod / condition->sampling_frequency));
-   fprintf(fp, "                                       -> %8.3d(frames)\n", HTS_PStreamSet_get_total_frame(pss) * condition->fperiod);
+   fprintf(fp, "                                       -> %8lu(frames)\n", (unsigned long) HTS_PStreamSet_get_total_frame(pss) * condition->fperiod);
 
    for (i = 0; i < HTS_Label_get_size(label); i++) {
-      fprintf(fp, "HMM[%2d]\n", i);
+      fprintf(fp, "HMM[%2lu]\n", (unsigned long) i);
       fprintf(fp, "  Name                                 -> %s\n", HTS_Label_get_string(label, i));
       fprintf(fp, "  Duration\n");
       for (j = 0; j < HTS_ModelSet_get_nvoices(ms); j++) {
-         fprintf(fp, "    Interpolation[%2d]\n", j);
+         fprintf(fp, "    Interpolation[%2lu]\n", (unsigned long) j);
          HTS_ModelSet_get_duration_index(ms, j, HTS_Label_get_string(label, i), &k, &l);
-         fprintf(fp, "      Tree index                       -> %8d\n", k);
-         fprintf(fp, "      PDF index                        -> %8d\n", l);
+         fprintf(fp, "      Tree index                       -> %8lu\n", (unsigned long) k);
+         fprintf(fp, "      PDF index                        -> %8lu\n", (unsigned long) l);
       }
       for (j = 0; j < HTS_ModelSet_get_nstate(ms); j++) {
-         fprintf(fp, "  State[%2d]\n", j + 2);
-         fprintf(fp, "    Length                             -> %8d(frames)\n", HTS_SStreamSet_get_duration(sss, i * HTS_ModelSet_get_nstate(ms) + j));
+         fprintf(fp, "  State[%2lu]\n", (unsigned long) j + 2);
+         fprintf(fp, "    Length                             -> %8lu(frames)\n", (unsigned long) HTS_SStreamSet_get_duration(sss, i * HTS_ModelSet_get_nstate(ms) + j));
          for (k = 0; k < HTS_ModelSet_get_nstream(ms); k++) {
-            fprintf(fp, "    Stream[%2d]\n", k);
+            fprintf(fp, "    Stream[%2lu]\n", (unsigned long) k);
             if (HTS_ModelSet_is_msd(ms, k)) {
                if (HTS_SStreamSet_get_msd(sss, k, i * HTS_ModelSet_get_nstate(ms) + j) > condition->msd_threshold[k])
                   fprintf(fp, "      MSD flag                         ->     TRUE\n");
@@ -573,10 +573,10 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
                   fprintf(fp, "      MSD flag                         ->    FALSE\n");
             }
             for (l = 0; l < HTS_ModelSet_get_nvoices(ms); l++) {
-               fprintf(fp, "      Interpolation[%2d]\n", l);
+               fprintf(fp, "      Interpolation[%2lu]\n", (unsigned long) l);
                HTS_ModelSet_get_parameter_index(ms, l, k, j + 2, HTS_Label_get_string(label, i), &m, &n);
-               fprintf(fp, "        Tree index                     -> %8d\n", m);
-               fprintf(fp, "        PDF index                      -> %8d\n", n);
+               fprintf(fp, "        Tree index                     -> %8lu\n", (unsigned long) m);
+               fprintf(fp, "        PDF index                      -> %8lu\n", (unsigned long) n);
             }
          }
       }

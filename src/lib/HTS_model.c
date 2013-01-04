@@ -658,6 +658,7 @@ static HTS_Boolean HTS_Model_load_tree(HTS_Model * model, HTS_File * fp)
 /* HTS_Model_load_pdf: load pdfs */
 static HTS_Boolean HTS_Model_load_pdf(HTS_Model * model, HTS_File * fp, size_t vector_length, size_t num_windows, HTS_Boolean is_msd)
 {
+   unsigned int i;
    size_t j, k;
    HTS_Boolean result = TRUE;
    size_t len;
@@ -675,8 +676,13 @@ static HTS_Boolean HTS_Model_load_pdf(HTS_Model * model, HTS_File * fp, size_t v
    model->npdf = (size_t *) HTS_calloc(model->ntree, sizeof(size_t));
    model->npdf -= 2;
    /* read the number of pdfs */
-   if (HTS_fread_little_endian(&model->npdf[2], sizeof(size_t), model->ntree, fp) != model->ntree)
-      result = FALSE;
+   for (j = 2; j <= model->ntree + 1; j++) {
+      if (HTS_fread_little_endian(&i, sizeof(unsigned int), 1, fp) != 1) {
+         result = FALSE;
+         break;
+      }
+      model->npdf[j] = (size_t) i;
+   }
    for (j = 2; j <= model->ntree + 1; j++) {
       if (model->npdf[j] <= 0) {
          HTS_error(1, "HTS_Model_load_pdf: # of pdfs at %d-th state should be positive.\n", j);
