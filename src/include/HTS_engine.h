@@ -144,7 +144,7 @@ typedef struct _HTS_Model {
 
 /* HTS_ModelSet: set of duration models, HMMs and GV models. */
 typedef struct _HTS_ModelSet {
-   char *hts_voice_version;     /* verion of HTS voice format */
+   char *hts_voice_version;     /* version of HTS voice format */
    size_t sampling_frequency;   /* sampling frequency */
    size_t frame_period;         /* frame period */
    size_t num_voices;           /* # of HTS voices */
@@ -157,7 +157,7 @@ typedef struct _HTS_ModelSet {
    char **option;               /* options for each stream */
    HTS_Model *duration;         /* duration PDFs and trees */
    HTS_Window *window;          /* window coefficients for delta */
-   HTS_Model **stream;          /* parameter PDfs and trees */
+   HTS_Model **stream;          /* parameter PDFs and trees */
    HTS_Model **gv;              /* GV PDFs and trees */
 } HTS_ModelSet;
 
@@ -411,11 +411,17 @@ size_t HTS_Engine_get_nstream(HTS_Engine * engine);
 /* HTS_Engine_get_nstate: get number of state */
 size_t HTS_Engine_get_nstate(HTS_Engine * engine);
 
+/* HTS_Engine_get_total_frame: get total number of frame */
+size_t HTS_Engine_get_total_frame(HTS_Engine * engine);
+
 /* HTS_Engine_get_nsamples: get number of samples */
 size_t HTS_Engine_get_nsamples(HTS_Engine * engine);
 
-/* HTS_Engine_get_speech: get generated speech */
-double HTS_Engine_get_speech(HTS_Engine * engine, size_t index);
+/* HTS_Engine_get_generated_parameter: output generated parameter */
+double HTS_Engine_get_generated_parameter(HTS_Engine * engine, size_t stream_index, size_t frame_index, size_t vector_index);
+
+/* HTS_Engine_get_generated_speech: output generated speech */
+double HTS_Engine_get_generated_speech(HTS_Engine * engine, size_t index);
 
 /* HTS_Engine_synthesize_from_fn: synthesize speech from file name */
 HTS_Boolean HTS_Engine_synthesize_from_fn(HTS_Engine * engine, const char *fn);

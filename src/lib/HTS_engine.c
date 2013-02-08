@@ -393,14 +393,26 @@ size_t HTS_Engine_get_nstate(HTS_Engine * engine)
    return HTS_ModelSet_get_nstate(&engine->ms);
 }
 
+/* HTS_Engine_get_total_frame: get total number of frame */
+size_t HTS_Engine_get_total_frame(HTS_Engine * engine)
+{
+   return HTS_GStreamSet_get_total_frame(&engine->gss);
+}
+
 /* HTS_Engine_get_nsamples: get number of samples */
 size_t HTS_Engine_get_nsamples(HTS_Engine * engine)
 {
    return HTS_GStreamSet_get_total_nsamples(&engine->gss);
 }
 
-/* HTS_Engine_get_speech: output generated speech */
-double HTS_Engine_get_speech(HTS_Engine * engine, size_t index)
+/* HTS_Engine_get_generated_parameter: output generated parameter */
+double HTS_Engine_get_generated_parameter(HTS_Engine * engine, size_t stream_index, size_t frame_index, size_t vector_index)
+{
+   return HTS_GStreamSet_get_parameter(&engine->gss, stream_index, frame_index, vector_index);
+}
+
+/* HTS_Engine_get_generated_speech: output generated speech */
+double HTS_Engine_get_generated_speech(HTS_Engine * engine, size_t index)
 {
    return HTS_GStreamSet_get_speech(&engine->gss, index);
 }

@@ -69,6 +69,8 @@ HTS_HIDDEN_H_START;
 #undef WORDS_BIGENDIAN
 #endif                          /* WORDS_BIGENDIAN && WORDS_LITTLEENDIAN */
 
+#define MAX_F0    20000.0
+#define MIN_F0    20.0
 #define MAX_LF0   9.9034875525361280454891979401956     /* log(20000.0) */
 #define MIN_LF0   2.9957322735539909934352235761425     /* log(20.0) */
 #define HALF_TONE 0.05776226504666210911810267678818    /* log(2.0) / 12.0 */
@@ -447,9 +449,7 @@ void HTS_GStreamSet_clear(HTS_GStreamSet * gss);
 #define IRLENG    576
 #endif                          /* HTS_EMBEDDED */
 
-#define PULSELISTSIZE 1024
-
-#define CHECK_LSP_STABILITY_MIN 0.1
+#define CHECK_LSP_STABILITY_MIN 0.25
 #define CHECK_LSP_STABILITY_NUM 4
 
 /* for MGLSA filter */
@@ -472,7 +472,8 @@ typedef struct _HTS_Vocoder {
    double pc;                   /* used in excitation generation */
    double p;                    /* used in excitation generation */
    double inc;                  /* used in excitation generation */
-   double *pulse_list;          /* used in excitation generation */
+   double *pulse_buff;          /* used in excitation generation */
+   size_t pulse_size;           /* used in excitation generation */
    unsigned char sw;            /* switch used in random generator */
    int x;                       /* excitation signal */
    double *freqt_buff;          /* used in freqt */

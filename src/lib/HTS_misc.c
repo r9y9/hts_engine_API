@@ -515,11 +515,14 @@ HTS_Boolean HTS_get_token_from_string_with_separator(const char *str, size_t * i
 /* HTS_calloc: wrapper for calloc */
 void *HTS_calloc(const size_t num, const size_t size)
 {
+   size_t n = num * size;
 #ifdef FESTIVAL
-   void *mem = (void *) safe_wcalloc(num * size);
+   void *mem = (void *) safe_wcalloc(n);
 #else
-   void *mem = (void *) calloc(num, size);
+   void *mem = (void *) malloc(n);
 #endif                          /* FESTIVAL */
+
+   memset(mem, 0, n);
 
    if (mem == NULL)
       HTS_error(1, "HTS_calloc: Cannot allocate memory.\n");
