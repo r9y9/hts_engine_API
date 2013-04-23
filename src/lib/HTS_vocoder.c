@@ -786,7 +786,7 @@ static void HTS_Vocoder_postfilter_mcp(HTS_Vocoder * v, double *mcp, const int m
       HTS_mc2b(mcp, v->postfilter_buff, m, alpha);
       e1 = HTS_b2en(v, v->postfilter_buff, m, alpha);
 
-      v->postfilter_buff[1] -= beta * alpha * mcp[2];
+      v->postfilter_buff[1] -= beta * alpha * v->postfilter_buff[2];
       for (k = 2; k <= m; k++)
          v->postfilter_buff[k] *= (1.0 + beta);
 
