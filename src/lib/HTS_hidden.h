@@ -431,7 +431,6 @@ void HTS_GStreamSet_clear(HTS_GStreamSet * gss);
 
 #define RANDMAX 32767
 
-#define IPERIOD 1
 #define SEED    1
 #define B0      0x00000001
 #define B28     0x10000000
@@ -461,6 +460,7 @@ void HTS_GStreamSet_clear(HTS_GStreamSet * gss);
 
 /* HTS_Vocoder: structure for setting of vocoder */
 typedef struct _HTS_Vocoder {
+   HTS_Boolean is_first;
    size_t stage;                /* Gamma=-1/stage: if stage=0 then Gamma=0 */
    double gamma;                /* Gamma */
    HTS_Boolean use_log_gain;    /* log gain flag (for LSP) */
@@ -468,12 +468,12 @@ typedef struct _HTS_Vocoder {
    unsigned long next;          /* temporary variable for random generator */
    HTS_Boolean gauss;           /* flag to use Gaussian noise */
    double rate;                 /* sampling rate */
-   double p1;                   /* used in excitation generation */
-   double pc;                   /* used in excitation generation */
-   double p;                    /* used in excitation generation */
-   double inc;                  /* used in excitation generation */
-   double *pulse_buff;          /* used in excitation generation */
-   size_t pulse_size;           /* used in excitation generation */
+   double pitch_of_curr_point;  /* used in excitation generation */
+   double pitch_counter;        /* used in excitation generation */
+   double pitch_inc_per_point;  /* used in excitation generation */
+   double *excite_ring_buff;    /* used in excitation generation */
+   size_t excite_buff_size;     /* used in excitation generation */
+   size_t excite_buff_index;    /* used in excitation generation */
    unsigned char sw;            /* switch used in random generator */
    int x;                       /* excitation signal */
    double *freqt_buff;          /* used in freqt */

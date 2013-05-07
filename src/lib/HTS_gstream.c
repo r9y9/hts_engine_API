@@ -134,7 +134,7 @@ HTS_Boolean HTS_GStreamSet_create(HTS_GStreamSet * gss, HTS_PStreamSet * pss, si
    /* synthesize speech waveform */
    HTS_Vocoder_initialize(&v, gss->gstream[0].vector_length - 1, stage, use_log_gain, sampling_rate, fperiod);
    if (gss->nstream >= 3)
-      nlpf = (gss->gstream[2].vector_length - 1) / 2;
+      nlpf = gss->gstream[2].vector_length;
    for (i = 0; i < gss->total_frame && (*stop) == FALSE; i++) {
       j = i * fperiod;
       if (gss->nstream >= 3)
