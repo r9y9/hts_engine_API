@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2012  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2013  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -417,7 +417,8 @@ double HTS_Engine_get_generated_speech(HTS_Engine * engine, size_t index)
    return HTS_GStreamSet_get_speech(&engine->gss, index);
 }
 
-static HTS_Boolean HTS_Engine_synthesize(HTS_Engine * engine)
+/* HTS_Engine_generate_state_sequence: genereate state sequence (1st synthesis step) */
+static HTS_Boolean HTS_Engine_generate_state_sequence(HTS_Engine * engine)
 {
    size_t i, state_index, model_index;
    double f;
@@ -444,17 +445,52 @@ static HTS_Boolean HTS_Engine_synthesize(HTS_Engine * engine)
          }
       }
    }
+   return TRUE;
+}
 
-   if (HTS_PStreamSet_create(&engine->pss, &engine->sss, engine->condition.msd_threshold, engine->condition.gv_weight) != TRUE) {
+/* HTS_Engine_generate_state_sequence_from_fn: genereate state sequence from file name (1st synthesis step) */
+HTS_Boolean HTS_Engine_generate_state_sequence_from_fn(HTS_Engine * engine, const char *fn)
+{
+   HTS_Engine_refresh(engine);
+   HTS_Label_load_from_fn(&engine->label, engine->condition.sampling_frequency, engine->condition.fperiod, fn);
+   return HTS_Engine_generate_state_sequence(engine);
+}
+
+/* HTS_Engine_generate_state_sequence_from_strings: generate state sequence from strings (1st synthesis step) */
+HTS_Boolean HTS_Engine_generate_state_sequence_from_strings(HTS_Engine * engine, char **lines, size_t num_lines)
+{
+   HTS_Engine_refresh(engine);
+   HTS_Label_load_from_strings(&engine->label, engine->condition.sampling_frequency, engine->condition.fperiod, lines, num_lines);
+   return HTS_Engine_generate_state_sequence(engine);
+}
+
+/* HTS_Engine_generate_parameter_sequence: generate parameter sequence (2nd synthesis step) */
+HTS_Boolean HTS_Engine_generate_parameter_sequence(HTS_Engine * engine)
+{
+   return HTS_PStreamSet_create(&engine->pss, &engine->sss, engine->condition.msd_threshold, engine->condition.gv_weight);
+}
+
+/* HTS_Engine_generate_sample_sequence: generate sample sequence (3rd synthesis step) */
+HTS_Boolean HTS_Engine_generate_sample_sequence(HTS_Engine * engine)
+{
+   return HTS_GStreamSet_create(&engine->gss, &engine->pss, engine->condition.stage, engine->condition.use_log_gain, engine->condition.sampling_frequency, engine->condition.fperiod, engine->condition.alpha, engine->condition.beta, &engine->condition.stop, engine->condition.volume, engine->condition.audio_buff_size > 0 ? &engine->audio : NULL);
+}
+
+/* HTS_Engine_synthesize: synthesize speech */
+static HTS_Boolean HTS_Engine_synthesize(HTS_Engine * engine)
+{
+   if (HTS_Engine_generate_state_sequence(engine) != TRUE) {
       HTS_Engine_refresh(engine);
       return FALSE;
    }
-
-   if (HTS_GStreamSet_create(&engine->gss, &engine->pss, engine->condition.stage, engine->condition.use_log_gain, engine->condition.sampling_frequency, engine->condition.fperiod, engine->condition.alpha, engine->condition.beta, &engine->condition.stop, engine->condition.volume, engine->condition.audio_buff_size > 0 ? &engine->audio : NULL) != TRUE) {
+   if (HTS_Engine_generate_parameter_sequence(engine) != TRUE) {
       HTS_Engine_refresh(engine);
       return FALSE;
    }
-
+   if (HTS_Engine_generate_sample_sequence(engine) != TRUE) {
+      HTS_Engine_refresh(engine);
+      return FALSE;
+   }
    return TRUE;
 }
 
