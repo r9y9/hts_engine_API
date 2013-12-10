@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2012  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2013  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -1611,7 +1611,8 @@ void HTS_ModelSet_get_duration(HTS_ModelSet * ms, const char *string, const doub
       vari[i] = 0.0;
    }
    for (i = 0; i < ms->num_voices; i++)
-      HTS_Model_add_parameter(&ms->duration[i], 2, string, mean, vari, NULL, iw[i]);
+      if (iw[i] != 0.0)
+         HTS_Model_add_parameter(&ms->duration[i], 2, string, mean, vari, NULL, iw[i]);
 }
 
 /* HTS_ModelSet_get_parameter_index: get paramter PDF & tree index */
@@ -1634,7 +1635,8 @@ void HTS_ModelSet_get_parameter(HTS_ModelSet * ms, size_t stream_index, size_t s
       *msd = 0.0;
 
    for (i = 0; i < ms->num_voices; i++)
-      HTS_Model_add_parameter(&ms->stream[i][stream_index], state_index, string, mean, vari, msd, iw[i]);
+      if (iw[i] != 0.0)
+         HTS_Model_add_parameter(&ms->stream[i][stream_index], state_index, string, mean, vari, msd, iw[i]);
 }
 
 /* HTS_ModelSet_get_gv_index: get gv PDF & tree index */
@@ -1654,7 +1656,8 @@ void HTS_ModelSet_get_gv(HTS_ModelSet * ms, size_t stream_index, const char *str
       vari[i] = 0.0;
    }
    for (i = 0; i < ms->num_voices; i++)
-      HTS_Model_add_parameter(&ms->gv[i][stream_index], 2, string, mean, vari, NULL, iw[i]);
+      if (iw[i] != 0.0)
+         HTS_Model_add_parameter(&ms->gv[i][stream_index], 2, string, mean, vari, NULL, iw[i]);
 }
 
 HTS_MODEL_C_END;
