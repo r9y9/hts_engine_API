@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2012  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2013  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -100,7 +100,7 @@ static void CALLBACK HTS_AudioInterface_callback_function(HWAVEOUT hwaveout, UIN
 }
 
 /* HTS_AudioInterface_write: send buffer to audio device */
-static void HTS_AudioInterface_write(HTS_AudioInterface * audio_interface, const short *buff, size_t buff_size)
+static HTS_Boolean HTS_AudioInterface_write(HTS_AudioInterface * audio_interface, const short *buff, size_t buff_size)
 {
    MMRESULT result;
 
@@ -124,6 +124,8 @@ static void HTS_AudioInterface_write(HTS_AudioInterface * audio_interface, const
 
    if (result != MMSYSERR_NOERROR)
       HTS_error(0, "hts_engine: Cannot send datablocks to your output audio device to play waveform.\n");
+
+   return (result == MMSYSERR_NOERROR) ? TRUE : FALSE;
 }
 
 /* HTS_AudioInterface_close: close audio device */
@@ -254,14 +256,16 @@ void HTS_Audio_set_parameter(HTS_Audio * audio, size_t sampling_frequency, size_
 /* HTS_Audio_write: send data to audio */
 void HTS_Audio_write(HTS_Audio * audio, short data)
 {
-   if (audio == NULL)
+   if (audio == NULL || audio->audio_interface == NULL)
       return;
 
    audio->buff[audio->buff_size++] = data;
 
    if (audio->buff_size >= audio->max_buff_size) {
-      if (audio->audio_interface != NULL)
-         HTS_AudioInterface_write((HTS_AudioInterface *) audio->audio_interface, audio->buff, audio->buff_size);
+      if (HTS_AudioInterface_write((HTS_AudioInterface *) audio->audio_interface, audio->buff, audio->buff_size) != TRUE) {
+         HTS_Audio_clear(audio);
+         return;
+      }
       audio->buff_size = 0;
    }
 }
@@ -276,7 +280,10 @@ void HTS_Audio_flush(HTS_Audio * audio)
 
    audio_interface = (HTS_AudioInterface *) audio->audio_interface;
    if (audio->buff_size > 0) {
-      HTS_AudioInterface_write(audio_interface, audio->buff, audio->buff_size);
+      if (HTS_AudioInterface_write(audio_interface, audio->buff, audio->buff_size) != TRUE) {
+         HTS_Audio_clear(audio);
+         return;
+      }
       audio->buff_size = 0;
    }
    while (audio_interface->now_buff_1 == TRUE || audio_interface->now_buff_2 == TRUE)
@@ -292,7 +299,6 @@ void HTS_Audio_clear(HTS_Audio * audio)
       return;
 
    audio_interface = (HTS_AudioInterface *) audio->audio_interface;
-   HTS_Audio_flush(audio);
    HTS_AudioInterface_close(audio_interface);
    if (audio->buff != NULL)
       free(audio->buff);
