@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2012  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2013  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -474,25 +474,36 @@ void HTS_PStreamSet_clear(HTS_PStreamSet * pss)
    if (pss->pstream) {
       for (i = 0; i < pss->nstream; i++) {
          pstream = &pss->pstream[i];
-         HTS_free(pstream->sm.wum);
-         HTS_free(pstream->sm.g);
-         HTS_free_matrix(pstream->sm.wuw, pstream->length);
-         HTS_free_matrix(pstream->sm.ivar, pstream->length);
-         HTS_free_matrix(pstream->sm.mean, pstream->length);
-         HTS_free_matrix(pstream->par, pstream->length);
+         if (pstream->sm.wum)
+            HTS_free(pstream->sm.wum);
+         if (pstream->sm.g)
+            HTS_free(pstream->sm.g);
+         if (pstream->sm.wuw)
+            HTS_free_matrix(pstream->sm.wuw, pstream->length);
+         if (pstream->sm.ivar)
+            HTS_free_matrix(pstream->sm.ivar, pstream->length);
+         if (pstream->sm.mean)
+            HTS_free_matrix(pstream->sm.mean, pstream->length);
+         if (pstream->par)
+            HTS_free_matrix(pstream->par, pstream->length);
          if (pstream->msd_flag)
             HTS_free(pstream->msd_flag);
-         for (j = 0; j < pstream->win_size; j++) {
-            pstream->win_coefficient[j] += pstream->win_l_width[j];
-            HTS_free(pstream->win_coefficient[j]);
+         if (pstream->win_coefficient) {
+            for (j = 0; j < pstream->win_size; j++) {
+               pstream->win_coefficient[j] += pstream->win_l_width[j];
+               HTS_free(pstream->win_coefficient[j]);
+            }
          }
          if (pstream->gv_mean)
             HTS_free(pstream->gv_mean);
          if (pstream->gv_vari)
             HTS_free(pstream->gv_vari);
-         HTS_free(pstream->win_coefficient);
-         HTS_free(pstream->win_l_width);
-         HTS_free(pstream->win_r_width);
+         if (pstream->win_coefficient)
+            HTS_free(pstream->win_coefficient);
+         if (pstream->win_l_width)
+            HTS_free(pstream->win_l_width);
+         if (pstream->win_r_width)
+            HTS_free(pstream->win_r_width);
          if (pstream->gv_switch)
             HTS_free(pstream->gv_switch);
       }

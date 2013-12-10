@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2012  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2013  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -185,9 +185,11 @@ void HTS_GStreamSet_clear(HTS_GStreamSet * gss)
 
    if (gss->gstream) {
       for (i = 0; i < gss->nstream; i++) {
-         for (j = 0; j < gss->total_frame; j++)
-            HTS_free(gss->gstream[i].par[j]);
-         HTS_free(gss->gstream[i].par);
+         if (gss->gstream[i].par != NULL) {
+            for (j = 0; j < gss->total_frame; j++)
+               HTS_free(gss->gstream[i].par[j]);
+            HTS_free(gss->gstream[i].par);
+         }
       }
       HTS_free(gss->gstream);
    }
