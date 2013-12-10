@@ -59,7 +59,7 @@ HTS_ENGINE_H_START;
 
 /* common ---------------------------------------------------------- */
 
-typedef int HTS_Boolean;
+typedef char HTS_Boolean;
 
 #ifndef TRUE
 #define TRUE  1
