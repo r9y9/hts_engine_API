@@ -1,3 +1,10 @@
+Version 1.08:
+ * support 64-bit machine.
+ * re-write excitation function.
+ * add some functions to get generated parameters and number of frames.
+ * add some functions for separating synthesis step.
+ * bug fixes.
+
 Version 1.07:
  * support new HTS voice format.
  * add LSP postfilter.
