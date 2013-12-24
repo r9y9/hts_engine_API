@@ -446,7 +446,7 @@ void HTS_Audio_flush(HTS_Audio * audio)
 
    audio_interface = (HTS_AudioInterface *) audio->audio_interface;
    if (audio->buff_size > 0) {
-      HTS_AudioInterface_write((HTS_AudioInterface *) audio->audio_interface, audio->buff, audio->buff_size);
+      HTS_AudioInterface_write(audio_interface, audio->buff, audio->buff_size);
       audio->buff_size = 0;
    }
 }
