@@ -272,6 +272,10 @@ int main(int argc, char **argv)
             }
             --argc;
             break;
+         case 'z':
+            HTS_Engine_set_audio_buff_size(&engine, (size_t) atoi(*++argv));
+            --argc;
+            break;
          default:
             fprintf(stderr, "Error: Invalid option '-%c'.\n", *(*argv + 1));
             HTS_Engine_clear(&engine);
