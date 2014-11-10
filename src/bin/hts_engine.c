@@ -87,6 +87,7 @@ void usage(void)
    fprintf(stderr, "    -u  f          : voiced/unvoiced threshold                               [  0.5][ 0.0-- 1.0]\n");
    fprintf(stderr, "    -jm f          : weight of GV for spectrum                               [  1.0][ 0.0--    ]\n");
    fprintf(stderr, "    -jf f          : weight of GV for log F0                                 [  1.0][ 0.0--    ]\n");
+   fprintf(stderr, "    -g  f          : volume (dB)                                             [  0.0][    --    ]\n");
    fprintf(stderr, "    -z  i          : audio buffer size (if i==0, turn off)                   [    0][   0--    ]\n");
    fprintf(stderr, "  infile:\n");
    fprintf(stderr, "    label file\n");
@@ -270,6 +271,10 @@ int main(int argc, char **argv)
                HTS_Engine_clear(&engine);
                exit(1);
             }
+            --argc;
+            break;
+         case 'g':
+            HTS_Engine_set_volume(&engine, atof(*++argv));
             --argc;
             break;
          case 'z':
