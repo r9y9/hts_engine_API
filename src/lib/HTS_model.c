@@ -1521,6 +1521,18 @@ size_t HTS_ModelSet_get_nstate(HTS_ModelSet * ms)
    return ms->num_states;
 }
 
+/* HTS_Engine_get_fullcontext_label_format: get full-context label format */
+const char *HTS_ModelSet_get_fullcontext_label_format(HTS_ModelSet * ms)
+{
+   return ms->fullcontext_format;
+}
+
+/* HTS_Engine_get_fullcontext_label_version: get full-context label version */
+const char *HTS_ModelSet_get_fullcontext_label_version(HTS_ModelSet * ms)
+{
+   return ms->fullcontext_version;
+}
+
 /* HTS_ModelSet_get_nstream: get number of stream */
 size_t HTS_ModelSet_get_nstream(HTS_ModelSet * ms)
 {

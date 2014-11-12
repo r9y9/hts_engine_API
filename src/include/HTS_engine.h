@@ -411,6 +411,12 @@ size_t HTS_Engine_get_nstream(HTS_Engine * engine);
 /* HTS_Engine_get_nstate: get number of state */
 size_t HTS_Engine_get_nstate(HTS_Engine * engine);
 
+/* HTS_Engine_get_fullcontext_label_format: get full context label format */
+const char *HTS_Engine_get_fullcontext_label_format(HTS_Engine * engine);
+
+/* HTS_Engine_get_fullcontext_label_version: get full context label version */
+const char *HTS_Engine_get_fullcontext_label_version(HTS_Engine * engine);
+
 /* HTS_Engine_get_total_frame: get total number of frame */
 size_t HTS_Engine_get_total_frame(HTS_Engine * engine);
 

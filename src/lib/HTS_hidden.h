@@ -189,6 +189,12 @@ HTS_Boolean HTS_ModelSet_get_gv_flag(HTS_ModelSet * ms, const char *string);
 /* HTS_ModelSet_get_nstate: get number of state */
 size_t HTS_ModelSet_get_nstate(HTS_ModelSet * ms);
 
+/* HTS_Engine_get_fullcontext_label_format: get full-context label format */
+const char *HTS_ModelSet_get_fullcontext_label_format(HTS_ModelSet * ms);
+
+/* HTS_Engine_get_fullcontext_label_version: get full-context label version */
+const char *HTS_ModelSet_get_fullcontext_label_version(HTS_ModelSet * ms);
+
 /* HTS_ModelSet_get_nstream: get number of stream */
 size_t HTS_ModelSet_get_nstream(HTS_ModelSet * ms);
 
