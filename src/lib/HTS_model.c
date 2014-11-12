@@ -62,6 +62,12 @@ HTS_MODEL_C_START;
 /* hts_engine libraries */
 #include "HTS_hidden.h"
 
+#ifdef WIN32
+typedef unsigned __int32 uint32_t;
+#else
+#include <stdint.h>
+#endif                          /* WIN32 */
+
 /* HTS_dp_match: recursive matching */
 static HTS_Boolean HTS_dp_match(const char *string, const char *pattern, size_t pos, size_t max)
 {
@@ -136,7 +142,7 @@ static size_t HTS_name2num(const char *buff)
 {
    size_t i;
 
-   for (i = strlen(buff) - 1; '0' <= buff[i] && buff[i] <= '9' && i >= 0; i--);
+   for (i = strlen(buff) - 1; '0' <= buff[i] && buff[i] <= '9'; i--);
    i++;
 
    return (size_t) atoi(&buff[i]);
@@ -145,7 +151,7 @@ static size_t HTS_name2num(const char *buff)
 /* HTS_get_state_num: return the number of state */
 static size_t HTS_get_state_num(const char *string)
 {
-   char *left, *right;
+   const char *left, *right;
 
    left = strchr(string, '[');
    if (left == NULL)
@@ -658,7 +664,7 @@ static HTS_Boolean HTS_Model_load_tree(HTS_Model * model, HTS_File * fp)
 /* HTS_Model_load_pdf: load pdfs */
 static HTS_Boolean HTS_Model_load_pdf(HTS_Model * model, HTS_File * fp, size_t vector_length, size_t num_windows, HTS_Boolean is_msd)
 {
-   unsigned int i;
+   uint32_t i;
    size_t j, k;
    HTS_Boolean result = TRUE;
    size_t len;
@@ -677,7 +683,7 @@ static HTS_Boolean HTS_Model_load_pdf(HTS_Model * model, HTS_File * fp, size_t v
    model->npdf -= 2;
    /* read the number of pdfs */
    for (j = 2; j <= model->ntree + 1; j++) {
-      if (HTS_fread_little_endian(&i, sizeof(unsigned int), 1, fp) != 1) {
+      if (HTS_fread_little_endian(&i, sizeof(i), 1, fp) != 1) {
          result = FALSE;
          break;
       }
