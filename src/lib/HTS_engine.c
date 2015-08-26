@@ -151,16 +151,16 @@ HTS_Boolean HTS_Engine_load(HTS_Engine * engine, char **voices, size_t num_voice
    engine->condition.duration_iw = (double *) HTS_calloc(num_voices, sizeof(double));
    for (i = 0; i < num_voices; i++)
       engine->condition.duration_iw[i] = average_weight;
-   engine->condition.parameter_iw = (double **) HTS_calloc(nstream, sizeof(double *));
-   for (i = 0; i < nstream; i++) {
-      engine->condition.parameter_iw[i] = (double *) HTS_calloc(num_voices, sizeof(double));
-      for (j = 0; j < num_voices; j++)
+   engine->condition.parameter_iw = (double **) HTS_calloc(num_voices, sizeof(double *));
+   for (i = 0; i < num_voices; i++) {
+      engine->condition.parameter_iw[i] = (double *) HTS_calloc(nstream, sizeof(double));
+      for (j = 0; j < nstream; j++)
          engine->condition.parameter_iw[i][j] = average_weight;
    }
-   engine->condition.gv_iw = (double **) HTS_calloc(nstream, sizeof(double *));
-   for (i = 0; i < nstream; i++) {
-      engine->condition.gv_iw[i] = (double *) HTS_calloc(num_voices, sizeof(double));
-      for (j = 0; j < num_voices; j++)
+   engine->condition.gv_iw = (double **) HTS_calloc(num_voices, sizeof(double *));
+   for (i = 0; i < num_voices; i++) {
+      engine->condition.gv_iw[i] = (double *) HTS_calloc(nstream, sizeof(double));
+      for (j = 0; j < nstream; j++)
          engine->condition.gv_iw[i][j] = average_weight;
    }
 
@@ -572,12 +572,12 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
       /* interpolation */
       fprintf(fp, "           Interpolation size          -> %8lu\n", (unsigned long) HTS_ModelSet_get_nvoices(ms));
       for (j = 0, temp = 0.0; j < HTS_ModelSet_get_nvoices(ms); j++)
-         temp += condition->parameter_iw[i][j];
+         temp += condition->parameter_iw[j][i];
       for (j = 0; j < HTS_ModelSet_get_nvoices(ms); j++)
-         if (condition->parameter_iw[i][j] != 0.0)
-            condition->parameter_iw[i][j] /= temp;
+         if (condition->parameter_iw[j][i] != 0.0)
+            condition->parameter_iw[j][i] /= temp;
       for (j = 0; j < HTS_ModelSet_get_nvoices(ms); j++)
-         fprintf(fp, "           Interpolation weight[%2lu]    -> %8.0f(%%)\n", (unsigned long) j, (float) (100 * condition->parameter_iw[i][j]));
+         fprintf(fp, "           Interpolation weight[%2lu]    -> %8.0f(%%)\n", (unsigned long) j, (float) (100 * condition->parameter_iw[j][i]));
       /* MSD */
       if (HTS_ModelSet_is_msd(ms, i)) { /* for MSD */
          fprintf(fp, "           MSD flag                    ->     TRUE\n");
@@ -592,12 +592,12 @@ void HTS_Engine_save_information(HTS_Engine * engine, FILE * fp)
          fprintf(fp, "           GV interpolation size       -> %8lu\n", (unsigned long) HTS_ModelSet_get_nvoices(ms));
          /* interpolation */
          for (j = 0, temp = 0.0; j < HTS_ModelSet_get_nvoices(ms); j++)
-            temp += condition->gv_iw[i][j];
+            temp += condition->gv_iw[j][i];
          for (j = 0; j < HTS_ModelSet_get_nvoices(ms); j++)
-            if (condition->gv_iw[i][j] != 0.0)
-               condition->gv_iw[i][j] /= temp;
+            if (condition->gv_iw[j][i] != 0.0)
+               condition->gv_iw[j][i] /= temp;
          for (j = 0; j < HTS_ModelSet_get_nvoices(ms); j++)
-            fprintf(fp, "           GV interpolation weight[%2lu] -> %8.0f(%%)\n", (unsigned long) j, (float) (100 * condition->gv_iw[i][j]));
+            fprintf(fp, "           GV interpolation weight[%2lu] -> %8.0f(%%)\n", (unsigned long) j, (float) (100 * condition->gv_iw[j][i]));
       } else {
          fprintf(fp, "           GV flag                     ->    FALSE\n");
       }
@@ -772,12 +772,12 @@ void HTS_Engine_clear(HTS_Engine * engine)
    if (engine->condition.gv_weight != NULL)
       HTS_free(engine->condition.gv_weight);
    if (engine->condition.parameter_iw != NULL) {
-      for (i = 0; i < HTS_ModelSet_get_nstream(&engine->ms); i++)
+      for (i = 0; i < HTS_ModelSet_get_nvoices(&engine->ms); i++)
          HTS_free(engine->condition.parameter_iw[i]);
       HTS_free(engine->condition.parameter_iw);
    }
    if (engine->condition.gv_iw != NULL) {
-      for (i = 0; i < HTS_ModelSet_get_nstream(&engine->ms); i++)
+      for (i = 0; i < HTS_ModelSet_get_nvoices(&engine->ms); i++)
          HTS_free(engine->condition.gv_iw[i]);
       HTS_free(engine->condition.gv_iw);
    }

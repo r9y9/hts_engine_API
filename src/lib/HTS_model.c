@@ -1640,7 +1640,7 @@ void HTS_ModelSet_get_parameter_index(HTS_ModelSet * ms, size_t voice_index, siz
 }
 
 /* HTS_ModelSet_get_parameter: get parameter using interpolation weight */
-void HTS_ModelSet_get_parameter(HTS_ModelSet * ms, size_t stream_index, size_t state_index, const char *string, const double *iw, double *mean, double *vari, double *msd)
+void HTS_ModelSet_get_parameter(HTS_ModelSet * ms, size_t stream_index, size_t state_index, const char *string, const double *const *iw, double *mean, double *vari, double *msd)
 {
    size_t i;
    size_t len = ms->stream[0][stream_index].vector_length * ms->stream[0][stream_index].num_windows;
@@ -1653,8 +1653,8 @@ void HTS_ModelSet_get_parameter(HTS_ModelSet * ms, size_t stream_index, size_t s
       *msd = 0.0;
 
    for (i = 0; i < ms->num_voices; i++)
-      if (iw[i] != 0.0)
-         HTS_Model_add_parameter(&ms->stream[i][stream_index], state_index, string, mean, vari, msd, iw[i]);
+      if (iw[i][stream_index] != 0.0)
+         HTS_Model_add_parameter(&ms->stream[i][stream_index], state_index, string, mean, vari, msd, iw[i][stream_index]);
 }
 
 /* HTS_ModelSet_get_gv_index: get gv PDF & tree index */
@@ -1664,7 +1664,7 @@ void HTS_ModelSet_get_gv_index(HTS_ModelSet * ms, size_t voice_index, size_t str
 }
 
 /* HTS_ModelSet_get_gv: get GV using interpolation weight */
-void HTS_ModelSet_get_gv(HTS_ModelSet * ms, size_t stream_index, const char *string, const double *iw, double *mean, double *vari)
+void HTS_ModelSet_get_gv(HTS_ModelSet * ms, size_t stream_index, const char *string, const double *const *iw, double *mean, double *vari)
 {
    size_t i;
    size_t len = ms->stream[0][stream_index].vector_length;
@@ -1674,8 +1674,8 @@ void HTS_ModelSet_get_gv(HTS_ModelSet * ms, size_t stream_index, const char *str
       vari[i] = 0.0;
    }
    for (i = 0; i < ms->num_voices; i++)
-      if (iw[i] != 0.0)
-         HTS_Model_add_parameter(&ms->gv[i][stream_index], 2, string, mean, vari, NULL, iw[i]);
+      if (iw[i][stream_index] != 0.0)
+         HTS_Model_add_parameter(&ms->gv[i][stream_index], 2, string, mean, vari, NULL, iw[i][stream_index]);
 }
 
 HTS_MODEL_C_END;
