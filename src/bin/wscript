@@ -1,0 +1,11 @@
+def configure(conf):
+    pass
+
+
+def build(bld):
+    bld.program(
+        source='hts_engine.c',
+        target='hts_engine',
+        use=['hts_engine_API'],
+        lib=['m'],
+        includes=['../include'])
