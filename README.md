@@ -27,3 +27,4 @@ The important changes from the original hts_engine_API are summarized below:
 - Integrate waf
 - Add pkg-config suppport
 - Continuous integratioin support
+- keep sementic versioning http://semver.org/
