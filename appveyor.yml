@@ -33,7 +33,7 @@ notifications:
     on_build_status_changed: false
 
 build_script:
-  - C:\MinGW\msys\1.0\bin\sh --login /c/projects/hts-engine-api/src/msys_build.sh
+  - C:\MinGW\msys\1.0\bin\sh --login /c/projects/hts-engine-api/msys_build.sh
 
 artifacts:
   - path: '**\*.dll'
