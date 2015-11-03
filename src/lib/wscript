@@ -1,0 +1,13 @@
+def configure(conf):
+    pass
+
+
+def build(bld):
+    bld.install_files('${HPREFIX}', bld.path.ant_glob('*.h'))
+    bld.install_files('${HPREFIX}', '../include/HTS_engine.h')
+
+    bld.shlib(
+        source=bld.path.ant_glob('*.c'),
+        target=bld.env['APPNAME'],
+        vnum=bld.env['VERSION'],
+        includes=['.', '../include'])

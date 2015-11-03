@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: @PACKAGE@
+Description: hts_engine API - a library to synthesize speech waveform from HMMs trained by the HMM-based speech synthesis system (HTS).
+Version: @VERSION@
+Cflags: -I${includedir}
+Libs: -L${libdir} @libs@
