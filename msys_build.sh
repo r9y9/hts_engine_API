@@ -20,6 +20,6 @@ if [ "$COMPILER" = gcc ]; then
 fi
 
 # Build
-cd /c/projects/hts_engine_api
+cd /c/projects/hts_engine_api/src
 ./waf configure --check-c-compiler="$COMPILER"
 ./waf

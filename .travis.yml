@@ -6,6 +6,7 @@ compiler:
 
 # Just check if build success or not for now
 script:
+  - cd src
   - ./waf configure
   - ./waf build
 
