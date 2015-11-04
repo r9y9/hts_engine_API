@@ -22,7 +22,7 @@ git cvsimport -v \
 
 - Linux
 - Mac OS X
-- Windows (on-going)
+- Windows (gcc)
 
 ## Changes
 
