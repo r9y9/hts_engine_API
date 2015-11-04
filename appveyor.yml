@@ -7,11 +7,12 @@ environment:
     - COMPILER: gcc
       ARCH: "x86_64"
 
-    - COMPILER: msvc
-      ARCH: "i686"
+# Disable msvc for now
+#    - COMPILER: msvc
+#      ARCH: "i686"
 
-    - COMPILER: msvc
-      ARCH: "x86_64"
+#    - COMPILER: msvc
+#      ARCH: "x86_64"
 
 init:
   - "ECHO %PYTHON%"
