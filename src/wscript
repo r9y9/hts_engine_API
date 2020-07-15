@@ -100,7 +100,7 @@ def build(bld):
         ls = ls + ' -l' + l
 
     print(bld.env.CC[0])
-    if not re.search('msvc', bld.env.CC[0]):
+    if not re.search('CL.exe', bld.env.CC[0]):
         ls += ' -lm'
 
     bld(source='hts_engine_API.pc.in',
