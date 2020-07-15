@@ -43,7 +43,7 @@ def configure(conf):
             'CFLAGS',
             ['-O2', '-Wall', '-fno-common', '-Wstrict-prototypes'])
     elif re.search('cl.exe', conf.env.CC[0].lower()):
-        conf.env.append_unique('CFLAGS', [''])
+        conf.env.append_unique('CFLAGS', ['/lm'])
         conf.check_lib_msvc('m')
     else:
         raise RuntimeError("Not supported compiler: %s" % conf.env.CC[0])
