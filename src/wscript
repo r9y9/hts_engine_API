@@ -43,8 +43,7 @@ def configure(conf):
             'CFLAGS',
             ['-O2', '-Wall', '-fno-common', '-Wstrict-prototypes'])
     elif re.search('cl.exe', conf.env.CC[0].lower()):
-        conf.env.append_unique('CFLAGS', ['/lm'])
-        conf.check_lib_msvc('m')
+        conf.env.append_unique('CFLAGS', [''])
     else:
         raise RuntimeError("Not supported compiler: %s" % conf.env.CC[0])
 
@@ -99,7 +98,8 @@ def build(bld):
     ls = ''
     for l in set(libs):
         ls = ls + ' -l' + l
-    ls += ' -lm'
+    if not re.search('msvc', bld.env.CC[0]):
+        ls += ' -lm'
 
     bld(source='hts_engine_API.pc.in',
         prefix=bld.env['PREFIX'],
