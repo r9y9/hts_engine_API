@@ -9,6 +9,7 @@ def build(bld):
         lib = ['m']
     else:
         lib = []
+    lib = []
     bld.program(
         source='hts_engine.c',
         target='hts_engine',
