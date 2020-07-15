@@ -1,11 +1,17 @@
+import re
+
 def configure(conf):
     pass
 
 
 def build(bld):
+    if not re.search('msvc', bld.env.CC[0]):
+        lib = ['m']
+    else:
+        lib = []
     bld.program(
         source='hts_engine.c',
         target='hts_engine',
         use=['hts_engine_API'],
-        lib=['m'],
+        lib=lib,
         includes=['../include'])
