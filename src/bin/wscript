@@ -5,13 +5,11 @@ def configure(conf):
 
 
 def build(bld):
-    if not re.search('msvc', bld.env.CC[0]):
+    if not re.search('CL.exe', bld.env.CC[0]):
         lib = ['m']
     else:
         lib = []
-
-    print(bld.env.CC)
-    lib = []
+    print(bld.env.CC[0])
     bld.program(
         source='hts_engine.c',
         target='hts_engine',

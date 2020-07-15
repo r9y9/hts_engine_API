@@ -98,6 +98,8 @@ def build(bld):
     ls = ''
     for l in set(libs):
         ls = ls + ' -l' + l
+
+    print(bld.env.CC[0])
     if not re.search('msvc', bld.env.CC[0]):
         ls += ' -lm'
 
