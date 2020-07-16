@@ -98,7 +98,10 @@ def build(bld):
     ls = ''
     for l in set(libs):
         ls = ls + ' -l' + l
-    ls += ' -lm'
+
+    print(bld.env.CC[0])
+    if not re.search('CL.exe', bld.env.CC[0]):
+        ls += ' -lm'
 
     bld(source='hts_engine_API.pc.in',
         prefix=bld.env['PREFIX'],
