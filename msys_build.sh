@@ -23,5 +23,9 @@ fi
 # Build
 cd /c/projects/hts-engine-api/src
 mkdir -p build && cd build
-cmake ..
-cmake --build . --config
+if [ "$COMPILER" = gcc ]; then
+  cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ ..
+else
+  cmake ..
+fi
+cmake --build . --config Release
