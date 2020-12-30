@@ -33,6 +33,8 @@ target_link_libraries(hts_engine hts_engine_API)
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     target_link_libraries(hts_engine_API winmm gcc stdc++)
     target_link_libraries(hts_engine winmm gcc stdc++)
+else()
+    target_link_libraries(hts_engine m)
 endif()
 
 install(TARGETS hts_engine_API hts_engine DESTINATION lib RUNTIME DESTINATION bin)
