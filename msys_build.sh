@@ -17,10 +17,11 @@ if [ "$COMPILER" = gcc ]; then
     fi
     7z x $f > /dev/null
     export PATH=$PWD/mingw$bits/bin:$PATH
+    export CC=$PWD/mingw$bits/bin/gcc
 fi
 
 # Build
 cd /c/projects/hts-engine-api/src
 mkdir -p build && cd build
-CC=$COMPILER cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF ..
-make -j
+cmake ..
+cmake --build . --config
