@@ -1,10 +1,10 @@
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-libdir=@libdir@
-includedir=@includedir@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${prefix}/lib
+includedir=${prefix}/include
 
-Name: @PACKAGE@
+Name: @CMAKE_PROJECT_NAME@
 Description: hts_engine API - a library to synthesize speech waveform from HMMs trained by the HMM-based speech synthesis system (HTS).
-Version: @VERSION@
+Version: @CMAKE_PROJECT_VERSION@
 Cflags: -I${includedir}
-Libs: -L${libdir} @libs@
+Libs: -L${libdir} -l@CMAKE_PROJECT_NAME@

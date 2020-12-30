@@ -5,7 +5,6 @@
 
 A fork of hts_engine_API
 
-
 ## Why
 
 Wanted to fork it with *git*.
@@ -28,7 +27,7 @@ git cvsimport -v \
 
 The important changes from the original hts_engine_API are summarized below:
 
-- Integrate waf
+- CMake support
 - Add pkg-config suppport
 - Continuous integratioin support
 - keep sementic versioning http://semver.org/

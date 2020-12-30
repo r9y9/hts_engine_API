@@ -1,11 +1,12 @@
 environment:
   PYTHON: "C:/Python36"
   matrix:
-    - COMPILER: gcc
-      ARCH: "i686"
-
-    - COMPILER: gcc
-      ARCH: "x86_64"
+# NOTE: we may want to revert this back if needed
+#    - COMPILER: gcc
+#      ARCH: "i686"
+#
+#    - COMPILER: gcc
+#      ARCH: "x86_64"
 
     - COMPILER: msvc
       ARCH: "i686"
