@@ -1,5 +1,9 @@
 language: cpp
 
+# Ubuntu 18.04 https://docs.travis-ci.com/user/reference/bionic
+# NOTE: this project requires cmake >= 3.11
+dist: bionic
+
 compiler:
   - gcc
   - clang
@@ -7,8 +11,9 @@ compiler:
 # Just check if build success or not for now
 script:
   - cd src
-  - ./waf configure
-  - ./waf build
+  - mkdir -p build && cd build
+  - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
+  - make -j
 
 notifications:
   email: false
