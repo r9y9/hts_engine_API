@@ -21,5 +21,6 @@ fi
 
 # Build
 cd /c/projects/hts-engine-api/src
-./waf configure --check-c-compiler="$COMPILER"
-./waf
+mkdir -p build && cd build
+CC=$COMPILER cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF ..
+make -j
