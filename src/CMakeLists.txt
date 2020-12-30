@@ -38,4 +38,5 @@ else()
 endif()
 
 install(TARGETS ${PROJECT_NAME} hts_engine DESTINATION lib RUNTIME DESTINATION bin)
+install(FILES include/HTS_engine.h DESTINATION include)
 install(FILES "${PROJECT_BINARY_DIR}/hts_engine_API.pc" DESTINATION lib/pkgconfig/)
