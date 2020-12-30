@@ -21,8 +21,8 @@ file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/lib/*.h $
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # The hts_engine_API library
-add_library(hts_engine_API ${SOURCE_FILES} ${HEADER_FILES})
-set_target_properties(hts_engine_API PROPERTIES
+add_library(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
+set_target_properties(${PROJECT_NAME} PROPERTIES
   VERSION ${CMAKE_PROJECT_VERSION}
 )
 
@@ -31,11 +31,11 @@ add_executable(hts_engine bin/hts_engine.c)
 target_link_libraries(hts_engine hts_engine_API)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    target_link_libraries(hts_engine_API winmm)
+    target_link_libraries(${PROJECT_NAME} winmm)
     target_link_libraries(hts_engine winmm)
 else()
     target_link_libraries(hts_engine m)
 endif()
 
-install(TARGETS hts_engine_API hts_engine DESTINATION lib RUNTIME DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} hts_engine DESTINATION lib RUNTIME DESTINATION bin)
 install(FILES "${PROJECT_BINARY_DIR}/hts_engine_API.pc" DESTINATION lib/pkgconfig/)
