@@ -1,10 +1,16 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 2.8)
 
 # The name "HTSEngine" is used in the original makefile
 # Due to historical reasons, let me use "hts_engine_API" instead first.
 # we may want to use "HTSEngine" in the future.
 # NOTE: we should use semanitc versioning. 1.09 -> 1.0.9!
-project(hts_engine_API VERSION 1.0.9)
+project(hts_engine_API)
+
+set(PROJECT_VER_MAJOR 1)
+set(PROJECT_VER_MINOR 0)
+set(PROJECT_VER_PATCH 9)
+set(PROJECT_VER "${PROJECT_VER_MAJOR}.${PROJECT_VER_MINOR}.${PROJECT_VER_PATCH}")
+set(PROJECT_APIVER "${PROJECT_VER_MAJOR}.${PROJECT_VER_MINOR}")
 
 # set the default path for built executables to the "bin" directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
@@ -23,7 +29,8 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 # The hts_engine_API library
 add_library(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
 set_target_properties(${PROJECT_NAME} PROPERTIES
-  VERSION ${CMAKE_PROJECT_VERSION}
+  VERSION ${PROJECT_VER}
+  SOVERSION ${PROJECT_APIVER}
 )
 
 # hts_engine binary
