@@ -1,19 +1,18 @@
 Installation Instructions
 *************************
 
-1. After unpacking the tar.gz file, cd to the hts_engine API directory.
+1. Cd to ./src directory.
 
-2. Run configure script with appropriate options.
+   % cd src
 
-   % ./configure
+2. Create "build" directory and cd to ./src/build.
 
-   For detail, please see.
+   % mkdir -p build && cd build
 
-   % ./configure --help
+3. Run "cmake" to create Makefile and "make" to compile.
 
-3. Run make.
-
-   % make
+   % cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
+   % make -j
 
 4. Install library and binary.
 
