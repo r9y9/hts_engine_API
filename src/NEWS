@@ -1,3 +1,6 @@
+Version 1.10:
+ * bug fixes.
+
 Version 1.09:
  * add '-g' option to change volume.
  * add some functions to get fullcontext label format and version defined in HTS voice.
