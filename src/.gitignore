@@ -12,5 +12,5 @@ test_mcp
 conf.sh
 *test*
 config.log
-hts_engine_API-0.99.tar.*
+hts_engine_API-*.tar.*
 *.bz2
