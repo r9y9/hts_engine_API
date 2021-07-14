@@ -32,6 +32,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
   VERSION ${PROJECT_VER}
   SOVERSION ${PROJECT_APIVER}
 )
+target_compile_definitions("${PROJECT_NAME}" PRIVATE "-DHTS_EXPORTS=1")
 
 # hts_engine binary
 add_executable(hts_engine bin/hts_engine.c)
