@@ -2,9 +2,9 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(hts_engine_API, 1.09, hts-engine-users@lists.sourceforge.net, hts_engine_API)
+AC_INIT(hts_engine_API, 1.10, hts-engine-users@lists.sourceforge.net, hts_engine_API)
 AC_CONFIG_AUX_DIR([config])
-AC_COPYRIGHT(Copyright 2001-2014 Nagoya Institute of Technology)
+AC_COPYRIGHT(Copyright 2001-2015 Nagoya Institute of Technology)
 AC_COPYRIGHT(Copyright 2001-2008 Tokyo Institute of Technology)
 AM_INIT_AUTOMAKE
 

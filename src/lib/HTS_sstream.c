@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2014  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2015  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -180,6 +180,9 @@ HTS_Boolean HTS_SStreamSet_create(HTS_SStreamSet * sss, HTS_ModelSet * ms, HTS_L
    double frame_length;
    size_t next_time;
    size_t next_state;
+
+   if (HTS_Label_get_size(label) == 0)
+      return FALSE;
 
    /* check interpolation weights */
    for (i = 0, temp = 0.0; i < HTS_ModelSet_get_nvoices(ms); i++)
