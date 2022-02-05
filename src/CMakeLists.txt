@@ -12,6 +12,14 @@ set(PROJECT_VER_PATCH 9)
 set(PROJECT_VER "${PROJECT_VER_MAJOR}.${PROJECT_VER_MINOR}.${PROJECT_VER_PATCH}")
 set(PROJECT_APIVER "${PROJECT_VER_MAJOR}.${PROJECT_VER_MINOR}")
 
+option(AUDIO_PLAY_NONE "Disable audio playing support" ON)
+
+# NOTE: we can use portaudio or win32 if we really want.
+# I disable it by default assuming most people don't want audio playing functionality
+if (${AUDIO_PLAY_NONE})
+  add_compile_options("-D AUDIO_PLAY_NONE")
+endif ()
+
 # set the default path for built executables to the "bin" directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
