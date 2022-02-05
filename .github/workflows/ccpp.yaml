@@ -7,13 +7,37 @@ on:
     branches: [ master ]
 
 jobs:
-  build-ubuntu:
+  build:
+    strategy:
+      matrix:
+        build_type: [ Release ]
+        config:
+          - os: ubuntu-latest
+            cc: gcc
+            cxx: g++
+          - os: ubuntu-latest
+            cc: clang
+            cxx: clang++
+          - os: macos-latest
+            cc: gcc
+            cxx: g++
+          - os: macos-latest
+            cc: clang
+            cxx: clang++
+          - os: windows-latest
+            cc: cl
+            cxx: cl
 
-    runs-on: ubuntu-latest
+    env:
+      CC: ${{ matrix.config.cc }}
+      CXX: ${{ matrix.config.cxx }}
+
+    runs-on: ${{ matrix.config.os }}
 
     steps:
-    - uses: actions/checkout@v2
-    - name: configure
-      run: cd src && mkdir build && cd build && cmake ..
-    - name: build
-      run:  cd src/build && make -j
+      - uses: actions/checkout@v2
+      - name: Build
+        working-directory: src
+        run: |
+          cmake -D CMAKE_BUILD_TYPE=${{ matrix.build_type }} -D BUILD_SHARED_LIBS=ON -S . -B build
+          cmake --build build --config ${{ matrix.build_type }}
