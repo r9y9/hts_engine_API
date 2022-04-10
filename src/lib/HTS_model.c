@@ -4,7 +4,7 @@
 /*           http://hts-engine.sourceforge.net/                      */
 /* ----------------------------------------------------------------- */
 /*                                                                   */
-/*  Copyright (c) 2001-2014  Nagoya Institute of Technology          */
+/*  Copyright (c) 2001-2015  Nagoya Institute of Technology          */
 /*                           Department of Computer Science          */
 /*                                                                   */
 /*                2001-2008  Tokyo Institute of Technology           */
@@ -894,7 +894,7 @@ HTS_Boolean HTS_ModelSet_load(HTS_ModelSet * ms, char **voices, size_t num_voice
 {
    size_t i, j, k, s, e;
    HTS_Boolean error = FALSE;
-   HTS_File *fp;
+   HTS_File *fp = NULL;
    char buff1[HTS_MAXBUFLEN];
    char buff2[HTS_MAXBUFLEN];
    size_t matched_size;
@@ -1067,7 +1067,10 @@ HTS_Boolean HTS_ModelSet_load(HTS_ModelSet * ms, char **voices, size_t num_voice
          }
       }
       if (error != FALSE) {
-         HTS_fclose(fp);
+         if (fp != NULL) {
+            HTS_fclose(fp);
+            fp = NULL;
+         }
          break;
       }
       /* reset STREAM options */
@@ -1183,7 +1186,10 @@ HTS_Boolean HTS_ModelSet_load(HTS_ModelSet * ms, char **voices, size_t num_voice
          free(temp_option);
       }
       if (error != FALSE) {
-         HTS_fclose(fp);
+         if (fp != NULL) {
+            HTS_fclose(fp);
+            fp = NULL;
+         }
          break;
       }
       /* reset POSITION */
@@ -1365,6 +1371,7 @@ HTS_Boolean HTS_ModelSet_load(HTS_ModelSet * ms, char **voices, size_t num_voice
                HTS_fseek(fp, start_of_data, SEEK_SET);
             }
          }
+         HTS_Window_clear(&ms->window[j]);      /* if windows were loaded already, release them */
          if (HTS_Window_load(&ms->window[j], win_fp, num_windows[j]) != TRUE)
             error = TRUE;
          for (k = 0; k < num_windows[j]; k++)
@@ -1452,7 +1459,10 @@ HTS_Boolean HTS_ModelSet_load(HTS_ModelSet * ms, char **voices, size_t num_voice
             free(temp_gv_tree[j]);
       free(temp_gv_tree);
       /* fclose */
-      HTS_fclose(fp);
+      if (fp != NULL) {
+         HTS_fclose(fp);
+         fp = NULL;
+      }
       if (error != FALSE)
          break;
    }
